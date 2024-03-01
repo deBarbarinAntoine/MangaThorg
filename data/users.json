@@ -1,0 +1,30 @@
+[
+	{
+		"id": 1,
+		"username": "Antoine",
+		"hash": "36a3db4437b94182655f23faa6ff1801e214092b4de8f022c490e79d1e4333f9e4482809ce710aba3bdd11026741257cdca0638cd7f87d379848a838f3797e66",
+		"salt": "elAdroqDRcV4UZUwSeEBJe6rE6wxz9GjVAOW/einxIfpQ41Bnc0B1L0cU9obD1ADbWhXgoVQNrfA3YGJsvXS/g==",
+		"email": "mail@adebarbarin.com"
+	},
+	{
+		"id": 2,
+		"username": "henry",
+		"hash": "c1e2c80638ec1657f1a2194419669f15741984c6da0d288d41b6e11460a293e95260cdab5b81cc379f2cb076eecc9bffbacaf31b2f90bfaff4cd20036c67fa5b",
+		"salt": "6V1KitCFiwPmJZXmmyz97ZuczVJqWwbUATTMx6b80wbM+kaqC1KEr3Ow+PeDXB/kIX/syZae0H42vNWo4sjxHQ==",
+		"email": "htitushg@gmail.com"
+	},
+	{
+		"id": 3,
+		"username": "Marie",
+		"hash": "c184eda2fc30aa375c5d78efc7f8731aa68b59dd00c2f762d53349ebd8e54bb32823d4610121a3d5acc55802e6093d377794be7f0d08dc01c0efa55119616e83",
+		"salt": "qcEMwPNfZNm+4Jg2PjWlKowCQ1OIrTmIw/szLIvB64AUlJWX5DW71iP1s1XBvANfqgLdSVDVN89ozAJsM1JCxQ==",
+		"email": "nonacidos@gmail.com"
+	},
+	{
+		"id": 4,
+		"username": "thorgdar",
+		"hash": "38f5bfc0eae8ebe5be95de801319f6a9747b24b362ff031f9e23b2b5ece68cd54c165eff8000cbf1a65ad0e5ce81e0d45e7ea810fe421743b6001eaefe39ab5e",
+		"salt": "/m6funW98HKlxFDeHEycq9c+xmTICsxiUvgJiFpWMmIuhmpNLiXoZPXeQCFYDIENafqz1pdYz6GvjUvUl3mM5w==",
+		"email": "thorgdar@gmail.com"
+	}
+]
