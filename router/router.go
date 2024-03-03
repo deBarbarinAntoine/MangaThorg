@@ -19,6 +19,8 @@ func Init() {
 	Mux.HandleFunc("GET /home", controllers.HomeHandlerGetBundle)
 	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
 	Mux.HandleFunc("GET /confirm", controllers.ConfirmHandlerGetBundle)
+	Mux.HandleFunc("GET /logout", controllers.LogoutHandlerGetBundle)
+	Mux.HandleFunc("GET /principal", controllers.PrincipalHandlerGetBundle)
 
 	// Handling MethodNotAllowed error on /
 	Mux.HandleFunc("/{$}", controllers.IndexHandlerNoMethBundle)

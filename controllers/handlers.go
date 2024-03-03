@@ -54,18 +54,18 @@ func indexHandlerDelete(w http.ResponseWriter, r *http.Request) {
 
 func indexHandlerNoMeth(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	log.Println("HTTP Error", http.StatusMethodNotAllowed)
+	log.Println("HTTP ApiErr", http.StatusMethodNotAllowed)
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	utils.Logger.Warn("indexHandlerNoMeth", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusMethodNotAllowed))
-	w.Write([]byte("Error " + fmt.Sprint(http.StatusMethodNotAllowed) + " !"))
+	w.Write([]byte("ApiErr " + fmt.Sprint(http.StatusMethodNotAllowed) + " !"))
 }
 
 func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	log.Println("HTTP Error", http.StatusNotFound)
+	log.Println("HTTP ApiErr", http.StatusNotFound)
 	w.WriteHeader(http.StatusNotFound)
 	utils.Logger.Warn("indexHandlerOther", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
-	w.Write([]byte("Error " + fmt.Sprint(http.StatusNotFound) + " !"))
+	w.Write([]byte("ApiErr " + fmt.Sprint(http.StatusNotFound) + " !"))
 }
 
 func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
@@ -109,11 +109,15 @@ func registerHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Has("err") {
 		switch r.URL.Query().Get("err") {
 		case "username":
-			message = "<div class=\"message\">Username already used!</div>"
-		case "password":
+			message = "<div class=\"message\">Username must be at least 3 characters long!</div>"
+		case "user":
+			message = "<div class=\"message\">Username or email already used!</div>"
+		case "match":
 			message = "<div class=\"message\">Both passwords need to be equal!</div>"
 		case "email":
 			message = "<div class=\"message\">Wrong email value!</div>"
+		case "password":
+			message = "<div class=\"message\">Password needs 8 characters min, 1 digit, 1 lowercase, 1 uppercase and 1 symbol.</div>"
 		}
 	}
 	tmpl, err := template.ParseFiles(utils.Path + "templates/register.gohtml")
@@ -139,16 +143,24 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 		password1: r.FormValue("password1"),
 		password2: r.FormValue("password2"),
 	}
-	_, exists := utils.SelectUser(formValues.username)
 	switch {
-	case exists:
+	case len(formValues.username) < 3:
 		http.Redirect(w, r, "register?err=username", http.StatusSeeOther)
 		return
+	case !utils.CheckUser(models.User{
+		Username: formValues.username,
+		Email:    formValues.email,
+	}):
+		http.Redirect(w, r, "register?err=user", http.StatusSeeOther)
+		return
 	case formValues.password1 != formValues.password2:
-		http.Redirect(w, r, "register?err=password", http.StatusSeeOther)
+		http.Redirect(w, r, "register?err=match", http.StatusSeeOther)
 		return
 	case !utils.CheckEmail(formValues.email):
 		http.Redirect(w, r, "register?err=email", http.StatusSeeOther)
+		return
+	case !utils.CheckPasswd(formValues.password1):
+		http.Redirect(w, r, "register?err=password", http.StatusSeeOther)
 		return
 	}
 	hash, salt := utils.NewPwd(formValues.password1)
@@ -200,5 +212,23 @@ func confirmHandlerGet(w http.ResponseWriter, r *http.Request) {
 		id := r.URL.Query().Get("id")
 		utils.PushTempUser(id)
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+}
+
+func logoutHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	utils.Logout(&w, r)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	tmpl, err := template.ParseFiles(utils.Path + "templates/principal.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.Execute(w, nil)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }

@@ -12,7 +12,7 @@ func Run() {
 	router.Init()
 
 	// Sending the assets to the clients
-	fs := http.FileServer(http.Dir("../assets"))
+	fs := http.FileServer(http.Dir(utils.Path + "assets"))
 	router.Mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
 	// Running the goroutine to automatically remove expired sessions every given time

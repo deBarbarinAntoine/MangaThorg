@@ -1,0 +1,13 @@
+:root {
+  --collection-1-font-color: rgba(238, 238, 238, 1);
+  --collection-1-background: rgba(34, 40, 49, 1);
+  --collection-1-foreground: rgba(57, 62, 70, 1);
+  --collection-1-blue-elem: rgba(0, 173, 181, 1);
+  --collection-1-sessionopened: none;
+  --collection-1-text-to-hover: rgba(238, 238, 238, 1);
+  --collection-1-isloginform: initial;
+  --collection-1-font-color-duplicate: rgba(238, 238, 238, 1);
+  --collection-1-background-duplicate: rgba(34, 40, 49, 1);
+  --collection-1-blue-element: rgba(0, 173, 181, 1);
+  --collection-1-foreground-duplicate: rgba(57, 62, 70, 1);
+}

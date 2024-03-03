@@ -1,0 +1,285 @@
+@import url('https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap');
+
+@font-face {
+  font-family: 'Tilt Neon', sans-serif;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  width: 1440px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px 0;
+  position: relative;
+  flex: 0 0 auto;
+  background-color: transparent;
+
+  .main {
+    justify-content: space-between;
+    padding: 55px 55px 5px;
+    align-self: stretch;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 0 0 auto;
+
+    .header-nav {
+      display: inline-flex;
+      flex-wrap: wrap;
+      height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 40px 0px;
+      padding: 7px 10px;
+      position: relative;
+      flex: 0 0 auto;
+
+      .category-link {
+        position: relative;
+        width: fit-content;
+        margin-top: -2px;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: var(--collection-1-text-to-hover);
+        font-size: 25px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+    }
+
+    .header-search-bar {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 155px;
+      padding: 5px 8px;
+      position: relative;
+      flex: 0 0 auto;
+      border-radius: 15px;
+      border: 3px solid #eeeeee;
+
+      .filter-search-bar {
+        display: inline-flex;
+        height: 29px;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px;
+        position: relative;
+        flex: 0 0 auto;
+        background-color: #393e46;
+        border-radius: 8px;
+
+        .filter-search-text {
+          position: relative;
+          width: fit-content;
+          margin-top: -8px;
+          margin-bottom: -6px;
+          font-family: "Tilt Neon", sans-serif;
+          font-weight: 400;
+          color: #eeeeee;
+          font-size: 18px;
+          text-align: center;
+          letter-spacing: 0;
+          line-height: normal;
+        }
+      }
+
+      .icon-search {
+        position: relative;
+        width: 36.3px;
+        height: 35px;
+      }
+    }
+  }
+
+  .variable {
+    width: 1440px;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px 55px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    flex: 0 0 auto;
+
+    .header-buttons {
+      display: inline-flex;
+      height: 35px;
+      gap: 25px;
+      flex: 0 0 auto;
+      align-items: center;
+      position: relative;
+
+      .login-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 25px;
+        position: relative;
+        align-self: stretch;
+        flex: 0 0 auto;
+        background-color: #00adb5;
+        border-radius: 12px;
+      }
+
+      .register-btn {
+        all: unset;
+        box-sizing: border-box;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 25px;
+        position: relative;
+        align-self: stretch;
+        flex: 0 0 auto;
+        background-color: #393e46;
+        border-radius: 12px;
+      }
+
+      .footer-nav-text {
+        position: relative;
+        width: fit-content;
+        margin-top: -5px;
+        margin-bottom: -3px;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: #eeeeee;
+        font-size: 18px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+    }
+
+    .header-msg {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 270px 0 0;
+      flex: 1;
+      align-items: center;
+      position: relative;
+
+      .line-top {
+        width: 174px;
+        margin-top: -1px;
+        position: relative;
+        height: 2px;
+      }
+
+      .invitation-msg {
+        position: relative;
+        width: fit-content;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: #00adb5;
+        font-size: 18px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+
+      .line-bottom {
+        width: 237px;
+        margin-bottom: -1px;
+        position: relative;
+        height: 2px;
+      }
+    }
+  }
+}
+
+// div filled with any single page's template
+.template {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  width: 1440px;
+  height: 340px;
+  align-items: flex-end;
+  gap: 10px;
+  position: relative;
+  background-color: transparent;
+
+  .footer-nav-credits {
+    display: flex;
+    flex-direction: column;
+    width: 900px;
+    align-items: center;
+    gap: 9px;
+    padding: 20px 0;
+    position: relative;
+
+    .footer-nav {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      flex: 0 0 auto;
+
+      .footer-nav-text {
+        position: relative;
+        width: 221px;
+        height: 25px;
+        margin-top: -1px;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: #eeeeee;
+        font-size: 18px;
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+    }
+
+    .credits {
+      position: relative;
+      width: 630px;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: #ffffff;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+
+    .copyright {
+      position: relative;
+      width: 528px;
+      height: 20px;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: #ffffff;
+      font-size: 16px;
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+  }
+
+  .footer-img-reading {
+    position: relative;
+    flex: 1;
+    align-self: stretch;
+    background-size: cover;
+    background-position: 50% 50%;
+  }
+}
+
+.logo {
+  position: relative;
+  width: 280px;
+  height: 60px;
+}

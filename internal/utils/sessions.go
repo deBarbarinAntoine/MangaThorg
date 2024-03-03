@@ -3,12 +3,13 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"log/slog"
 	"mangathorg/internal/models"
 	"net/http"
 	"time"
 )
 
-// In-memory Session data storage
+// SessionsData is an in-memory models.Session data storage.
 var SessionsData = make(map[string]models.Session)
 
 func retrieveSessions() []models.Session {
@@ -57,6 +58,10 @@ func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 
 	user, _ := SelectUser(username)
 
+	// Update the last connection time in `users.json`.
+	user.LastConnection = time.Now()
+	updateUser(user)
+
 	// Create Session data in memory
 	SessionsData[sessionID] = models.Session{
 		UserID:         user.Id,
@@ -65,6 +70,8 @@ func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 		IpAddress:      GetIP(r),
 		ExpirationTime: expirationTime,
 	}
+
+	Logger.Info("Login", slog.Any("user", SessionsData[sessionID]))
 }
 
 // CheckSession checks if there is a cookie in the request
@@ -87,6 +94,9 @@ func CheckSession(r *http.Request) bool {
 	}
 	// Verify expiration time
 	if session.ExpirationTime.Before(time.Now()) {
+		Logger.Info("Logout", slog.Any("user", SessionsData[cookie.Value]))
+		// deleting previous entry in the SessionsData map
+		delete(SessionsData, cookie.Value)
 		return false
 	}
 	return true
@@ -133,6 +143,29 @@ func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+func Logout(w *http.ResponseWriter, r *http.Request) {
+	var newCookie = &http.Cookie{
+		Name:     "session_id",
+		Value:    "",
+		HttpOnly: true,
+		Secure:   false, // Use only if using HTTPS
+		Path:     "/",
+		MaxAge:   -1,
+		SameSite: http.SameSiteStrictMode,
+	}
+
+	// setting the new cookie
+	http.SetCookie(*w, newCookie)
+
+	// retrieving the in-memory current session data
+	cookie, _ := r.Cookie("updatedCookie")
+
+	Logger.Info("Logout", slog.Any("user", SessionsData[cookie.Value]))
+
+	// deleting previous entry in the SessionsData map
+	delete(SessionsData, cookie.Value)
+}
+
 func generateSessionID() string {
 	b := make([]byte, 64)
 	_, err := rand.Read(b)
@@ -154,6 +187,7 @@ func isExpired(session models.Session) bool {
 func cleanSessions() {
 	for sessionID, session := range SessionsData {
 		if isExpired(session) {
+			Logger.Info("Session cleared automatically", slog.Any("user", session))
 			delete(SessionsData, sessionID)
 		}
 	}

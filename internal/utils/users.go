@@ -2,10 +2,10 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
 	"log/slog"
 	"mangathorg/internal/models"
 	"os"
+	"regexp"
 	"time"
 )
 
@@ -30,6 +30,46 @@ func retrieveUsers() ([]models.User, error) {
 	}
 
 	return users, nil
+}
+
+// CheckUser
+// checks if the models.User 's username and email are still available in jsonFile and TempUsers.
+func CheckUser(user models.User) bool {
+	users, err := retrieveUsers()
+	if err != nil {
+		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
+	}
+	for _, singleUser := range users {
+		if user.Username == singleUser.Username || user.Email == singleUser.Email {
+			return false
+		}
+	}
+	for _, tempUser := range TempUsers {
+		if user.Username == tempUser.User.Username || user.Email == tempUser.User.Email {
+			return false
+		}
+	}
+	return true
+}
+
+func CheckEmail(email string) bool {
+	reg := regexp.MustCompile("^[\\w&#$.%+-]+@[\\w&#$.%+-]+\\.[a-z]{2,6}?$")
+	return reg.MatchString(email)
+}
+
+// CheckPasswd
+// checks if the password's format is according to the rules.
+func CheckPasswd(passwd string) bool {
+
+	// Matches any password containing at least one digit, one lowercase,
+	// one uppercase, one symbol and 8 characters in total.
+	//regex := regexp.MustCompile(`^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*([^\w\s]|_)).{8,}$`) // Alas not supported by the regexp library
+	digit := regexp.MustCompile(`\d+`)
+	lower := regexp.MustCompile(`[a-z]+`)
+	upper := regexp.MustCompile(`[A-Z]+`)
+	symbol := regexp.MustCompile(`([^\w\s]|_)+`)
+	minLen := regexp.MustCompile(`.{8,}`)
+	return digit.MatchString(passwd) && lower.MatchString(passwd) && upper.MatchString(passwd) && symbol.MatchString(passwd) && minLen.MatchString(passwd)
 }
 
 // changeUsers
@@ -136,11 +176,10 @@ func deleteTempUser(temp models.TempUser) {
 }
 
 func PushTempUser(id string) {
-	log.Printf("TempUsers: %#v\n", TempUsers)
-	log.Printf("id: %#v\n", id)
 	for _, temp := range TempUsers {
 		if temp.ConfirmID == id {
 			temp.User.Id = GetIdNewUser()
+			temp.User.CreationTime = time.Now()
 			CreateUser(temp.User)
 			deleteTempUser(temp)
 		}
@@ -151,7 +190,8 @@ func ManageTempUsers() {
 	duration := setDailyTimer()
 	for {
 		for _, user := range TempUsers {
-			if time.Now().Sub(user.CreationTime) > time.Hour*12 {
+			if time.Since(user.CreationTime) > time.Hour*12 {
+				Logger.Info("TempUser cleared automatically", slog.Any("user", user))
 				deleteTempUser(user)
 			}
 		}

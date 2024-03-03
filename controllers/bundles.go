@@ -1,6 +1,8 @@
 package controllers
 
-import "mangathorg/internal/middlewares"
+import (
+	"mangathorg/internal/middlewares"
+)
 
 var IndexHandlerGetBundle = middlewares.Join(indexHandlerGet, middlewares.Log, middlewares.UserCheck)
 var IndexHandlerPutBundle = middlewares.Join(indexHandlerPut, middlewares.Log, middlewares.Guard)
@@ -14,3 +16,5 @@ var RegisterHandlerPostBundle = middlewares.Join(registerHandlerPost, middleware
 var HomeHandlerGetBundle = middlewares.Join(homeHandlerGet, middlewares.Log, middlewares.Guard)
 var LogHandlerGetBundle = middlewares.Join(logHandlerGet, middlewares.Log, middlewares.UserCheck)
 var ConfirmHandlerGetBundle = middlewares.Join(confirmHandlerGet, middlewares.Log, middlewares.OnlyVisitors)
+var LogoutHandlerGetBundle = middlewares.Join(logoutHandlerGet, middlewares.Log, middlewares.Guard)
+var PrincipalHandlerGetBundle = middlewares.Join(principalHandlerGet, middlewares.Log)

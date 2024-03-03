@@ -1,12 +1,10 @@
 package utils
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"net/http"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 )
@@ -48,10 +46,5 @@ func GetIP(r *http.Request) string {
 
 func GetCurrentFuncName() string {
 	pc, _, _, _ := runtime.Caller(1)
-	return fmt.Sprintf("%s", runtime.FuncForPC(pc).Name())
-}
-
-func CheckEmail(email string) bool {
-	reg := regexp.MustCompile("^[a-z0-9-_]+@[a-z0-9-_]+\\.[a-z]+$")
-	return reg.MatchString(email)
+	return runtime.FuncForPC(pc).Name()
 }

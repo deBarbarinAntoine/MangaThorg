@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"log/slog"
 	"mangathorg/internal/models"
@@ -44,8 +43,17 @@ func setDailyTimer() time.Duration {
 		n = n.Add(24 * time.Hour)
 		d = n.Sub(t)
 	}
-	log.Println("setDailyTimer() value: ", d)
+	log.Println("setDailyTimer() value: ", d) // verbose
 	return d
+}
+
+func closeLog() {
+	if logs != nil {
+		err := logs.Close()
+		if err != nil {
+			log.Println(GetCurrentFuncName(), slog.Any("output", err))
+		}
+	}
 }
 
 // LogInit is meant to be run as a goroutine to create a new log file every day
@@ -53,19 +61,15 @@ func setDailyTimer() time.Duration {
 func LogInit() {
 	duration := setDailyTimer()
 	var jsonHandler *slog.JSONHandler
+	var err error
+	var filename string
+	defer closeLog()
 	for {
-		filename := "logs/logs_" + time.Now().Format(time.DateOnly) + ".log"
-		var err error
-		logs, err = os.Open(filename)
+		filename = "logs/logs_" + time.Now().Format(time.DateOnly) + ".log"
+		closeLog()
+		logs, err = os.OpenFile(filename, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			var createErr error
-			if logs != nil {
-				logs.Close()
-			}
-			logs, createErr = os.Create(filename)
-			if createErr != nil {
-				log.Println(GetCurrentFuncName(), slog.Any("output", createErr))
-			}
+			log.Println(GetCurrentFuncName(), slog.Any("output", err))
 		}
 		jsonHandler = slog.NewJSONHandler(logs, nil)
 		Logger = slog.New(jsonHandler)
@@ -76,7 +80,7 @@ func LogInit() {
 
 // fetchLogInfo retrieves all Log from `file` and stores it in *log.
 func (log *Logs) fetchLogInfo(file string) {
-	fmt.Println(GetCurrentFuncName())
+	//fmt.Println(GetCurrentFuncName()) // verbose
 	defer wg.Done()
 	filename := "logs/" + file
 	data, err := os.ReadFile(filename)
@@ -91,9 +95,9 @@ func (log *Logs) fetchLogInfo(file string) {
 			return
 		}
 		*log = append(*log, singleLog)
-		fmt.Printf("singleLog: %#v\n", singleLog)
+		//fmt.Printf("singleLog: %#v\n", singleLog) // verbose
 	}
-	fmt.Printf("log: %#v\n", log)
+	//fmt.Printf("log: %#v\n", log) // verbose
 }
 
 func printFileNames(files []os.DirEntry) []string {
@@ -108,11 +112,11 @@ func printFileNames(files []os.DirEntry) []string {
 // and returns a Logs array.
 func RetrieveLogs() (logArray Logs) {
 	logFiles, err := os.ReadDir(Path + "logs/.")
-	fmt.Printf("logFiles: %#v\n", printFileNames(logFiles))
+	//fmt.Printf("logFiles: %#v\n", printFileNames(logFiles)) // verbose
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
 	} else {
-		reg := regexp.MustCompile("^[a-zA-Z0-9-_]+\\.log$")
+		reg := regexp.MustCompile(`\.log$`)
 		for _, file := range logFiles {
 			if reg.MatchString(file.Name()) {
 				wg.Add(1)
@@ -132,7 +136,7 @@ func (log *Logs) sortLogs() {
 	})
 }
 
-// FetchLevelLogs filters Log returning only Log matching the given `level`.
+// FetchAttrLogs filters Log returning only Log matching the given `level`.
 func FetchAttrLogs(attr string, value string) Logs {
 	attr = strings.ToLower(attr)
 	logs := RetrieveLogs()
@@ -146,17 +150,15 @@ func FetchAttrLogs(attr string, value string) Logs {
 					result = append(result, singleLog)
 				}
 			}
-			break
 		default:
 			return nil
 		}
 	case "user", "username":
 		for _, singleLog := range logs {
-			if strings.ToLower(singleLog.User.Username) == strings.ToLower(value) {
+			if strings.EqualFold(singleLog.User.Username, value) {
 				result = append(result, singleLog)
 			}
 		}
-		break
 	default:
 		return nil
 	}

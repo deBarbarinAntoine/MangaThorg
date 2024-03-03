@@ -71,7 +71,7 @@ func SendMail(temp *models.TempUser) {
 
 	// Setting the headers
 	header := make(map[string]string)
-	header["From"] = "Account management" + "<" + config.Email + ">"
+	header["From"] = "MangaThorg" + "<" + config.Email + ">"
 	header["To"] = temp.User.Email
 	header["Subject"] = "Email verification"
 	header["Message-ID"] = generateMessageID(config.Hostname)
@@ -131,7 +131,7 @@ func SendMail(temp *models.TempUser) {
 func dial(addr string) (*smtp.Client, error) {
 	conn, err := tls.Dial("tcp", addr, nil)
 	if err != nil {
-		log.Println("Dialing Error:", err)
+		log.Println("Dialing ApiErr:", err)
 		return nil, err
 	}
 	// Explode Host Port String
@@ -158,7 +158,7 @@ func sendMailTLS(addr string, auth smtp.Auth, from string,
 	if auth != nil {
 		if ok, _ := c.Extension("AUTH"); ok {
 			if err = c.Auth(auth); err != nil {
-				log.Println("Error during AUTH", err)
+				log.Println("ApiErr during AUTH", err)
 				return err
 			}
 		}
