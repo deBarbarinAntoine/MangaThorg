@@ -27,6 +27,34 @@ type ApiTag struct {
 	Relationships []interface{} `json:"relationships"`
 }
 
+type MangaRequestParam struct {
+	Order          string
+	IncludedTags   string
+	ExcludedTags   string
+	Title          string
+	Author         string
+	AuthorOrArtist string
+	Status         string
+	Public         string
+	ContentRating  string
+	Limit          string
+	Offset         string
+}
+
+type MangaRequest struct {
+	OrderType      string
+	OrderValue     string
+	IncludedTags   []string
+	ExcludedTags   []string
+	Title          string
+	Author         string
+	AuthorOrArtist string
+	Status         []string
+	Public         []string
+	Limit          int
+	Offset         int
+}
+
 // ApiManga is the data structure for the Manga request to MangaDex API.
 //
 //	Request: GET https://api.mangadex.org/manga
@@ -233,11 +261,4 @@ type ApiMangaStats struct {
 			Follows int `json:"follows"`
 		} `json:"-"`
 	} `json:"statistics"`
-}
-
-// CacheData is the data structure for all data stored in the cache.
-type CacheData struct {
-	Id          string      `json:"id"`
-	UpdatedTime time.Time   `json:"updated_time"`
-	Data        interface{} `json:"data"`
 }

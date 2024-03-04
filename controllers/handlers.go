@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"log"
 	"log/slog"
+	"mangathorg/internal/api"
 	"mangathorg/internal/middlewares"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
@@ -231,4 +232,10 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func requestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.MangaRequest(api.TopPopularRequest))
 }

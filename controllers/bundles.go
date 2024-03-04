@@ -17,4 +17,5 @@ var HomeHandlerGetBundle = middlewares.Join(homeHandlerGet, middlewares.Log, mid
 var LogHandlerGetBundle = middlewares.Join(logHandlerGet, middlewares.Log, middlewares.UserCheck)
 var ConfirmHandlerGetBundle = middlewares.Join(confirmHandlerGet, middlewares.Log, middlewares.OnlyVisitors)
 var LogoutHandlerGetBundle = middlewares.Join(logoutHandlerGet, middlewares.Log, middlewares.Guard)
-var PrincipalHandlerGetBundle = middlewares.Join(principalHandlerGet, middlewares.Log)
+var PrincipalHandlerGetBundle = middlewares.Join(principalHandlerGet, middlewares.Log, middlewares.UserCheck)
+var RequestHandlerGetBundle = middlewares.Join(requestHandlerGet, middlewares.Log, middlewares.UserCheck)
