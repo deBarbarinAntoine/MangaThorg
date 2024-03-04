@@ -7,6 +7,7 @@ import (
 	"mangathorg/internal/utils"
 	"os"
 	"reflect"
+	"slices"
 )
 
 var dataPath string = utils.Path + "cache/"
@@ -45,7 +46,7 @@ func retrieveSingleCacheData(info string, id string) models.SingleCacheData {
 }
 
 func checkCache(info string, id string) bool {
-	if !checkStatus(info) {
+	if !checkStatus(info, id) {
 		return false
 	}
 
@@ -54,7 +55,7 @@ func checkCache(info string, id string) bool {
 	return cacheData.Exists(id)
 }
 
-func checkStatus(info string) bool {
+func checkStatus(info string, id string) bool {
 	data, err := os.ReadFile(dataPath + "status.json")
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -76,17 +77,17 @@ func checkStatus(info string) bool {
 	case models.Status.Popular:
 		return status.Popular
 	case models.Status.Categories:
-		return status.Categories != nil
+		return status.Categories != nil && slices.Contains(status.Categories, id)
 	case models.Status.ChaptersScan:
-		return status.ChaptersScan != nil
+		return status.ChaptersScan != nil && slices.Contains(status.ChaptersScan, id)
 	case models.Status.Covers:
-		return status.Covers != nil
+		return status.Covers != nil && slices.Contains(status.Covers, id)
 	case models.Status.MangaFeeds:
-		return status.MangaFeeds != nil
+		return status.MangaFeeds != nil && slices.Contains(status.MangaFeeds, id)
 	case models.Status.MangaStats:
-		return status.MangaStats != nil
+		return status.MangaStats != nil && slices.Contains(status.MangaStats, id)
 	case models.Status.Mangas:
-		return status.Mangas != nil
+		return status.Mangas != nil && slices.Contains(status.Mangas, id)
 	case models.Status.Tags:
 		return status.Tags
 	default:
@@ -97,9 +98,9 @@ func checkStatus(info string) bool {
 func isCache(r models.MangaRequest) (bool, string, string) {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
-		return checkCache(models.Status.Popular, ""), models.Status.Popular, ""
+		return checkStatus(models.Status.Popular, ""), models.Status.Popular, ""
 	case reflect.DeepEqual(r, TopLatestUploadedRequest):
-		return checkCache(models.Status.LastUploaded, ""), models.Status.LastUploaded, ""
+		return checkStatus(models.Status.LastUploaded, ""), models.Status.LastUploaded, ""
 	default:
 		return false, "", ""
 	}

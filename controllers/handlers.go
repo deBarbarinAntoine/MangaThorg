@@ -234,8 +234,28 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func requestHandlerGet(w http.ResponseWriter, r *http.Request) {
+func mangaRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(api.MangaRequest(api.TopPopularRequest))
+}
+
+func coverRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.CoverRequest("48f71892-0983-4149-9b26-ae7e5dd97728"))
+}
+
+func showCoverImageHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	cover := api.CoverRequest("48f71892-0983-4149-9b26-ae7e5dd97728")
+	var html template.HTML = "<img src=\"https://uploads.mangadex.org/covers/cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa/" + template.HTML(cover.Data.Attributes.FileName) + "\" />"
+	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "index", html)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }

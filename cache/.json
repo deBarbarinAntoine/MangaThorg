@@ -1,0 +1,19 @@
+[
+	{
+		"id": "",
+		"updated_time": "2024-03-04T17:53:41.837127751+01:00",
+		"order": "",
+		"data": {
+			"result": "error",
+			"errors": [
+				{
+					"id": "9c346772-7b14-5982-b4b6-7b5888522762",
+					"status": 400,
+					"title": "validation_exception",
+					"detail": "Error validating /order: Array value found, but an object is required",
+					"context": null
+				}
+			]
+		}
+	}
+]

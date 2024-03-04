@@ -47,6 +47,19 @@ func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	return apiManga, nil
 }
 
+func (datum SingleCacheData) ApiCover() (ApiCover, error) {
+	var apiCover ApiCover
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return ApiCover{}, err
+	}
+	err = json.Unmarshal(data, &apiCover)
+	if err != nil {
+		return ApiCover{}, err
+	}
+	return apiCover, nil
+}
+
 func (datum SingleCacheData) Write(filePath string, Append bool) error {
 	var cacheData CacheData
 	if Append {
@@ -74,7 +87,6 @@ func (datum SingleCacheData) Write(filePath string, Append bool) error {
 	if errJSON != nil {
 		return errJSON
 	}
-	//log.Printf("mangathorg/internal/methods/SingleCacheData.Write() data: %#v\n", string(data)) // testing
 	errWrite := os.WriteFile(filePath, data, 0666)
 	if errWrite != nil {
 		return errWrite

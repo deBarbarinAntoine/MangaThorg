@@ -38,9 +38,6 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	var exists bool
 	var info, id string
 	if exists, info, id = isCache(request); exists {
-		log.Printf(utils.GetCurrentFuncName()+" info: %#v\n", info)
-		log.Printf(utils.GetCurrentFuncName()+" id: %#v\n", id)
-		log.Printf(utils.GetCurrentFuncName()+" cache exists: %#v\n", exists)
 		apiManga, err := cacheRequest(request).ApiManga()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -75,15 +72,57 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = response.SingleCacheData(request.OrderValue).Write(dataPath+info+".json", id != "")
+	if info != "" {
+		err = response.SingleCacheData(request.OrderValue).Write(dataPath+info+".json", id != "")
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		}
+		updateCacheStatus(info, id)
+	}
+
+	return response
+}
+
+func CoverRequest(id string) models.ApiCover {
+	if checkStatus(models.Status.Covers, id) {
+		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
+		apiCover, err := coverCache.ApiCover()
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		}
+		log.Println("retrieving cover from cache") // testing
+		return apiCover
+	}
+
+	endpoint := "cover/"
+	req, errReq := http.NewRequest(http.MethodGet, baseURL+endpoint+id, nil)
+	if errReq != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errReq))
+	}
+
+	res, errRes := client.Do(req)
+	if res.Body != nil {
+		defer res.Body.Close()
+	} else {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errRes))
+	}
+
+	body, errBody := io.ReadAll(res.Body)
+	if errBody != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errBody))
+	}
+
+	var response models.ApiCover
+	err := json.Unmarshal(body, &response)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(info, id)
-	//log.Printf(utils.GetCurrentFuncName()+" response: %#v\n", response) // testing
-	log.Printf(utils.GetCurrentFuncName()+" info: %#v\n", info)
-	log.Printf(utils.GetCurrentFuncName()+" id: %#v\n", id)
-	log.Printf(utils.GetCurrentFuncName()+" cache exists: %#v\n", exists)
+
+	err = response.SingleCacheData("").Write(dataPath+models.Status.Covers+".json", id != "")
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+	updateCacheStatus(models.Status.Covers, id)
 
 	return response
 }

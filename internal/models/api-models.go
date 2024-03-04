@@ -19,26 +19,26 @@ type ApiTag struct {
 		Name struct {
 			En string `json:"en"`
 		} `json:"name"`
-		Description struct {
-		} `json:"description"`
-		Group   string `json:"group"`
-		Version int    `json:"version"`
+		Description interface{} `json:"description"`
+		Group       string      `json:"group"`
+		Version     int         `json:"version"`
 	} `json:"attributes"`
 	Relationships []interface{} `json:"relationships"`
 }
 
 type MangaRequestParam struct {
-	Order          string
-	IncludedTags   string
-	ExcludedTags   string
-	Title          string
-	Author         string
-	AuthorOrArtist string
-	Status         string
-	Public         string
-	ContentRating  string
-	Limit          string
-	Offset         string
+	Order              string
+	IncludedTags       string
+	ExcludedTags       string
+	TranslatedLanguage string
+	Title              string
+	Author             string
+	AuthorOrArtist     string
+	Status             string
+	Public             string
+	ContentRating      string
+	Limit              string
+	Offset             string
 }
 
 type MangaRequest struct {
@@ -142,7 +142,7 @@ type ApiCover struct {
 	Result   string   `json:"result"`
 	Errors   []ApiErr `json:"errors,omitempty"`
 	Response string   `json:"response"`
-	Data     []struct {
+	Data     struct {
 		Id         string `json:"id"`
 		Type       string `json:"type"`
 		Attributes struct {
@@ -155,11 +155,10 @@ type ApiCover struct {
 			UpdatedAt   string `json:"updatedAt"`
 		} `json:"attributes"`
 		Relationships []struct {
-			Id         string `json:"id"`
-			Type       string `json:"type"`
-			Related    string `json:"related"`
-			Attributes struct {
-			} `json:"attributes"`
+			Id         string      `json:"id"`
+			Type       string      `json:"type"`
+			Related    string      `json:"related"`
+			Attributes interface{} `json:"attributes"`
 		} `json:"relationships"`
 	} `json:"data"`
 	Limit  int `json:"limit"`

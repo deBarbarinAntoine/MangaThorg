@@ -8,17 +8,18 @@ import (
 
 func (r MangaRequest) Params() MangaRequestParam {
 	return MangaRequestParam{
-		Order:          "order[" + r.OrderType + "]",
-		IncludedTags:   "includedTags",
-		ExcludedTags:   "excludedTags",
-		Title:          "title",
-		Author:         "author",
-		AuthorOrArtist: "authorOrArtist",
-		Status:         "status[]",
-		Public:         "publicationDemographic[]",
-		ContentRating:  "contentRating[]",
-		Limit:          "limit",
-		Offset:         "offset",
+		Order:              "order[" + r.OrderType + "]",
+		IncludedTags:       "includedTags",
+		ExcludedTags:       "excludedTags",
+		TranslatedLanguage: "availableTranslatedLanguage[]",
+		Title:              "title",
+		Author:             "author",
+		AuthorOrArtist:     "authorOrArtist",
+		Status:             "status[]",
+		Public:             "publicationDemographic[]",
+		ContentRating:      "contentRating[]",
+		Limit:              "limit",
+		Offset:             "offset",
 	}
 }
 
@@ -46,6 +47,7 @@ func (r MangaRequest) ToQuery(q *url.Values) {
 	if r.Public != nil {
 		(*q)[params.Public] = r.Public
 	}
+	(*q)[params.TranslatedLanguage] = []string{"en"}
 	(*q)[params.ContentRating] = []string{"safe"}
 	(*q)[params.Limit] = []string{strconv.Itoa(r.Limit)}
 	(*q)[params.Offset] = []string{strconv.Itoa(r.Offset)}
@@ -59,6 +61,14 @@ func (res ApiManga) SingleCacheData(order string) SingleCacheData {
 	data.UpdatedTime = time.Now()
 	data.Order = order
 	data.Data = res
-	//log.Printf("mangathorg/internal/methods/ApiManga.SingleCacheData() data: %#v\n", data) // testing
+	return data
+}
+
+func (res ApiCover) SingleCacheData(order string) SingleCacheData {
+	var data SingleCacheData
+	data.Id = res.Data.Id
+	data.UpdatedTime = time.Now()
+	data.Order = order
+	data.Data = res
 	return data
 }
