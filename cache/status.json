@@ -1,12 +1,10 @@
 {
 	"last_uploaded": false,
-	"popular": true,
+	"popular": false,
 	"tags": false,
 	"categories": [],
 	"mangas": [],
-	"covers": [
-		"48f71892-0983-4149-9b26-ae7e5dd97728"
-	],
+	"covers": [],
 	"manga_feeds": [],
 	"chapters_scan": [],
 	"manga_stats": []

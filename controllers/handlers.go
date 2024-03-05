@@ -33,8 +33,8 @@ func indexHandlerPut(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sessionID, _ := r.Cookie("updatedCookie")
-	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerPut"+sessionID.Value+"\nUsername: "+utils.SessionsData[sessionID.Value].Username+"\nIP address: "+utils.SessionsData[sessionID.Value].IpAddress)
+	session, sessionID := utils.GetSession(r)
+	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerPut"+sessionID+"\nUsername: "+session.Username+"\nIP address: "+session.IpAddress)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -46,8 +46,8 @@ func indexHandlerDelete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	sessionID, _ := r.Cookie("updatedCookie")
-	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerDelete"+sessionID.Value+"\nUsername: "+utils.SessionsData[sessionID.Value].Username+"\nIP address: "+utils.SessionsData[sessionID.Value].IpAddress)
+	session, sessionID := utils.GetSession(r)
+	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerPut"+sessionID+"\nUsername: "+session.Username+"\nIP address: "+session.IpAddress)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -234,28 +234,28 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func mangaRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.MangaRequest(api.TopPopularRequest))
-}
-
-func coverRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.CoverRequest("48f71892-0983-4149-9b26-ae7e5dd97728"))
+	json.NewEncoder(w).Encode(api.FetchManga(api.TopPopularRequest))
 }
 
 func showCoverImageHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	cover := api.CoverRequest("48f71892-0983-4149-9b26-ae7e5dd97728")
-	var html template.HTML = "<img src=\"https://uploads.mangadex.org/covers/cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa/" + template.HTML(cover.Data.Attributes.FileName) + "\" />"
+	cover := api.CoverRequest([]string{"48f71892-0983-4149-9b26-ae7e5dd97728"})
+	html := "<img src=\"https://uploads.mangadex.org/covers/cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa/" + cover[0].Attributes.FileName + "\" />"
 	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "index", html)
+	err = tmpl.ExecuteTemplate(w, "index", template.HTML(html))
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func tagsRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.TagsRequest())
 }

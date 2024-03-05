@@ -1,6 +1,15 @@
 package models
 
-import "time"
+import (
+	"net/url"
+	"time"
+)
+
+type ApiData interface {
+	SingleCacheData(order string) SingleCacheData
+	SendRequest(baseURL string, endpoint string, query url.Values) error
+	CheckResponse() error
+}
 
 // ApiErr is the common structure for errors coming from MangaDex API.
 type ApiErr struct {
@@ -24,6 +33,71 @@ type ApiTag struct {
 		Version     int         `json:"version"`
 	} `json:"attributes"`
 	Relationships []interface{} `json:"relationships"`
+}
+
+// MangaWhole is the structure that wraps all manga related info.
+type MangaWhole struct {
+	Manga Manga
+	Cover Cover
+	// todo: add Chapters
+	// todo: add Statistics
+}
+
+// Manga is the common structure for Mangas used by MangaDex API.
+type Manga struct {
+	Id         string `json:"id"`
+	Type       string `json:"type"`
+	Attributes struct {
+		Title struct {
+			En string `json:"en"`
+		} `json:"title"`
+		AltTitles []struct {
+			Zh   string `json:"zh,omitempty"`
+			Ko   string `json:"ko,omitempty"`
+			En   string `json:"en,omitempty"`
+			Ja   string `json:"ja,omitempty"`
+			JaRo string `json:"ja-ro,omitempty"`
+			KoRo string `json:"ko-ro,omitempty"`
+		} `json:"altTitles"`
+		Description struct {
+			En string `json:"en"`
+		} `json:"description"`
+		IsLocked bool `json:"isLocked"`
+		Links    struct {
+			Al    string `json:"al,omitempty"`
+			Ap    string `json:"ap,omitempty"`
+			Mu    string `json:"mu"`
+			Raw   string `json:"raw,omitempty"`
+			Bw    string `json:"bw,omitempty"`
+			Kt    string `json:"kt,omitempty"`
+			Amz   string `json:"amz,omitempty"`
+			Ebj   string `json:"ebj,omitempty"`
+			Mal   string `json:"mal,omitempty"`
+			Nu    string `json:"nu,omitempty"`
+			Engtl string `json:"engtl,omitempty"`
+			Cdj   string `json:"cdj,omitempty"`
+		} `json:"links"`
+		OriginalLanguage               string    `json:"originalLanguage"`
+		LastVolume                     string    `json:"lastVolume"`
+		LastChapter                    string    `json:"lastChapter"`
+		PublicationDemographic         *string   `json:"publicationDemographic"`
+		Status                         string    `json:"status"`
+		Year                           *int      `json:"year"`
+		ContentRating                  string    `json:"contentRating"`
+		Tags                           []ApiTag  `json:"tags"`
+		State                          string    `json:"state"`
+		ChapterNumbersResetOnNewVolume bool      `json:"chapterNumbersResetOnNewVolume"`
+		CreatedAt                      time.Time `json:"createdAt"`
+		UpdatedAt                      time.Time `json:"updatedAt"`
+		Version                        int       `json:"version"`
+		AvailableTranslatedLanguages   []string  `json:"availableTranslatedLanguages"`
+		LatestUploadedChapter          string    `json:"latestUploadedChapter"`
+	} `json:"attributes"`
+	Relationships []struct {
+		Id      string `json:"id"`
+		Type    string `json:"type"`
+		Related string `json:"related,omitempty"`
+	} `json:"relationships"`
 }
 
 type MangaRequestParam struct {
@@ -75,64 +149,10 @@ type ApiManga struct {
 	Result   string   `json:"result"`
 	Errors   []ApiErr `json:"errors,omitempty"`
 	Response string   `json:"response,omitempty"`
-	Data     []struct {
-		Id         string `json:"id"`
-		Type       string `json:"type"`
-		Attributes struct {
-			Title struct {
-				En string `json:"en"`
-			} `json:"title"`
-			AltTitles []struct {
-				Zh   string `json:"zh,omitempty"`
-				Ko   string `json:"ko,omitempty"`
-				En   string `json:"en,omitempty"`
-				Ja   string `json:"ja,omitempty"`
-				JaRo string `json:"ja-ro,omitempty"`
-				KoRo string `json:"ko-ro,omitempty"`
-			} `json:"altTitles"`
-			Description struct {
-				En string `json:"en"`
-			} `json:"description"`
-			IsLocked bool `json:"isLocked"`
-			Links    struct {
-				Al    string `json:"al,omitempty"`
-				Ap    string `json:"ap,omitempty"`
-				Mu    string `json:"mu"`
-				Raw   string `json:"raw,omitempty"`
-				Bw    string `json:"bw,omitempty"`
-				Kt    string `json:"kt,omitempty"`
-				Amz   string `json:"amz,omitempty"`
-				Ebj   string `json:"ebj,omitempty"`
-				Mal   string `json:"mal,omitempty"`
-				Nu    string `json:"nu,omitempty"`
-				Engtl string `json:"engtl,omitempty"`
-				Cdj   string `json:"cdj,omitempty"`
-			} `json:"links"`
-			OriginalLanguage               string    `json:"originalLanguage"`
-			LastVolume                     string    `json:"lastVolume"`
-			LastChapter                    string    `json:"lastChapter"`
-			PublicationDemographic         *string   `json:"publicationDemographic"`
-			Status                         string    `json:"status"`
-			Year                           *int      `json:"year"`
-			ContentRating                  string    `json:"contentRating"`
-			Tags                           []ApiTag  `json:"tags"`
-			State                          string    `json:"state"`
-			ChapterNumbersResetOnNewVolume bool      `json:"chapterNumbersResetOnNewVolume"`
-			CreatedAt                      time.Time `json:"createdAt"`
-			UpdatedAt                      time.Time `json:"updatedAt"`
-			Version                        int       `json:"version"`
-			AvailableTranslatedLanguages   []string  `json:"availableTranslatedLanguages"`
-			LatestUploadedChapter          string    `json:"latestUploadedChapter"`
-		} `json:"attributes"`
-		Relationships []struct {
-			Id      string `json:"id"`
-			Type    string `json:"type"`
-			Related string `json:"related,omitempty"`
-		} `json:"relationships"`
-	} `json:"data,omitempty"`
-	Limit  int `json:"limit,omitempty"`
-	Offset int `json:"offset,omitempty"`
-	Total  int `json:"total,omitempty"`
+	Data     []Manga  `json:"data,omitempty"`
+	Limit    int      `json:"limit,omitempty"`
+	Offset   int      `json:"offset,omitempty"`
+	Total    int      `json:"total,omitempty"`
 }
 
 // ApiCover is the data structure for the Cover request to MangaDex API.
@@ -142,28 +162,31 @@ type ApiCover struct {
 	Result   string   `json:"result"`
 	Errors   []ApiErr `json:"errors,omitempty"`
 	Response string   `json:"response"`
-	Data     struct {
-		Id         string `json:"id"`
-		Type       string `json:"type"`
-		Attributes struct {
-			Volume      string `json:"volume"`
-			FileName    string `json:"fileName"`
-			Description string `json:"description"`
-			Locale      string `json:"locale"`
-			Version     int    `json:"version"`
-			CreatedAt   string `json:"createdAt"`
-			UpdatedAt   string `json:"updatedAt"`
-		} `json:"attributes"`
-		Relationships []struct {
-			Id         string      `json:"id"`
-			Type       string      `json:"type"`
-			Related    string      `json:"related"`
-			Attributes interface{} `json:"attributes"`
-		} `json:"relationships"`
-	} `json:"data"`
-	Limit  int `json:"limit"`
-	Offset int `json:"offset"`
-	Total  int `json:"total"`
+	Data     []Cover  `json:"data"`
+	Limit    int      `json:"limit"`
+	Offset   int      `json:"offset"`
+	Total    int      `json:"total"`
+}
+
+// Cover is the common structure for Covers used by MangaDex API.
+type Cover struct {
+	Id         string `json:"id"`
+	Type       string `json:"type"`
+	Attributes struct {
+		Volume      string `json:"volume"`
+		FileName    string `json:"fileName"`
+		Description string `json:"description"`
+		Locale      string `json:"locale"`
+		Version     int    `json:"version"`
+		CreatedAt   string `json:"createdAt"`
+		UpdatedAt   string `json:"updatedAt"`
+	} `json:"attributes"`
+	Relationships []struct {
+		Id         string      `json:"id"`
+		Type       string      `json:"type"`
+		Related    string      `json:"related"`
+		Attributes interface{} `json:"attributes"`
+	} `json:"relationships"`
 }
 
 // ApiTags is the data structure for the Tag request to MangaDex API.

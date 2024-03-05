@@ -2,12 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"log/slog"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"os"
 	"reflect"
 	"slices"
+	"sync"
 )
 
 var dataPath string = utils.Path + "cache/"
@@ -137,16 +139,34 @@ func updateCacheStatus(info string, id string) {
 	case models.Status.Popular:
 		status.Popular = true
 	case models.Status.Categories:
+		if slices.Contains(status.Categories, id) {
+			return
+		}
 		status.Categories = append(status.Categories, id)
 	case models.Status.ChaptersScan:
+		if slices.Contains(status.ChaptersScan, id) {
+			return
+		}
 		status.ChaptersScan = append(status.ChaptersScan, id)
 	case models.Status.Covers:
+		if slices.Contains(status.Covers, id) {
+			return
+		}
 		status.Covers = append(status.Covers, id)
 	case models.Status.MangaFeeds:
+		if slices.Contains(status.MangaFeeds, id) {
+			return
+		}
 		status.MangaFeeds = append(status.MangaFeeds, id)
 	case models.Status.MangaStats:
+		if slices.Contains(status.MangaStats, id) {
+			return
+		}
 		status.MangaStats = append(status.MangaStats, id)
 	case models.Status.Mangas:
+		if slices.Contains(status.Mangas, id) {
+			return
+		}
 		status.Mangas = append(status.Mangas, id)
 	case models.Status.Tags:
 		status.Tags = true
@@ -160,4 +180,19 @@ func updateCacheStatus(info string, id string) {
 	if errWrite != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errWrite))
 	}
+}
+
+func cacheCover(id string, index int, covers *[]models.Cover, wg *sync.WaitGroup, coversNotFound *[]int) {
+	defer wg.Done()
+	if checkStatus(models.Status.Covers, id) {
+		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
+		apiCover, err := coverCache.Cover()
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		}
+		log.Println("retrieving cover from cache") // testing
+		(*covers)[index] = apiCover
+		return
+	}
+	*coversNotFound = append(*coversNotFound, index)
 }

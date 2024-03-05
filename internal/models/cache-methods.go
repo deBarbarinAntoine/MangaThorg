@@ -47,17 +47,30 @@ func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	return apiManga, nil
 }
 
-func (datum SingleCacheData) ApiCover() (ApiCover, error) {
-	var apiCover ApiCover
+func (datum SingleCacheData) Cover() (Cover, error) {
+	var cover Cover
 	data, err := json.Marshal(datum.Data)
 	if err != nil {
-		return ApiCover{}, err
+		return Cover{}, err
 	}
-	err = json.Unmarshal(data, &apiCover)
+	err = json.Unmarshal(data, &cover)
 	if err != nil {
-		return ApiCover{}, err
+		return Cover{}, err
 	}
-	return apiCover, nil
+	return cover, nil
+}
+
+func (datum SingleCacheData) ApiTags() (ApiTags, error) {
+	var apiTags ApiTags
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return ApiTags{}, err
+	}
+	err = json.Unmarshal(data, &apiTags)
+	if err != nil {
+		return ApiTags{}, err
+	}
+	return apiTags, nil
 }
 
 func (datum SingleCacheData) Write(filePath string, Append bool) error {

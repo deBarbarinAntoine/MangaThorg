@@ -1,20 +1,17 @@
 package api
 
 import (
-	"encoding/json"
-	"io"
+	"errors"
 	"log"
 	"log/slog"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
-	"net/http"
-	"time"
+	"net/url"
+	"strconv"
+	"sync"
 )
 
 var baseURL string = "https://api.mangadex.org/"
-var client = http.Client{
-	Timeout: time.Second * 5,
-}
 
 var TopPopularRequest = models.MangaRequest{
 	OrderType:    "rating",
@@ -34,6 +31,25 @@ var TopLatestUploadedRequest = models.MangaRequest{
 	Offset:       0,
 }
 
+func FetchManga(request models.MangaRequest) []models.MangaWhole {
+	apiManga := MangaRequest(request)
+	coversId, err := apiManga.CoversId()
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+	covers := CoverRequest(coversId)
+	var mangas []models.MangaWhole
+	for i, manga := range apiManga.Data {
+		var mangaWhole = models.MangaWhole{
+			Manga: manga,
+			Cover: covers[i],
+		}
+		mangas = append(mangas, mangaWhole)
+	}
+
+	return mangas
+}
+
 func MangaRequest(request models.MangaRequest) models.ApiManga {
 	var exists bool
 	var info, id string
@@ -45,84 +61,89 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 		return apiManga
 	}
 
-	endpoint := "manga"
-	req, errReq := http.NewRequest(http.MethodGet, baseURL+endpoint, nil)
-	if errReq != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errReq))
-	}
-	q := req.URL.Query()
-	request.ToQuery(&q)
-	req.URL.RawQuery = q.Encode()
-
-	res, errRes := client.Do(req)
-	if res.Body != nil {
-		defer res.Body.Close()
-	} else {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errRes))
-	}
-
-	body, errBody := io.ReadAll(res.Body)
-	if errBody != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errBody))
-	}
-
-	var response models.ApiManga
-	err := json.Unmarshal(body, &response)
+	var apiManga models.ApiManga
+	err := apiManga.SendRequest(baseURL, "manga", request.ToQuery())
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
 	if info != "" {
-		err = response.SingleCacheData(request.OrderValue).Write(dataPath+info+".json", id != "")
+		err = apiManga.SingleCacheData(request.OrderValue).Write(dataPath+info+".json", id != "")
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		updateCacheStatus(info, id)
 	}
 
-	return response
+	return apiManga
 }
 
-func CoverRequest(id string) models.ApiCover {
-	if checkStatus(models.Status.Covers, id) {
-		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
-		apiCover, err := coverCache.ApiCover()
+func CoverRequest(ids []string) []models.Cover {
+	var allCovers = make([]models.Cover, len(ids))
+	var wg sync.WaitGroup
+	var toRequest []int
+	for i, id := range ids {
+		wg.Add(1)
+		go cacheCover(id, i, &allCovers, &wg, &toRequest)
+	}
+	wg.Wait()
+
+	var apiCoverResponse models.ApiCover
+	var query = make(url.Values)
+	for _, i := range toRequest {
+		query["ids[]"] = append(query["ids[]"], ids[i])
+	}
+	err := apiCoverResponse.SendRequest(baseURL, "cover", query)
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+
+	covers, errDiv := apiCoverResponse.Divide()
+	if errDiv != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+
+	for _, cover := range covers {
+		cache := cover.SingleCacheData()
+		err = cache.Write(dataPath+models.Status.Covers+".json", true)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
-		log.Println("retrieving cover from cache") // testing
-		return apiCover
+		updateCacheStatus(models.Status.Covers, cache.Id)
+	}
+	for i, j := range toRequest {
+		if i >= len(covers) {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("index ["+strconv.Itoa(i)+"] of ["+strconv.Itoa(len(covers))+"] out of range")))
+			break
+		}
+		allCovers[j] = covers[i]
 	}
 
-	endpoint := "cover/"
-	req, errReq := http.NewRequest(http.MethodGet, baseURL+endpoint+id, nil)
-	if errReq != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errReq))
+	return allCovers
+}
+
+func TagsRequest() models.ApiTags {
+	if checkStatus(models.Status.Tags, "") {
+		tagCache := retrieveSingleCacheData(models.Status.Tags, "")
+		apiTags, err := tagCache.ApiTags()
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		}
+		log.Println("retrieving tags from cache") // testing
+		return apiTags
 	}
 
-	res, errRes := client.Do(req)
-	if res.Body != nil {
-		defer res.Body.Close()
-	} else {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errRes))
-	}
-
-	body, errBody := io.ReadAll(res.Body)
-	if errBody != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errBody))
-	}
-
-	var response models.ApiCover
-	err := json.Unmarshal(body, &response)
+	var apiTags models.ApiTags
+	err := apiTags.SendRequest(baseURL, "manga/tag", nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = response.SingleCacheData("").Write(dataPath+models.Status.Covers+".json", id != "")
+	err = apiTags.SingleCacheData("").Write(dataPath+models.Status.Tags+".json", false)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.Covers, id)
+	updateCacheStatus(models.Status.Tags, "")
 
-	return response
+	return apiTags
 }

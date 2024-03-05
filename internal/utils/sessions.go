@@ -20,6 +20,15 @@ func retrieveSessions() []models.Session {
 	return sessions
 }
 
+func GetSession(r *http.Request) (models.Session, string) {
+	sessionID, err := r.Cookie("updatedCookie")
+	if err != nil {
+		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
+		return models.Session{}, ""
+	}
+	return SessionsData[sessionID.Value], sessionID.Value
+}
+
 func newConnectionID() int {
 	sessions := retrieveSessions()
 	var id int
