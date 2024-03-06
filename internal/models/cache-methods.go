@@ -34,6 +34,22 @@ func (cache CacheData) Update(newDatum SingleCacheData) (CacheData, error) {
 	return nil, errors.New("SingleCacheData not found")
 }
 
+func (cache CacheData) Delete(id string) (CacheData, error) {
+	var idx int
+	var found bool
+	for i, single := range cache {
+		if single.Id == id {
+			idx = i
+			found = true
+			break
+		}
+	}
+	if found {
+		return append(cache[:idx], cache[idx+1:]...), nil
+	}
+	return cache, errors.New("singleCacheData not found")
+}
+
 func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	var apiManga ApiManga
 	data, err := json.Marshal(datum.Data)

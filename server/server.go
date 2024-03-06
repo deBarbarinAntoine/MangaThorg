@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"mangathorg/internal/api"
 	"mangathorg/internal/utils"
 	"mangathorg/router"
 	"net/http"
@@ -23,6 +24,9 @@ func Run() {
 
 	// Running the goroutine to automatically remove old TempUsers
 	go utils.ManageTempUsers()
+
+	// Running the goroutine to automatically remove old CacheData
+	go api.CacheMonitor()
 
 	// Running the server
 	log.Fatalln(http.ListenAndServe(":8080", router.Mux))

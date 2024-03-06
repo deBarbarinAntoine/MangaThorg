@@ -33,20 +33,6 @@ var Logger *slog.Logger
 var logs *os.File
 var wg sync.WaitGroup
 
-// setDailyTimer sets the first LogInit waiting time to match midnight.
-func setDailyTimer() time.Duration {
-	t := time.Now()
-	t = t.Add(time.Hour * 24)
-	n := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
-	d := n.Sub(t)
-	if d < 0 {
-		n = n.Add(24 * time.Hour)
-		d = n.Sub(t)
-	}
-	log.Println("setDailyTimer() value: ", d) // verbose
-	return d
-}
-
 func closeLog() {
 	if logs != nil {
 		err := logs.Close()
@@ -59,7 +45,7 @@ func closeLog() {
 // LogInit is meant to be run as a goroutine to create a new log file every day
 // appending the file's creation timestamp in its name.
 func LogInit() {
-	duration := setDailyTimer()
+	duration := SetDailyTimer(0)
 	var jsonHandler *slog.JSONHandler
 	var err error
 	var filename string
@@ -73,6 +59,7 @@ func LogInit() {
 		}
 		jsonHandler = slog.NewJSONHandler(logs, nil)
 		Logger = slog.New(jsonHandler)
+		Logger.Info(GetCurrentFuncName(), slog.String("goroutine", "LogInit"))
 		time.Sleep(duration)
 		duration = time.Hour * 24
 	}
@@ -80,7 +67,6 @@ func LogInit() {
 
 // fetchLogInfo retrieves all Log from `file` and stores it in *log.
 func (log *Logs) fetchLogInfo(file string) {
-	//fmt.Println(GetCurrentFuncName()) // verbose
 	defer wg.Done()
 	filename := "logs/" + file
 	data, err := os.ReadFile(filename)
@@ -95,12 +81,10 @@ func (log *Logs) fetchLogInfo(file string) {
 			return
 		}
 		*log = append(*log, singleLog)
-		//fmt.Printf("singleLog: %#v\n", singleLog) // verbose
 	}
-	//fmt.Printf("log: %#v\n", log) // verbose
 }
 
-func printFileNames(files []os.DirEntry) []string {
+func printFileNames(files []os.DirEntry) []string { // verbose function, for testing
 	var result []string
 	for _, file := range files {
 		result = append(result, file.Name())

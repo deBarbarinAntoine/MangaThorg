@@ -6,13 +6,45 @@ import (
 	"net/http"
 	"path/filepath"
 	"runtime"
+	"strconv"
 	"strings"
+	"time"
 )
 
 var (
 	_, b, _, _ = runtime.Caller(0)
 	Path       = filepath.Dir(filepath.Dir(filepath.Dir(b))) + "/"
 )
+
+// durationToString -> just for fun ;)
+func durationToString(d time.Duration) string {
+	var hours, minutes string
+	h := int(d.Hours())
+	m := int(d.Minutes()) % 60
+	if h < 10 {
+		hours += "0"
+	}
+	if m < 10 {
+		minutes += "0"
+	}
+	hours += strconv.Itoa(h)
+	minutes += strconv.Itoa(m)
+	return hours + "H" + minutes
+}
+
+// SetDailyTimer sets a waiting time to match a certain `hour`.
+func SetDailyTimer(hour int) time.Duration {
+	hour = hour % 24
+	t := time.Now()
+	n := time.Date(t.Year(), t.Month(), t.Day(), hour, 0, 0, 0, t.Location())
+	d := n.Sub(t)
+	if d < 0 {
+		n = n.Add(24 * time.Hour)
+		d = n.Sub(t)
+	}
+	log.Println("SetDailyTimer() value: ", durationToString(d), "until", n.Format("02 Jan 15H04")) // verbose
+	return d
+}
 
 func GetIP(r *http.Request) string {
 	ips := r.Header.Get("X-Forwarded-For")

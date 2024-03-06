@@ -71,7 +71,7 @@ type MangaWhole struct {
 	Manga    Manga
 	Cover    Cover
 	Chapters []Chapter
-	// todo: add Statistics
+	Stat     Statistics
 }
 
 // Manga is the common structure for Mangas used by MangaDex API.

@@ -187,8 +187,10 @@ func PushTempUser(id string) {
 }
 
 func ManageTempUsers() {
-	duration := setDailyTimer()
+	time.Sleep(time.Second * 10)
+	duration := SetDailyTimer(2)
 	for {
+		Logger.Info(GetCurrentFuncName(), slog.String("goroutine", "ManageTempUsers"))
 		for _, user := range TempUsers {
 			if time.Since(user.CreationTime) > time.Hour*12 {
 				Logger.Info("TempUser cleared automatically", slog.Any("user", user))

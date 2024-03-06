@@ -205,6 +205,7 @@ func cleanSessions() {
 func MonitorSessions() {
 	for {
 		time.Sleep(time.Hour)
+		Logger.Info(GetCurrentFuncName(), slog.String("goroutine", "MonitorSessions"))
 		cleanSessions()
 	}
 }

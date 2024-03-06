@@ -35,8 +35,10 @@ func FetchMangaById(id string) models.MangaWhole {
 	apiManga := MangaRequestById(id)
 	coverId := apiManga.CoverId()
 	manga.Manga = apiManga.Data
-	manga.Cover = CoverRequest([]string{coverId})[0]
+	covers := CoverRequest([]string{coverId})
+	manga.Cover = covers[0]
 	manga.Chapters = FeedRequest(id).Data
+	manga.Stat = StatRequest(id)
 
 	return manga
 }
@@ -259,7 +261,6 @@ func StatRequest(id string) models.Statistics {
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	log.Printf("apiMangaStats: %#v\n", apiMangaStats)
 	err = apiMangaStats.SingleCacheData(id).Write(dataPath+models.Status.MangaStats+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
