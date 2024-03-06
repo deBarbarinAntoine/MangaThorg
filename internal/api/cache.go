@@ -9,7 +9,6 @@ import (
 	"os"
 	"reflect"
 	"slices"
-	"sync"
 )
 
 var dataPath string = utils.Path + "cache/"
@@ -182,8 +181,7 @@ func updateCacheStatus(info string, id string) {
 	}
 }
 
-func cacheCover(id string, index int, covers *[]models.Cover, wg *sync.WaitGroup, coversNotFound *[]int) {
-	defer wg.Done()
+func cacheCover(id string, index int, covers *[]models.Cover) bool {
 	if checkStatus(models.Status.Covers, id) {
 		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
 		apiCover, err := coverCache.Cover()
@@ -192,7 +190,7 @@ func cacheCover(id string, index int, covers *[]models.Cover, wg *sync.WaitGroup
 		}
 		log.Println("retrieving cover from cache") // testing
 		(*covers)[index] = apiCover
-		return
+		return true
 	}
-	*coversNotFound = append(*coversNotFound, index)
+	return false
 }

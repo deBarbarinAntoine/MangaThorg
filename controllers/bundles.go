@@ -21,3 +21,6 @@ var PrincipalHandlerGetBundle = middlewares.Join(principalHandlerGet, middleware
 var MangaRequestHandlerGet = middlewares.Join(mangaHandlerGet, middlewares.Log, middlewares.UserCheck)
 var ShowCoverImageHandlerGetBundle = middlewares.Join(showCoverImageHandlerGet, middlewares.Log, middlewares.UserCheck)
 var TagsRequestHandlerGetBundle = middlewares.Join(tagsRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
+var FeedRequestHandlerGetBundle = middlewares.Join(feedRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
+var ChapterScanRequestHandlerGetBundle = middlewares.Join(chapterScanRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
+var MangaWholeRequestHandlerGetBundle = middlewares.Join(mangaWholeRequestHandlerGet, middlewares.Log, middlewares.UserCheck)

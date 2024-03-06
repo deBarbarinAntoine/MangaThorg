@@ -35,11 +35,42 @@ type ApiTag struct {
 	Relationships []interface{} `json:"relationships"`
 }
 
+type Chapter struct {
+	Id         string `json:"id"`
+	Type       string `json:"type"`
+	Attributes struct {
+		Title              string `json:"title"`
+		Volume             string `json:"volume"`
+		Chapter            string `json:"chapter"`
+		Pages              int    `json:"pages"`
+		TranslatedLanguage string `json:"translatedLanguage"`
+		Uploader           string `json:"uploader"`
+		ExternalUrl        string `json:"externalUrl"`
+		Version            int    `json:"version"`
+		CreatedAt          string `json:"createdAt"`
+		UpdatedAt          string `json:"updatedAt"`
+		PublishAt          string `json:"publishAt"`
+		ReadableAt         string `json:"readableAt"`
+	} `json:"attributes"`
+	Relationships []struct {
+		Id         string `json:"id"`
+		Type       string `json:"type"`
+		Related    string `json:"related"`
+		Attributes struct {
+		} `json:"attributes"`
+	} `json:"relationships"`
+}
+
+type ChapterWhole struct {
+	Info  Chapter
+	Scans ApiChapterScan
+}
+
 // MangaWhole is the structure that wraps all manga related info.
 type MangaWhole struct {
-	Manga Manga
-	Cover Cover
-	// todo: add Chapters
+	Manga    Manga
+	Cover    Cover
+	Chapters []Chapter
 	// todo: add Statistics
 }
 
@@ -155,6 +186,16 @@ type ApiManga struct {
 	Total    int      `json:"total,omitempty"`
 }
 
+type ApiSingleManga struct {
+	Result   string   `json:"result"`
+	Errors   []ApiErr `json:"errors,omitempty"`
+	Response string   `json:"response,omitempty"`
+	Data     Manga    `json:"data,omitempty"`
+	Limit    int      `json:"limit,omitempty"`
+	Offset   int      `json:"offset,omitempty"`
+	Total    int      `json:"total,omitempty"`
+}
+
 // ApiCover is the data structure for the Cover request to MangaDex API.
 //
 //	Request: GET https://api.mangadex.org/cover/{manga-id}
@@ -206,37 +247,13 @@ type ApiTags struct {
 //
 //	Request: GET https://api.mangadex.org/manga/{manga-id}/feed
 type ApiMangaFeed struct {
-	Result   string   `json:"result"`
-	Errors   []ApiErr `json:"errors,omitempty"`
-	Response string   `json:"response"`
-	Data     []struct {
-		Id         string `json:"id"`
-		Type       string `json:"type"`
-		Attributes struct {
-			Title              string `json:"title"`
-			Volume             string `json:"volume"`
-			Chapter            string `json:"chapter"`
-			Pages              int    `json:"pages"`
-			TranslatedLanguage string `json:"translatedLanguage"`
-			Uploader           string `json:"uploader"`
-			ExternalUrl        string `json:"externalUrl"`
-			Version            int    `json:"version"`
-			CreatedAt          string `json:"createdAt"`
-			UpdatedAt          string `json:"updatedAt"`
-			PublishAt          string `json:"publishAt"`
-			ReadableAt         string `json:"readableAt"`
-		} `json:"attributes"`
-		Relationships []struct {
-			Id         string `json:"id"`
-			Type       string `json:"type"`
-			Related    string `json:"related"`
-			Attributes struct {
-			} `json:"attributes"`
-		} `json:"relationships"`
-	} `json:"data"`
-	Limit  int `json:"limit"`
-	Offset int `json:"offset"`
-	Total  int `json:"total"`
+	Result   string    `json:"result"`
+	Errors   []ApiErr  `json:"errors,omitempty"`
+	Response string    `json:"response"`
+	Data     []Chapter `json:"data"`
+	Limit    int       `json:"limit"`
+	Offset   int       `json:"offset"`
+	Total    int       `json:"total"`
 }
 
 // ApiChapterScan is the data structure for the Chapter scan request to MangaDex API.
@@ -253,34 +270,35 @@ type ApiChapterScan struct {
 	} `json:"chapter"`
 }
 
+type Statistics struct {
+	Comments struct {
+		ThreadId     int `json:"threadId"`
+		RepliesCount int `json:"repliesCount"`
+	} `json:"comments"`
+	Rating struct {
+		Average      float64 `json:"average"`
+		Bayesian     float64 `json:"bayesian"`
+		Distribution struct {
+			Rating1  int `json:"1"`
+			Rating2  int `json:"2"`
+			Rating3  int `json:"3"`
+			Rating4  int `json:"4"`
+			Rating5  int `json:"5"`
+			Rating6  int `json:"6"`
+			Rating7  int `json:"7"`
+			Rating8  int `json:"8"`
+			Rating9  int `json:"9"`
+			Rating10 int `json:"10"`
+		} `json:"distribution"`
+	} `json:"rating"`
+	Follows int `json:"follows"`
+}
+
 // ApiMangaStats is the data structure for the Chapter stats request to MangaDex API.
 //
 //	Request: GET https://api.mangadex.org/statistics/manga/{manga-id}
 type ApiMangaStats struct {
-	Result     string `json:"result"`
-	Statistics struct {
-		Id struct {
-			Comments struct {
-				ThreadId     int `json:"threadId"`
-				RepliesCount int `json:"repliesCount"`
-			} `json:"comments"`
-			Rating struct {
-				Average      float64 `json:"average"`
-				Bayesian     float64 `json:"bayesian"`
-				Distribution struct {
-					Rating1  int `json:"1"`
-					Rating2  int `json:"2"`
-					Rating3  int `json:"3"`
-					Rating4  int `json:"4"`
-					Rating5  int `json:"5"`
-					Rating6  int `json:"6"`
-					Rating7  int `json:"7"`
-					Rating8  int `json:"8"`
-					Rating9  int `json:"9"`
-					Rating10 int `json:"10"`
-				} `json:"distribution"`
-			} `json:"rating"`
-			Follows int `json:"follows"`
-		} `json:"-"`
-	} `json:"statistics"`
+	Result     string      `json:"result"`
+	Errors     []ApiErr    `json:"errors"`
+	Statistics interface{} `json:"statistics"`
 }

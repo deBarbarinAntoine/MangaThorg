@@ -47,6 +47,19 @@ func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	return apiManga, nil
 }
 
+func (datum SingleCacheData) Manga() (Manga, error) {
+	var manga Manga
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return Manga{}, err
+	}
+	err = json.Unmarshal(data, &manga)
+	if err != nil {
+		return Manga{}, err
+	}
+	return manga, nil
+}
+
 func (datum SingleCacheData) Cover() (Cover, error) {
 	var cover Cover
 	data, err := json.Marshal(datum.Data)
@@ -71,6 +84,45 @@ func (datum SingleCacheData) ApiTags() (ApiTags, error) {
 		return ApiTags{}, err
 	}
 	return apiTags, nil
+}
+
+func (datum SingleCacheData) ApiMangaFeed() (ApiMangaFeed, error) {
+	var apiMangaFeed ApiMangaFeed
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return ApiMangaFeed{}, err
+	}
+	err = json.Unmarshal(data, &apiMangaFeed)
+	if err != nil {
+		return ApiMangaFeed{}, err
+	}
+	return apiMangaFeed, nil
+}
+
+func (datum SingleCacheData) ApiChapterScan() (ApiChapterScan, error) {
+	var apiChapterScan ApiChapterScan
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return ApiChapterScan{}, err
+	}
+	err = json.Unmarshal(data, &apiChapterScan)
+	if err != nil {
+		return ApiChapterScan{}, err
+	}
+	return apiChapterScan, nil
+}
+
+func (datum SingleCacheData) ApiMangaStats() (ApiMangaStats, error) {
+	var apiMangaStats ApiMangaStats
+	data, err := json.Marshal(datum.Data)
+	if err != nil {
+		return ApiMangaStats{}, err
+	}
+	err = json.Unmarshal(data, &apiMangaStats)
+	if err != nil {
+		return ApiMangaStats{}, err
+	}
+	return apiMangaStats, nil
 }
 
 func (datum SingleCacheData) Write(filePath string, Append bool) error {

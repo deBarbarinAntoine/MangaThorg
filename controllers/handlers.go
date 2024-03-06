@@ -17,14 +17,17 @@ import (
 
 func indexHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerGet")
-	if err != nil {
-		log.Fatalln(err)
-	}
+	//tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+	//err = tmpl.ExecuteTemplate(w, "index", "indexHandlerGet")
+	//if err != nil {
+	//	log.Fatalln(err)
+	//}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.StatRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
 }
 
 func indexHandlerPut(w http.ResponseWriter, r *http.Request) {
@@ -258,4 +261,22 @@ func tagsRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(api.TagsRequest())
+}
+
+func feedRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.FeedRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
+}
+
+func chapterScanRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.ScanRequest("444b113a-3705-4718-8f91-f46c640ab433"))
+}
+
+func mangaWholeRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(api.FetchMangaById("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
 }
