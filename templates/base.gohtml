@@ -1,15 +1,17 @@
+{{define "base"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{.Base.StaticPath}}/css/base.css" />
-    <title>{{.Base.Title}}</title>
+    <link rel="stylesheet" href="{{template "staticPath" .}}/css/base.css" />
+    <link rel="stylesheet" href="{{template "staticPath" .}}/css/style.css" />
+    <title>{{template "title" .}}</title>
 </head>
 <body>
 <header class="header">
     <div class="main">
-        <img class="logo" src="{{.Base.StaticPath}}/img/header-logo-1.png" />
+        <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
         <div class="header-nav">
             <div class="category-link">LATEST UPDATES</div>
             <div class="category-link">POPULAR</div>
@@ -17,7 +19,7 @@
         </div>
         <div class="header-search-bar">
             <div class="filter-search-bar"><div class="filter-search-text">Filter</div></div>
-            <img class="icon-search" src="{{.Base.StaticPath}}/img/icon-search-1.png" />
+            <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
         </div>
     </div>
     <div class="variable">
@@ -26,18 +28,18 @@
             <div class="register-btn"><div class="footer-nav-text">Register</div></div>
         </div>
         <div class="header-msg">
-            <img class="line-top" src="{{.Base.StaticPath}}/img/line-1-1.svg" />
+            <img class="line-top" src="{{template "staticPath" .}}/img/line-1-1.svg" alt="line" />
             <p class="invitation-msg">Sign in to have all features available</p>
-            <img class="line-bottom" src="{{.Base.StaticPath}}/img/line-2-1.svg" />
+            <img class="line-bottom" src="{{template "staticPath" .}}/img/line-2-1.svg" alt="line" />
         </div>
     </div>
 </header>
 
-<div class="template">{{template "principal" .}}</div>
+<div class="template">{{template "body" .}}</div>
 
 <footer class="footer">
     <div class="footer-nav-credits">
-        <img class="logo" src="{{.Base.StaticPath}}/img/header-logo-1.png" />
+        <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
         <div class="footer-nav">
             <div class="footer-nav-text">ABOUT</div>
             <div class="footer-nav-text">TERMS AND CONDITIONS</div>
@@ -49,8 +51,9 @@
         </p>
         <div class="copyright">© MangaThorg.adebarbarin.com</div>
     </div>
-    <div class="footer-img-reading" style="background-image: url('{{.Base.StaticPath}}/img/footer-img-reading-girl-1.png')"></div>
+    <div class="footer-img-reading" style="background-image: url('{{template "staticPath" .}}/img/footer-img-reading-girl-1.png')"></div>
 </footer>
 
 </body>
 </html>
+{{end}}

@@ -30,6 +30,10 @@ var TopLatestUploadedRequest = models.MangaRequest{
 	Offset:       0,
 }
 
+//func CategoryRequest(category string) []models.MangaWhole {
+//
+//}
+
 func FetchMangaById(id string) models.MangaWhole {
 	var manga models.MangaWhole
 	apiManga := MangaRequestById(id)

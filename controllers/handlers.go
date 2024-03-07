@@ -227,11 +227,20 @@ func logoutHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path + "templates/principal.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.Execute(w, nil)
+	var data = struct {
+		Banner         models.MangaWhole
+		LatestUploaded []models.MangaWhole
+		Popular        []models.MangaWhole
+	}{
+		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa"),
+		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest),
+		Popular:        api.FetchManga(api.TopPopularRequest),
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
