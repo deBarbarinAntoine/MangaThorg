@@ -3,71 +3,71 @@
 @font-face {
   font-family: 'Tilt Neon', sans-serif;
 }
+
 a {
   text-decoration: none;
   color: $font-color;
 }
 
 .banner {
-  display: flex;
-  width: 100%;
-  height: 400px;
-  gap: 250px;
   overflow: hidden;
-  align-items: center;
   position: relative;
+  display: flex;
+  height: 400px;
+  width: 100%;
+  min-height: fit-content;
+  align-items: center;
+  justify-content: space-evenly;
 
   img.background-img {
     position: absolute;
     width: 100%;
-    height: 400px;
+    height: inherit;
     top: 0;
     left: 0;
     object-fit: cover;
-    filter: blur(12px) grayscale(20%) brightness(50%);
+    object-position: center;
+    filter: blur(8px) grayscale(20%) brightness(50%);
   }
 
   .banner-text {
-    display: inline-flex;
-    width: 40%;
-    flex-direction: column;
-    justify-content: center;
-    gap: 25px;
-    padding: 30px;
+    display: flex;
     flex: 0 0 auto;
+    width: 60%;
+    max-height: 90%;
+    flex-direction: column;
+    justify-content: space-evenly;
     align-items: center;
-    position: relative;
+    gap: 1.5rem;
+    padding: 10px 20px;
 
-    .text-wrapper-3 {
+    .banner-title {
       position: relative;
-      width: 500px;
-      height: 38px;
-      margin-top: -1px;
+      height: fit-content;
+      width: 85%;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
       font-size: 30px;
       text-align: center;
-      letter-spacing: 0;
-      line-height: normal;
     }
 
-    p.text-wrapper-4 {
+    div.banner-description {
       position: relative;
-      width: 500px;
+      height: 60%;
+      overflow-y: scroll;
+      width: 85%;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
-      font-size: 13px;
+      font-size: 1rem;
       text-align: justify;
-      letter-spacing: 0;
-      line-height: normal;
     }
 
     .tags {
       display: flex;
-      width: 500px;
-      height: 30px;
+      width: 90%;
+      height: fit-content;
       align-items: center;
       gap: 5px 7px;
       position: relative;
@@ -76,19 +76,18 @@ a {
       .banner-tag {
         display: flex;
         gap: 5px;
-        padding: 2px 6px;
+        padding: 3px 8px;
         flex: 0 0 auto;
         background-color: $foreground;
-        border-radius: 8px;
+        border-radius: 5px;
         align-items: center;
 
-        .text-wrapper-5 {
+        .banner-tag-text {
           width: fit-content;
-          text-shadow: 0 0 12px #000000b2;
           font-family: "Tilt Neon", sans-serif;
           font-weight: 400;
           color: $font-color;
-          font-size: 11px;
+          font-size: 12px;
           text-align: center;
           letter-spacing: 0;
           line-height: normal;
@@ -99,14 +98,14 @@ a {
     .banner-buttons {
       display: flex;
       width: 500px;
-      height: 50px;
+      height: fit-content;
       justify-content: center;
       gap: 30px;
       align-items: center;
       position: relative;
 
       a {
-        .read-btn {
+        .read-btn, .info-btn {
           display: flex;
           width: 125px;
           align-items: center;
@@ -115,27 +114,17 @@ a {
           padding: 10px;
           position: relative;
           align-self: stretch;
-          background-color: $blue-elem;
           border-radius: 10px;
           overflow: hidden;
         }
-      }
-      a {
         .info-btn {
-          display: flex;
-          width: 125px;
-          align-items: center;
-          justify-content: center;
-          gap: 10px;
-          padding: 10px;
-          position: relative;
-          align-self: stretch;
           background-color: $background;
-          border-radius: 10px;
-          overflow: hidden;
+        }
+        .read-btn {
+          background-color: $blue-elem;
         }
       }
-      .text-wrapper-6 {
+      .banner-btn-text {
         position: relative;
         width: fit-content;
         font-family: "Tilt Neon", sans-serif;
@@ -151,25 +140,23 @@ a {
 
   .banner-card {
     display: flex;
+    justify-content: center;
+    align-items: center;
     width: 400px;
     height: 600px;
-    justify-content: center;
-    gap: 10px;
+    margin-top: 3%;
+    margin-right: 5%;
     padding: 15px;
-    background-color: $font-color;
     border-radius: 15px;
     transform: rotate(12deg);
+    background-color: $font-color;
     box-shadow: 0 12px 12px 7px #00000040;
-    align-items: center;
-    position: relative;
-    background-position: center;
-    background-size: contain;
-    background-repeat: no-repeat;
 
     img.banner-cover {
-      width: 100%;
+      max-height: 100%;
+      max-width: 100%;
       object-position: center;
-      object-fit: contain;
+      object-fit: cover;
     }
   }
 }
@@ -177,12 +164,12 @@ a {
 .latest-updates, .popular {
   display: flex;
   flex-direction: column;
-  width: 1440px;
+  width: 100%;
   align-items: flex-start;
   gap: 10px;
-  padding: 5px 20px;
   position: relative;
   flex: 0 0 auto;
+  //background-color: $font-color;
 
   .category-title {
     align-items: center;
@@ -193,10 +180,9 @@ a {
     display: flex;
     position: relative;
 
-    .text-wrapper-7 {
+    .category-title-text {
       position: relative;
       width: fit-content;
-      margin-top: -1px;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
@@ -206,52 +192,47 @@ a {
       line-height: normal;
     }
   }
+
   .category-list {
-    align-items: flex-start;
-    justify-content: space-between;
-    padding: 5px 0;
-    align-self: stretch;
-    width: 100%;
-    flex: 0 0 auto;
     display: flex;
-    position: relative;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1.5rem;
+    padding: 0 1rem;
+    width: calc(100% - 2rem);
+    overflow-x: scroll;
 
     .category-card {
+      display: flex;
       flex-direction: column;
-      width: 210px;
       align-items: center;
       gap: 10px;
-      display: flex;
-      position: relative;
+      width: fit-content;
 
       .category-card-cover {
+        position: relative;
         display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
         height: 288px;
         aspect-ratio: 12/16;
-        align-items: center;
-        justify-content: space-between;
         padding: 8px 10px;
-        position: relative;
-        align-self: stretch;
-        width: 100%;
-        background-color: $background;
         border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 1px 2px 7px 5px #00000040;
+        background-color: $font-color;
+        box-shadow: 0 7px 7px 5px #00000040;
 
         .category-card-img {
           position: absolute;
-          width: 210px;
-          height: 288px;
+          height: 100%;
+          width: 100%;
           top: 0;
           left: 0;
           border-radius: 12px;
-          aspect-ratio: 12/16;
           background-position: center;
           background-size: cover;
           background-repeat: no-repeat;
+          transition: filter ease-in 200ms;
         }
         .category-card-hover {
           display: none;
@@ -266,41 +247,112 @@ a {
           display: none;
         }
         &:hover {
+          overflow: hidden;
           .category-card-img {
-            filter: blur(12px) grayscale(20%);
+            filter: blur(8px) grayscale(20%) brightness(60%);
           }
           .category-card-hover {
             position: absolute;
             display: flex;
             flex-direction: column;
-            width: 210px;
-            height: 28px;
+            width: 100%;
+            height: 34px;
+            border-radius: 12px 12px 0 0;
             top: 0;
             left: 0;
             background-color: $blue-elem;
           }
           .hover-description {
             display: flex;
-            width: inherit;
+            flex-direction: column;
+            gap: 1.2rem;
+            width: 90%;
+            height: 60%;
             color: $font-color;
-            font-size: 11px;
             z-index: 10;
+            font-family: "Tilt Neon", sans-serif;
+
+            .description-title {
+              text-align: center;
+              font-size: 18px;
+            }
+            .description-ctn {
+              text-align: justify;
+              font-size: 11px;
+              overflow-y: scroll;
+              overflow-wrap: anywhere;
+            }
           }
           .hover-tags {
+            z-index: 10;
             display: flex;
+            width: 90%;
+            height: 22%;
+            align-items: center;
+            justify-content: center;
+            gap: 2px 4px;
+            flex-wrap: wrap;
+            overflow-y: scroll;
             a {
+              margin: 0;
+              padding: 0;
+
               .hover-tag {
-                .tag-title {}
+                display: flex;
+                gap: 5px;
+                padding: 2px 4px;
+                flex: 0 0 auto;
+                background-color: $foreground;
+                border-radius: 4px;
+                align-items: center;
+
+                .hover-tag-text {
+                  width: fit-content;
+                  font-family: "Tilt Neon", sans-serif;
+                  font-weight: 400;
+                  color: $font-color;
+                  font-size: 11px;
+                  text-align: center;
+                  letter-spacing: 0;
+                  line-height: normal;
+                }
               }
             }
+
           }
           .hover-buttons {
+            z-index: 10;
+            width: 100%;
+            height: 12%;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 26px;
+            font-family: "Tilt Neon", sans-serif;
             a {
-              span.hover-btn-text {}
+              margin: 0;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              padding: 5px 10px;
+              border-radius: 6px;
+
+              span.hover-btn-text {
+                width: fit-content;
+                font-family: "Tilt Neon", sans-serif;
+                font-weight: 400;
+                color: $font-color;
+                font-size: 14px;
+                text-align: center;
+                letter-spacing: 0;
+                line-height: normal;
+              }
             }
-            a {
-              span.hover-btn-text {}
+            .hover-btn-read {
+              background-color: $blue-elem;
+            }
+            .hover-btn-info {
+              background-color: $background;
             }
           }
         }
@@ -315,7 +367,7 @@ a {
         width: 100%;
         flex: 0 0 auto;
 
-        .text-wrapper-8 {
+        .category-card-title {
           position: relative;
           width: fit-content;
           margin-top: -1px;

@@ -2,28 +2,28 @@
 
 {{define "title"}}MangaThorg - Principal{{end}}
 
-{{define "body"}}
+{{define "page"}}
 <div class="banner">
   <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}" alt="{{.Banner.Manga.Attributes.Title.En}}" />
   <div class="banner-text">
-    <div class="text-wrapper-3">Ending Maker</div>
-    <p class="text-wrapper-4">
+    <div class="banner-title">{{.Banner.Manga.Attributes.Title.En}}</div>
+    <div class="banner-description">
       {{.Banner.Manga.Attributes.Description.En}}
-    </p>
+    </div>
     <div class="tags">
       {{range .Banner.Manga.Attributes.Tags}}
-        <div class="banner-tag"><div class="text-wrapper-5">{{.Attributes.Name.En}}</div></div>
+        <a href="/category/{{.Id}}" class="banner-tag"><div class="banner-tag-text">{{.Attributes.Name.En}}</div></a>
       {{end}}
     </div>
     <div class="banner-buttons">
-      <a href="/chapter/{{.Banner.Manga.Attributes.LatestUploadedChapter}}"><div class="read-btn"><div class="text-wrapper-6">Read Now</div></div></a>
-      <a href="/manga/{{.Banner.Manga.Id}}"><div class="info-btn"><div class="text-wrapper-6">View Info</div></div></a>
+      <a href="/chapter/{{.Banner.Manga.Attributes.LatestUploadedChapter}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
+      <a href="/manga/{{.Banner.Manga.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
     </div>
   </div>
   <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}" alt="{{.Banner.Manga.Attributes.Title.En}}" /></div>
 </div>
 <div class="latest-updates">
-  <div class="category-title"><div class="text-wrapper-7">Latest Uploaded</div></div>
+  <div class="category-title"><div class="category-title-text">Latest Uploaded</div></div>
   <div class="category-list">
     {{range .LatestUploaded}}
       <div class="category-card">
@@ -32,45 +32,50 @@
           <div class="category-card-hover"></div>
           <div class="hover-description">
             <div class="description-title">
-              <p>Description</p>
+              Description
             </div>
-            {{.Manga.Attributes.Description.En}}
+            <div class="description-ctn">{{.Manga.Attributes.Description.En}}</div>
+
           </div>
           <div class="hover-tags">
             {{range .Manga.Attributes.Tags}}
-              <a href="/category/{{.Id}}"><div class="hover-tag"><div class="tag-title">{{.Attributes.Name.En}}</div></div></a>
+              <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
             {{end}}
           </div>
           <div class="hover-buttons">
-            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}"><span class="hover-btn-text">Read Now</span></a>
-            <a href="/manga/{{.Manga.Id}}"><span class="hover-btn-text">View Info</span></a>
+            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+            <a href="/manga/{{.Manga.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
           </div>
         </div>
-        <div class="category-card-info"><div class="text-wrapper-8">{{.Manga.Attributes.Title.En}}</div></div>
+        <div class="category-card-info"><div class="category-card-title">{{.Manga.Attributes.Title.En}}</div></div>
       </div>
     {{end}}
   </div>
 </div>
 <div class="popular">
-  <div class="category-title"><div class="text-wrapper-7">Popular</div></div>
+  <div class="category-title"><div class="category-title-text">Popular</div></div>
   <div class="category-list">
     {{range .Popular}}
       <div class="category-card">
         <div class="category-card-cover">
           <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}')"></div>
           <div class="category-card-hover"></div>
-          <div class="hover-description">{{.Manga.Attributes.Description.En}}</div>
+          <div class="hover-description">
+            <div class="description-title">Description</div>
+            <div class="description-ctn">{{.Manga.Attributes.Description.En}}</div>
+
+          </div>
           <div class="hover-tags">
             {{range .Manga.Attributes.Tags}}
-              <a href="/category/{{.Id}}"><div class="hover-tag"><div class="tag-title">{{.Attributes.Name.En}}</div></div></a>
+              <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
             {{end}}
           </div>
           <div class="hover-buttons">
-            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}"><span class="hover-btn-text">Read Now</span></a>
-            <a href="/manga/{{.Manga.Id}}"><span class="hover-btn-text">View Info</span></a>
+            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+            <a href="/manga/{{.Manga.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
           </div>
         </div>
-        <div class="category-card-info"><div class="text-wrapper-8">{{.Manga.Attributes.Title.En}}</div></div>
+        <div class="category-card-info"><div class="category-card-title">{{.Manga.Attributes.Title.En}}</div></div>
       </div>
     {{end}}
   </div>
