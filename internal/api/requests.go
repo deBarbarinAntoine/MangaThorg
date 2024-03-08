@@ -17,7 +17,7 @@ var TopPopularRequest = models.MangaRequest{
 	OrderValue:   "desc",
 	IncludedTags: nil,
 	ExcludedTags: nil,
-	Limit:        10,
+	Limit:        6,
 	Offset:       0,
 }
 
@@ -26,7 +26,7 @@ var TopLatestUploadedRequest = models.MangaRequest{
 	OrderValue:   "desc",
 	IncludedTags: nil,
 	ExcludedTags: nil,
-	Limit:        10,
+	Limit:        6,
 	Offset:       0,
 }
 

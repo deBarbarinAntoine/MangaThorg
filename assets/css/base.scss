@@ -19,14 +19,14 @@ body {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  padding: 10px 0;
+  padding: 16px 0;
 
   .main {
     justify-content: space-between;
-    width: 100%;
+    width: 90%;
     display: flex;
     align-items: center;
-    flex: 0 0 auto;
+    padding: 16px 0;
 
     .header-nav {
       display: inline-flex;
@@ -35,8 +35,8 @@ body {
       align-items: center;
       justify-content: center;
       gap: 3rem;
-      padding: 7px 10px;
-      flex: 0 0 auto;
+      padding: 0 10px;
+      width: fit-content;
 
       .category-link {
         width: fit-content;
@@ -50,62 +50,67 @@ body {
       }
     }
 
-    .header-search-bar {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 155px;
-      padding: 5px 8px;
-      flex: 0 0 auto;
-      border-radius: 15px;
-      border: 3px solid $font-color;
+    .header-search-bar-ctn {
+      display: flex;
+      justify-content: flex-end;
+      flex: 1;
 
-      .filter-search-bar {
-        display: inline-flex;
-        height: fit-content;
+      .header-search-bar {
+        display: flex;
         align-items: center;
-        justify-content: center;
-        gap: 10px;
-        padding: 10px;
-        flex: 0 0 auto;
-        background-color: $foreground;
-        border-radius: 8px;
+        justify-content: space-between;
+        padding: 8px;
+        border-radius: 15px;
+        border: 3px solid $font-color;
+        width: 60%;
+        max-width: 400px;
 
-        .filter-search-text {
-          width: fit-content;
-          font-family: "Tilt Neon", sans-serif;
-          font-weight: 400;
-          color: $font-color;
-          font-size: 18px;
-          text-align: center;
-          letter-spacing: 0;
-          line-height: normal;
-          padding: 2px 4px;
+        .filter-search-bar {
+          display: flex;
+          height: fit-content;
+          align-items: center;
+          justify-content: center;
+          padding: 10px;
+          background-color: $foreground;
+          border-radius: 8px;
+
+          .filter-search-text {
+            width: fit-content;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            color: $font-color;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 0;
+            line-height: normal;
+            padding: 2px 4px;
+          }
+        }
+
+        .icon-search {
+          width: 36.3px;
+          height: 35px;
         }
       }
-
-      .icon-search {
-        width: 36.3px;
-        height: 35px;
-      }
     }
+
   }
 
   .variable {
-    width: calc(100% - 4rem);
+    width: 89%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex: 0 0 auto;
-    gap: 10px;
-    padding: 10px 2rem;
+    gap: 2rem;
+    padding: 16px 0;
 
     .header-buttons {
       height: 35px;
       display: flex;
       align-items: center;
-      flex: 0 0 auto;
-      gap: 25px;
+      flex: 1;
+      gap: 2.5rem;
 
       .login-btn, .register-btn {
         display: flex;
@@ -125,7 +130,7 @@ body {
         background-color: $foreground;
       }
 
-      .header-nav-text {
+      .header-btn-text {
         width: fit-content;
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
@@ -137,13 +142,17 @@ body {
       }
     }
 
+    .filler {
+      display: flex;
+      flex: 1;
+    }
+
     .header-msg {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 10px;
-      padding: 0 12rem 0 0;
-      flex: 1;
+      gap: 1rem;
+      width: fit-content;
       align-items: center;
       position: relative;
 
@@ -174,6 +183,15 @@ body {
   }
 }
 
+
+.logo {
+  display: flex;
+  flex: 1;
+  object-position: left;
+  object-fit: contain;
+  height: 60px;
+}
+
 // div filled with any single page's template
 .template {
   display: flex;
@@ -202,6 +220,16 @@ body {
     align-items: center;
     gap: 9px;
     padding: 20px 0;
+
+    .logo-ctn {
+      display: flex;
+      justify-content: center;
+      width: 70%;
+
+      .logo {
+        object-position: center;
+      }
+    }
 
     .footer-nav {
       display: inline-flex;
@@ -254,9 +282,4 @@ body {
     height: 100%;
     width: 37%;
   }
-}
-
-.logo {
-  width: 280px;
-  height: 60px;
 }

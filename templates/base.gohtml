@@ -17,21 +17,24 @@
             <div class="category-link">POPULAR</div>
             <div class="category-link">CATEGORIES</div>
         </div>
-        <div class="header-search-bar">
-            <div class="filter-search-bar"><div class="filter-search-text">Filter</div></div>
-            <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
+        <div class="header-search-bar-ctn">
+            <div class="header-search-bar">
+                <div class="filter-search-bar"><div class="filter-search-text">Filter</div></div>
+                <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
+            </div>
         </div>
     </div>
     <div class="variable">
         <div class="header-buttons">
-            <div class="login-btn"><div class="header-nav-text">Sign in</div></div>
-            <div class="register-btn"><div class="header-nav-text">Register</div></div>
+            <div class="login-btn"><div class="header-btn-text">Sign in</div></div>
+            <div class="register-btn"><div class="header-btn-text">Register</div></div>
         </div>
         <div class="header-msg">
             <img class="line-top" src="{{template "staticPath" .}}/img/line-1-1.svg" alt="line" />
-            <p class="invitation-msg">Sign in to have all features available</p>
+            <div class="invitation-msg">Sign in to have all features available</div>
             <img class="line-bottom" src="{{template "staticPath" .}}/img/line-2-1.svg" alt="line" />
         </div>
+        <div class="filler"></div>
     </div>
 </header>
 
@@ -39,7 +42,9 @@
 
 <footer class="footer">
     <div class="footer-nav-credits">
-        <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
+        <div class="logo-ctn">
+            <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
+        </div>
         <div class="footer-nav">
             <div class="header-nav-text">ABOUT</div>
             <div class="header-nav-text">TERMS AND CONDITIONS</div>

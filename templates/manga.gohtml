@@ -1,0 +1,29 @@
+{{define "staticPath"}}static{{end}}
+
+{{define "title"}}MangaThorg - {{.Manga.Attributes.Title.En}}{{end}}
+
+{{define "page"}}
+
+    <!-- Banner element -->
+    <div class="banner">
+        <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}" alt="{{.Manga.Attributes.Title.En}}" />
+        <div class="banner-text">
+            <div class="banner-title">{{.Manga.Attributes.Title.En}}</div>
+            <div class="banner-description">
+                {{.Manga.Attributes.Description.En}}
+            </div>
+            <div class="tags">
+                {{range .Manga.Attributes.Tags}}
+                    <a href="/category/{{.Id}}" class="banner-tag"><div class="banner-tag-text">{{.Attributes.Name.En}}</div></a>
+                {{end}}
+            </div>
+            <div class="banner-buttons">
+                <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
+                <a href="/manga/{{.Manga.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
+            </div>
+        </div>
+        <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}" alt="{{.Manga.Attributes.Title.En}}" /></div>
+    </div>
+
+
+{{end}}
