@@ -193,17 +193,17 @@ a {
     align-items: flex-start;
     gap: 2vw;
     padding: 0 1rem;
-    width: fit-content;
-    max-width: calc(100% - 2rem);
-    overflow-x: scroll;
+    width: calc(100% - 2rem);
+    overflow: clip;
 
     .category-card {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: calc(10px + .3vw);
-      height: calc(200px + 16vw);
-      aspect-ratio: 9/16;
+      width: clamp(190px, 15%, 340px);
+      height: max-content;
+      flex-shrink: 0;
 
       .category-card-cover {
         position: relative;
@@ -271,11 +271,11 @@ a {
 
             .description-title {
               text-align: center;
-              font-size: calc(16px + .3vw);
+              font-size: clamp(16px, calc(15px + .4vw), 3rem);
             }
             .description-ctn {
               text-align: justify;
-              font-size: calc(10px + .3vw);
+              font-size: clamp(10px, calc(8px + .3vw), 1.8rem);
               overflow-y: scroll;
               overflow-wrap: anywhere;
             }
@@ -308,7 +308,7 @@ a {
                   font-family: "Tilt Neon", sans-serif;
                   font-weight: 400;
                   color: $font-color;
-                  font-size: calc(10px + .3vw);
+                  font-size: clamp(10px, calc(8px + .3vw), 1.6rem);
                   text-align: center;
                   letter-spacing: 0;
                   line-height: normal;
@@ -324,7 +324,7 @@ a {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 26px;
+            gap: clamp(12px, calc(3% + 1.1vw), 3rem);
             font-family: "Tilt Neon", sans-serif;
             a {
               margin: 0;
@@ -332,14 +332,14 @@ a {
               justify-content: center;
               align-items: center;
               padding: calc(2px + .2vw) calc(8px + .3vw);
-              border-radius: calc(5px + .3vw);
+              border-radius: calc(4px + .2vw);
 
               span.hover-btn-text {
                 width: fit-content;
                 font-family: "Tilt Neon", sans-serif;
                 font-weight: 400;
                 color: $font-color;
-                font-size: calc(12px + .3vw);
+                font-size: clamp(12px, calc(10px + .3vw), 2rem);
                 text-align: center;
                 letter-spacing: 0;
                 line-height: normal;
@@ -371,7 +371,7 @@ a {
           font-family: "Tilt Neon", sans-serif;
           font-weight: 400;
           color: $font-color;
-          font-size: 15px;
+          font-size: calc(15px + .3vw);
           text-align: center;
           letter-spacing: 0;
           line-height: normal;

@@ -4,26 +4,79 @@
 
 {{define "page"}}
 
-    <!-- Banner element -->
-    <div class="banner">
+        <!-- Manga Banner -->
+<div class="manga-presentation">
+    <div class="manga-banner">
         <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}" alt="{{.Manga.Attributes.Title.En}}" />
         <div class="banner-text">
-            <div class="banner-title">{{.Manga.Attributes.Title.En}}</div>
-            <div class="banner-description">
-                {{.Manga.Attributes.Description.En}}
+            <div class="manga-title">{{.Manga.Attributes.Title.En}}</div>
+            <div class="manga-attributes">
+                <div class="attribute">
+                    <div class="attribute-label">Author</div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Author Name>*/}}</div></div>
+                </div>
+                <div class="attribute">
+                    <div class="attribute-label">Status</div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Status>*/}}</div></div>
+                </div>
+                <div class="attribute">
+                    <div class="attribute-label">Public</div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Public>*/}}</div></div>
+                </div>
+                <div class="attribute">
+                    <div class="attribute-label">Rating</div>
+                    <div class="rating-tag">
+                        <img class="icon-star-outline" src="img/icon-star-outline.png" />
+                        <div class="attr-text">{{/*<Rating-bayesian>*/}}</div>
+                    </div>
+                </div>
             </div>
-            <div class="tags">
+            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="manga-read-btn">
+                <div class="manga-read-btn-text">Read to {{/*Ch. <chapter-nb>*/}}</div>
+                <img class="icon-menu-book" src="img/icon-menu-book.svg"  alt="read-to logo"/>
+            </a>
+        </div>
+        <a href="" class="manga-remove"><img class="bookmark-remove" src="img/bookmark-remove.png" /></a>
+    </div>
+    <div class="manga-card-ctn-abs">
+        <div class="manga-card"><img class="manga-card-img" src="img/ending-maker-cover-1.png" /></div>
+    </div>
+    <div class="manga-info">
+        <div class="manga-description">
+            <p>
+                {{.Manga.Attributes.Description.En}}
+            </p>
+            <div class="manga-tag-list">
                 {{range .Manga.Attributes.Tags}}
-                    <a href="/category/{{.Id}}" class="banner-tag"><div class="banner-tag-text">{{.Attributes.Name.En}}</div></a>
+                    <a href="/category/{{.Id}}" class="manga-tag"><div class="manga-tag-text">{{.Attributes.Name.En}}</div></a>
                 {{end}}
             </div>
-            <div class="banner-buttons">
-                <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
-                <a href="/manga/{{.Manga.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
-            </div>
         </div>
-        <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}" alt="{{.Manga.Attributes.Title.En}}" /></div>
     </div>
+</div>
 
+        <!-- Manga Chapter-list -->
+<div class="manga-chapters">
+    <div class="chapters-header">
+        <div class="title-ctn"><div class="title">Chapters</div></div>
+        <div class="sorting">
+            <div class="sort-title">Sort:</div>
+            <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
+            <div class="sort-tag"><div class="sort-tag-text">Ascending</div></div>
+        </div>
+    </div>
+    <div class="chapters-list">
+        {{range .Chapters}}
+            <div class="chapter">
+                <p class="chapter-title">{{/*<Chapter number and title>*/}}</p>
+                <div class="source">
+                    <img class="icon-group" src="img/icon-group-34.png" />
+                    <div class="source-name">{{/*<Scanlation-group>*/}}</div>
+                </div>
+                <a href="/chapter/{{/*<chapter-id>*/}}" class="chapter-link"><img class="icon-menu-book" src="img/icon-menu-book-29.png" /></a>
+            </div>
+        {{end}}
+    </div>
+</div>
 
 {{end}}
