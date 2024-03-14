@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"log/slog"
 	"mangathorg/internal/models"
@@ -37,6 +38,9 @@ func retrieveSingleCacheData(info string, id string) models.SingleCacheData {
 
 	if id == "" && cacheData != nil {
 		return cacheData[0]
+	} else if cacheData == nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: CacheData not found")))
+		return models.SingleCacheData{}
 	}
 
 	for _, datum := range cacheData {
@@ -44,6 +48,7 @@ func retrieveSingleCacheData(info string, id string) models.SingleCacheData {
 			return datum
 		}
 	}
+	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: SingleCacheData not found")))
 	return models.SingleCacheData{}
 }
 
@@ -185,10 +190,19 @@ func updateCacheStatus(info string, id string) {
 func cacheCover(id string, index int, covers *[]models.Cover) bool {
 	if checkStatus(models.Status.Covers, id) {
 		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
+
+		// checking if the cover has been found
+		if reflect.DeepEqual(coverCache, models.SingleCacheData{}) {
+			log.Println("failed to retrieve cover from cache")
+			deleteCacheStatus(models.Status.Covers, id)
+			return false
+		}
+
 		apiCover, err := coverCache.Cover()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
+
 		log.Println("retrieving cover from cache") // testing
 		(*covers)[index] = apiCover
 		return true

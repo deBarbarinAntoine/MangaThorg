@@ -38,6 +38,11 @@ func FetchMangaById(id string) models.MangaWhole {
 	var manga models.MangaWhole
 	apiManga := MangaRequestById(id)
 	coverId := apiManga.CoverId()
+
+	// fixme cover_id not found error to handle!
+	if coverId == "" {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cover_art not found in manga which id is: "+apiManga.Data.Id)))
+	}
 	manga.Manga = apiManga.Data
 	covers := CoverRequest([]string{coverId})
 	manga.Cover = covers[0]
@@ -55,7 +60,14 @@ func MangaRequestById(id string) models.ApiSingleManga {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		log.Println("retrieving manga from cache") // testing
-		return models.ApiSingleManga{Data: manga}
+
+		// handling missing id in the manga cache data
+		if manga.Id == "" {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("manga retrieved from cache has no Id")))
+			deleteCacheData(models.Status.Mangas, mangaCache)
+		} else {
+			return models.ApiSingleManga{Data: manga}
+		}
 	}
 	var apiSingleManga models.ApiSingleManga
 	err := apiSingleManga.SendRequest(baseURL, "manga/"+id, nil)

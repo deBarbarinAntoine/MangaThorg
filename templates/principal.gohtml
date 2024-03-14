@@ -8,7 +8,7 @@
 
   <!-- Banner element -->
 <div class="banner">
-  <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}" alt="{{.Banner.Manga.Attributes.Title.En}}" />
+  <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}.512.jpg" alt="{{.Banner.Manga.Attributes.Title.En}}" />
   <div class="banner-text">
     <div class="banner-title">{{.Banner.Manga.Attributes.Title.En}}</div>
     <div class="banner-description">
@@ -24,7 +24,7 @@
       <a href="/manga/{{.Banner.Manga.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
     </div>
   </div>
-  <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}" alt="{{.Banner.Manga.Attributes.Title.En}}" /></div>
+  <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}.512.jpg" alt="{{.Banner.Manga.Attributes.Title.En}}" /></div>
 </div>
 
   <!-- Popular Mangas -->
@@ -34,7 +34,7 @@
     {{range .Popular}}
       <div class="category-card">
         <div class="category-card-cover">
-          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}')"></div>
+          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}.256.jpg')"></div>
           <div class="category-card-hover"></div>
           <div class="hover-description">
             <div class="description-title">Description</div>
@@ -64,7 +64,7 @@
     {{range .LatestUploaded}}
       <div class="category-card">
         <div class="category-card-cover">
-          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}')"></div>
+          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}.256.jpg')"></div>
           <div class="category-card-hover"></div>
           <div class="hover-description">
             <div class="description-title">
