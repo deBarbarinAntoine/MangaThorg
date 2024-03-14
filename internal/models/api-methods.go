@@ -5,9 +5,9 @@ import (
 	"errors"
 	"io"
 	"log"
+	"math"
 	"net/http"
 	"net/url"
-	"sort"
 	"strconv"
 	"time"
 )
@@ -139,6 +139,13 @@ func (data *ApiMangaStats) SingleCacheData(id string) SingleCacheData {
 }
 
 func (data *ApiManga) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
+
+	query.Add("includes[]", "cover_art")
+	query.Add("includes[]", "author")
+
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -158,6 +165,13 @@ func (data *ApiManga) SendRequest(baseURL string, endpoint string, query url.Val
 }
 
 func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
+
+	query.Add("includes[]", "cover_art")
+	query.Add("includes[]", "author")
+
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -177,6 +191,9 @@ func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query u
 }
 
 func (data *ApiCover) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -196,6 +213,9 @@ func (data *ApiCover) SendRequest(baseURL string, endpoint string, query url.Val
 }
 
 func (data *ApiTags) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -226,6 +246,7 @@ func (data *ApiMangaFeed) SendRequest(baseURL string, endpoint string, query url
 
 	err = json.Unmarshal(body, data)
 	if err != nil {
+		log.Println("ApiMangaFeed.SendRequest: unmarshal error!")
 		return err
 	}
 
@@ -238,6 +259,9 @@ func (data *ApiMangaFeed) SendRequest(baseURL string, endpoint string, query url
 }
 
 func (data *ApiChapterScan) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -257,6 +281,9 @@ func (data *ApiChapterScan) SendRequest(baseURL string, endpoint string, query u
 }
 
 func (data *ApiMangaStats) SendRequest(baseURL string, endpoint string, query url.Values) error {
+	if query == nil {
+		query = make(url.Values)
+	}
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -296,7 +323,13 @@ func Request(url string, query url.Values) ([]byte, error) {
 	if errBody != nil {
 		return nil, errBody
 	}
-	return body, nil
+
+	var err error
+	if res.StatusCode != 200 {
+		err = errors.New("error " + res.Status)
+	}
+
+	return body, err
 }
 
 func (data *ApiMangaStats) Stats(id string) Statistics {
@@ -355,19 +388,74 @@ func (data *ApiManga) CoversId() ([]string, error) {
 	return ids, err
 }
 
-func (data *ApiMangaFeed) Sort(order string) {
-	switch order {
-	case "asc":
-		sort.Slice(data.Data, func(i, j int) bool {
-			return data.Data[i].Attributes.Volume < data.Data[j].Attributes.Volume && data.Data[i].Attributes.Chapter < data.Data[j].Attributes.Chapter
-		})
-	case "desc":
-		sort.Slice(data.Data, func(i, j int) bool {
-			return data.Data[i].Attributes.Volume > data.Data[j].Attributes.Volume && data.Data[i].Attributes.Chapter > data.Data[j].Attributes.Chapter
-		})
-	default:
-		return
+func (data *ApiManga) Format() []MangaUsefullData {
+	var formattedMangas []MangaUsefullData
+	for _, datum := range data.Data {
+		formattedMangas = append(formattedMangas, datum.Format())
 	}
+	return formattedMangas
+}
+
+func (data *ApiSingleManga) Format() MangaUsefullData {
+	return data.Data.Format()
+}
+
+func (data *Manga) Format() MangaUsefullData {
+
+	var feed ApiMangaFeed
+	var query = make(url.Values)
+	query.Add("order[chapter]", "asc")
+	query.Add("contentRating[]", "safe")
+	query.Add("includes[]", "scanlation_group")
+	query.Add("limit", "1")
+
+	// fixme: optimization needed (takes too much time to load)
+	//err := feed.SendRequest("https://api.mangadex.org/", "manga/"+data.Id+"/feed", query)
+	//if err != nil {
+	//	log.Println("request error:", err)
+	//}
+	//var firstChapterId string
+	//if feed.Data != nil {
+	//	firstChapterId = feed.Data[0].Id
+	//}
+
+	var manga = MangaUsefullData{
+		Id:                     data.Id,
+		Title:                  data.Attributes.Title.En,
+		Author:                 "",
+		Description:            data.Attributes.Description.En,
+		FirstChapterId:         data.Attributes.LatestUploadedChapter, // fixme: change to FirstChapterId
+		LastChapterId:          data.Attributes.LatestUploadedChapter,
+		LastChapterNb:          data.Attributes.LastChapter,
+		OriginalLanguage:       data.Attributes.OriginalLanguage,
+		PublicationDemographic: data.Attributes.PublicationDemographic,
+		Status:                 data.Attributes.Status,
+		Year:                   data.Attributes.Year,
+		Tags:                   data.Attributes.Tags,
+		CoverId:                "",
+		CoverImg:               "",
+		Rating:                 0,
+		Chapters:               nil,
+		NbChapter:              feed.Total,
+	}
+	var isCover, isAuthor bool
+	for _, relationship := range data.Relationships {
+		if relationship.Type == "cover_art" && !isCover {
+			manga.CoverId = relationship.Id
+			manga.CoverImg = relationship.Attributes.FileName
+			isCover = true
+		}
+		if relationship.Type == "author" && !isAuthor {
+			manga.Author = relationship.Attributes.Name
+			isAuthor = true
+		}
+	}
+	return manga
+}
+
+func (manga *MangaUsefullData) Fill(stats Statistics, chapters []Chapter) {
+	manga.Rating = math.Round(stats.Rating.Bayesian*10) / 10
+	manga.Chapters = chapters
 }
 
 func (data *ApiTags) CheckResponse() error {

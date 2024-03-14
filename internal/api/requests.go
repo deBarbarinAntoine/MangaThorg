@@ -34,20 +34,12 @@ var TopLatestUploadedRequest = models.MangaRequest{
 //
 //}
 
-func FetchMangaById(id string) models.MangaWhole {
-	var manga models.MangaWhole
+func FetchMangaById(id string) models.MangaUsefullData {
+	var manga models.MangaUsefullData
 	apiManga := MangaRequestById(id)
-	coverId := apiManga.CoverId()
 
-	// fixme cover_id not found error to handle!
-	if coverId == "" {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cover_art not found in manga which id is: "+apiManga.Data.Id)))
-	}
-	manga.Manga = apiManga.Data
-	covers := CoverRequest([]string{coverId})
-	manga.Cover = covers[0]
-	manga.Chapters = FeedRequest(id).Data
-	manga.Stat = StatRequest(id)
+	manga = apiManga.Data.Format()
+	manga.Fill(StatRequest(id), FeedRequest(id).Data)
 
 	return manga
 }
@@ -88,15 +80,10 @@ func MangaRequestById(id string) models.ApiSingleManga {
 	return apiSingleManga
 }
 
-func FetchManga(request models.MangaRequest) []models.MangaWhole {
+func FetchManga(request models.MangaRequest) []models.MangaUsefullData {
 	apiManga := MangaRequest(request)
-	coversId, err := apiManga.CoversId()
-	if err != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-	}
-	covers := CoverRequest(coversId)
 
-	return wrapMangas(apiManga.Data, covers, coversId)
+	return apiManga.Format()
 }
 
 func wrapMangas(mangas []models.Manga, covers []models.Cover, coversId []string) []models.MangaWhole {
@@ -215,16 +202,20 @@ func FeedRequest(id string) models.ApiMangaFeed {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		log.Println("retrieving feed from cache") // testing
-		apiMangaFeed.Sort("desc")
 		return apiMangaFeed
 	}
 	var apiMangaFeed models.ApiMangaFeed
-	err := apiMangaFeed.SendRequest(baseURL, "manga/"+id+"/feed", nil)
+
+	var query = make(url.Values)
+	query.Add("order[chapter]", "desc")
+	query.Add("translatedLanguage[]", "en")
+	query.Add("contentRating[]", "safe")
+	query.Add("includes[]", "scanlation_group")
+
+	err := apiMangaFeed.SendRequest(baseURL, "manga/"+id+"/feed", query)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	apiMangaFeed.Sort("desc")
 
 	err = apiMangaFeed.SingleCacheData(id).Write(dataPath+models.Status.MangaFeeds+".json", true)
 	if err != nil {
@@ -291,4 +282,14 @@ func StatRequest(id string) models.Statistics {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("unable to extract statistics from interface")))
 	}
 	return mangaStats
+}
+
+func ImageProxy(mangaId, pictureName string) []byte {
+	reqUrl := "https://uploads.mangadex.org/covers/" + mangaId + "/" + pictureName
+	data, err := models.Request(reqUrl, nil)
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+
+	return data
 }

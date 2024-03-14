@@ -24,3 +24,4 @@ var TagsRequestHandlerGetBundle = middlewares.Join(tagsRequestHandlerGet, middle
 var FeedRequestHandlerGetBundle = middlewares.Join(feedRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
 var ChapterScanRequestHandlerGetBundle = middlewares.Join(chapterScanRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
 var MangaWholeRequestHandlerGetBundle = middlewares.Join(mangaWholeRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
+var CoversHandlerGetBundle = middlewares.Join(coverHandlerGet, middlewares.Log, middlewares.UserCheck)

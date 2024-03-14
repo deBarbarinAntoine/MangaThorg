@@ -57,7 +57,8 @@ type Chapter struct {
 		Type       string `json:"type"`
 		Related    string `json:"related"`
 		Attributes struct {
-		} `json:"attributes"`
+			Name string `json:"name,omitempty"`
+		} `json:"attributes,omitempty"`
 	} `json:"relationships"`
 }
 
@@ -72,6 +73,26 @@ type MangaWhole struct {
 	Cover    Cover
 	Chapters []Chapter
 	Stat     Statistics
+}
+
+type MangaUsefullData struct {
+	Id                     string
+	Title                  string
+	Author                 string
+	Description            string
+	FirstChapterId         string
+	LastChapterId          string
+	LastChapterNb          string
+	OriginalLanguage       string
+	PublicationDemographic *string
+	Status                 string
+	Year                   *int
+	Tags                   []ApiTag
+	CoverId                string
+	CoverImg               string
+	Rating                 float64
+	Chapters               []Chapter
+	NbChapter              int
 }
 
 // Manga is the common structure for Mangas used by MangaDex API.
@@ -125,9 +146,13 @@ type Manga struct {
 		LatestUploadedChapter          string    `json:"latestUploadedChapter"`
 	} `json:"attributes"`
 	Relationships []struct {
-		Id      string `json:"id"`
-		Type    string `json:"type"`
-		Related string `json:"related,omitempty"`
+		Id         string `json:"id"`
+		Type       string `json:"type"`
+		Related    string `json:"related,omitempty"`
+		Attributes struct {
+			Name     string `json:"name,omitempty"`
+			FileName string `json:"fileName,omitempty"`
+		} `json:"attributes,omitempty"`
 	} `json:"relationships"`
 }
 

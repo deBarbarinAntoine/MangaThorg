@@ -232,9 +232,9 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln(err)
 	}
 	var data = struct {
-		Banner         models.MangaWhole
-		LatestUploaded []models.MangaWhole
-		Popular        []models.MangaWhole
+		Banner         models.MangaUsefullData
+		LatestUploaded []models.MangaUsefullData
+		Popular        []models.MangaUsefullData
 	}{
 		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa"),
 		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest),
@@ -298,4 +298,18 @@ func mangaWholeRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(api.FetchMangaById("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
+}
+
+func coverHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	mangaId := r.PathValue("manga")
+	img := r.PathValue("img")
+	if mangaId == "" || img == "" {
+		return
+	}
+	w.Header().Set("Content-Type", "image/jpeg")
+	_, err := w.Write(api.ImageProxy(mangaId, img))
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
 }

@@ -8,23 +8,23 @@
 
   <!-- Banner element -->
 <div class="banner">
-  <img class="background-img" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}.512.jpg" alt="{{.Banner.Manga.Attributes.Title.En}}" />
+  <img class="background-img" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" />
   <div class="banner-text">
-    <div class="banner-title">{{.Banner.Manga.Attributes.Title.En}}</div>
+    <div class="banner-title">{{.Banner.Title}}</div>
     <div class="banner-description">
-      {{.Banner.Manga.Attributes.Description.En}}
+      {{.Banner.Description}}
     </div>
     <div class="tags">
-      {{range .Banner.Manga.Attributes.Tags}}
+      {{range .Banner.Tags}}
         <a href="/category/{{.Id}}" class="banner-tag"><div class="banner-tag-text">{{.Attributes.Name.En}}</div></a>
       {{end}}
     </div>
     <div class="banner-buttons">
-      <a href="/chapter/{{.Banner.Manga.Attributes.LatestUploadedChapter}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
-      <a href="/manga/{{.Banner.Manga.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
+      <a href="/chapter/{{.Banner.FirstChapterId}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
+      <a href="/manga/{{.Banner.Id}}"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
     </div>
   </div>
-  <div class="banner-card"><img class="banner-cover" src="https://uploads.mangadex.org/covers/{{.Banner.Manga.Id}}/{{.Banner.Cover.Attributes.FileName}}.512.jpg" alt="{{.Banner.Manga.Attributes.Title.En}}" /></div>
+  <div class="banner-card"><img class="banner-cover" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" /></div>
 </div>
 
   <!-- Popular Mangas -->
@@ -34,24 +34,24 @@
     {{range .Popular}}
       <div class="category-card">
         <div class="category-card-cover">
-          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}.256.jpg')"></div>
+          <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
           <div class="category-card-hover"></div>
           <div class="hover-description">
             <div class="description-title">Description</div>
-            <div class="description-ctn">{{.Manga.Attributes.Description.En}}</div>
+            <div class="description-ctn">{{.Description}}</div>
 
           </div>
           <div class="hover-tags">
-            {{range .Manga.Attributes.Tags}}
+            {{range .Tags}}
               <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
             {{end}}
           </div>
           <div class="hover-buttons">
-            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
-            <a href="/manga/{{.Manga.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
+            <a href="/chapter/{{.FirstChapterId}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+            <a href="/manga/{{.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
           </div>
         </div>
-        <div class="category-card-info"><div class="category-card-title">{{.Manga.Attributes.Title.En}}</div></div>
+        <div class="category-card-info"><div class="category-card-title">{{.Title}}</div></div>
       </div>
     {{end}}
   </div>
@@ -64,26 +64,26 @@
     {{range .LatestUploaded}}
       <div class="category-card">
         <div class="category-card-cover">
-          <div class="category-card-img" style="background-image: url('https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}.256.jpg')"></div>
+          <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
           <div class="category-card-hover"></div>
           <div class="hover-description">
             <div class="description-title">
               Description
             </div>
-            <div class="description-ctn">{{.Manga.Attributes.Description.En}}</div>
+            <div class="description-ctn">{{.Description}}</div>
 
           </div>
           <div class="hover-tags">
-            {{range .Manga.Attributes.Tags}}
+            {{range .Tags}}
               <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
             {{end}}
           </div>
           <div class="hover-buttons">
-            <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
-            <a href="/manga/{{.Manga.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
+            <a href="/chapter/{{.FirstChapterId}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+            <a href="/manga/{{.Id}}" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
           </div>
         </div>
-        <div class="category-card-info"><div class="category-card-title">{{.Manga.Attributes.Title.En}}</div></div>
+        <div class="category-card-info"><div class="category-card-title">{{.Title}}</div></div>
       </div>
     {{end}}
   </div>
