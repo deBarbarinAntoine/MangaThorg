@@ -11,6 +11,7 @@ $bright-foreground: #EEEEEE33;
 
 body {
   background-color: $background;
+  scrollbar-width: none;
 }
 
 .header {
@@ -21,6 +22,7 @@ body {
   justify-content: center;
   gap: 5px;
   padding: 16px 0;
+  overflow-x: hidden;
 
   .main {
     justify-content: space-between;
@@ -30,21 +32,20 @@ body {
     padding: 16px 0;
 
     .header-nav {
-      display: inline-flex;
-      flex-wrap: wrap;
-      height: 44px;
+      display: flex;
+      flex: 1 0 max-content;
       align-items: center;
       justify-content: center;
-      gap: 3rem;
-      padding: 0 10px;
-      width: fit-content;
+      gap: clamp(10px, 8%, 3rem);
+      padding: 0 calc(8px + .3vw);
+      width: max-content;
 
       .category-link {
-        width: fit-content;
+        width: max-content;
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
         color: $blue-elem;
-        font-size: 25px;
+        font-size: calc(15px + .4vw);
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
@@ -60,41 +61,41 @@ body {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 8px;
-        border-radius: 15px;
+        padding: calc(3px + .2vw);
+        border-radius: calc(12px + .3vw);
         border: 3px solid $font-color;
         width: 60%;
+        min-width: 7rem;
+        height: fit-content;
         max-width: 400px;
 
         .filter-search-bar {
           display: flex;
-          height: fit-content;
           align-items: center;
           justify-content: center;
-          padding: 10px;
+          height: fit-content;
+          padding: calc(4px + .2vw);
           background-color: $foreground;
-          border-radius: 8px;
+          border-radius: calc(5px + .3vw);
 
           .filter-search-text {
             width: fit-content;
             font-family: "Tilt Neon", sans-serif;
             font-weight: 400;
             color: $font-color;
-            font-size: 18px;
+            font-size: calc(10px + .5vw);
             text-align: center;
             letter-spacing: 0;
             line-height: normal;
-            padding: 2px 4px;
+            padding: 0 calc(2px + .2vw);
           }
         }
 
         .icon-search {
-          width: 36.3px;
-          height: 35px;
+          height: calc(18px + .6vw);
         }
       }
     }
-
   }
 
   .variable {
@@ -107,20 +108,20 @@ body {
     padding: 16px 0;
 
     .header-buttons {
-      height: 35px;
+      height: calc(25px + .5vw);
       display: flex;
       align-items: center;
       flex: 1;
-      gap: 2.5rem;
+      gap: calc(20px + 1vw);
 
       .login-btn, .register-btn {
         display: flex;
         align-items: center;
         justify-content: center;
         flex: 0 0 auto;
-        gap: 10px;
-        padding: 10px 25px;
-        border-radius: 12px;
+        gap: calc(8px + .3vw);
+        padding: calc(6px + .3vw) calc(20px + .5vw);
+        border-radius: calc(10px + .4vw);
       }
 
       .login-btn {
@@ -136,7 +137,7 @@ body {
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
         color: $font-color;
-        font-size: 18px;
+        font-size: calc(12px + .4vw);
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
@@ -152,7 +153,7 @@ body {
       display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 1rem;
+      gap: calc(12px + .4vw);
       width: fit-content;
       align-items: center;
       position: relative;
@@ -169,7 +170,7 @@ body {
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
         color: $blue-elem;
-        font-size: 18px;
+        font-size: calc(13px + .4vw);
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
@@ -184,13 +185,12 @@ body {
   }
 }
 
-
 .logo {
   display: flex;
   flex: 1;
   object-position: left;
   object-fit: contain;
-  height: 60px;
+  height: clamp(2rem, calc(25px + 1.5vw), 60px);
 }
 
 // div filled with any single page's template
@@ -207,20 +207,21 @@ body {
 // footer
 .footer {
   display: flex;
-  width: 100%;
-  height: 340px;
-  align-items: flex-end;
-  gap: 3rem;
-  background-color: transparent;
   justify-content: center;
+  align-items: flex-end;
+  gap: calc(2rem + 1vw);
+  width: calc(100% - calc(calc(13px + .4vw) * 2));
+  height: calc(7rem + 10vw);
+  padding: calc(13px + .4vw);
+  background-color: transparent;
 
   .footer-nav-credits {
     display: flex;
     flex-direction: column;
-    width: 37%;
     align-items: center;
-    gap: 9px;
-    padding: 20px 0;
+    gap: calc(5px + .3vw);
+    padding: calc(15px + .4vw) 0;
+    width: 40%;
 
     .logo-ctn {
       display: flex;
@@ -233,19 +234,17 @@ body {
     }
 
     .footer-nav {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      position: relative;
-      flex: 0 0 auto;
+      gap: calc(8px + .5vw);
 
       .header-nav-text {
-        width: 221px;
-        height: 25px;
-        margin-top: -1px;
+        width: fit-content;
+        height: calc(15px + .4vw);
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
         color: $font-color;
-        font-size: 18px;
+        font-size: calc(13px + .4vw);
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
@@ -253,23 +252,23 @@ body {
     }
 
     .credits {
-      width: 630px;
+      width: 90%;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
-      font-size: 16px;
+      font-size: calc(11px + .4vw);
       text-align: center;
       letter-spacing: 0;
       line-height: normal;
     }
 
     .copyright {
-      width: 528px;
+      width: 70%;
       height: 20px;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
-      font-size: 16px;
+      font-size: calc(11px + .4vw);
       text-align: center;
       letter-spacing: 0;
       line-height: normal;
@@ -277,10 +276,10 @@ body {
   }
 
   .footer-img-reading {
+    height: 100%;
+    width: 50%;
     background-size: contain;
     background-repeat: no-repeat;
     background-position: 50% 50%;
-    height: 100%;
-    width: 37%;
   }
 }

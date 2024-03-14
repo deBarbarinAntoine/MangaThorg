@@ -248,8 +248,18 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.FetchManga(api.TopPopularRequest))
+	mangaId := r.PathValue("id")
+	if mangaId == "" {
+		http.Redirect(w, r, "/principal", http.StatusNotFound)
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", api.FetchMangaById(mangaId))
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
 }
 
 func showCoverImageHandlerGet(w http.ResponseWriter, r *http.Request) {

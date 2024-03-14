@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -352,6 +353,21 @@ func (data *ApiManga) CoversId() ([]string, error) {
 	}
 
 	return ids, err
+}
+
+func (data *ApiMangaFeed) Sort(order string) {
+	switch order {
+	case "asc":
+		sort.Slice(data.Data, func(i, j int) bool {
+			return data.Data[i].Attributes.Volume < data.Data[j].Attributes.Volume && data.Data[i].Attributes.Chapter < data.Data[j].Attributes.Chapter
+		})
+	case "desc":
+		sort.Slice(data.Data, func(i, j int) bool {
+			return data.Data[i].Attributes.Volume > data.Data[j].Attributes.Volume && data.Data[i].Attributes.Chapter > data.Data[j].Attributes.Chapter
+		})
+	default:
+		return
+	}
 }
 
 func (data *ApiTags) CheckResponse() error {

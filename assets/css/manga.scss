@@ -17,12 +17,15 @@
     img.background-img {
       position: absolute;
       width: 100%;
-      height: 100%;
+      height: inherit;
       top: 0;
       left: 0;
       object-fit: cover;
+      object-position: center;
+      filter: blur(8px) grayscale(20%) brightness(50%);
     }
     .banner-text {
+      position: relative;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
@@ -135,8 +138,8 @@
   .manga-card-ctn-abs {
     position: absolute;
     top: calc(1.5rem + 1.5vw);
-    left: 0;
-    width: 100%;
+    right: 0;
+    width: calc(100% - calc(calc(1.5rem + 1.5vw) * 2));
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -147,7 +150,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: calc(200px + 15vw);
+      width: calc(180px + 14vw);
       aspect-ratio: 12/16;
       padding: calc(10px + .5vw);
       border-radius: calc(7px + .4vw);
@@ -175,17 +178,16 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      width: 80%;
+      width: 60%;
+      padding: 0 calc(22px + .5vw);
 
       p {
         width: 100%;
-        text-align: justify;
         font-family: "Tilt Neon", sans-serif;
         font-weight: 400;
         color: $font-color;
-        font-size: calc(14px + .8vw);
-        letter-spacing: 0;
-        line-height: normal;
+        font-size: calc(13px + .3vw);
+        text-align: justify;
       }
       .manga-tag-list {
         display: flex;
@@ -223,7 +225,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 100%;
+  width: calc(100% - 50px);
   padding: 10px 25px;
 
   .chapters-header {
@@ -303,6 +305,7 @@
     border-radius: 0 12px 12px 12px;
     background-color: $foreground;
     overflow-y: auto;
+    overflow-x: hidden;
 
     &:nth-child(even) {
       background-color: $bright-foreground;

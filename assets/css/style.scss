@@ -56,7 +56,8 @@ a {
     div.banner-description {
       position: relative;
       height: 65%;
-      overflow-y: scroll;
+      overflow-y: auto;
+      scrollbar-width: none;
       width: 85%;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
@@ -276,7 +277,8 @@ a {
             .description-ctn {
               text-align: justify;
               font-size: clamp(10px, calc(8px + .3vw), 1.8rem);
-              overflow-y: scroll;
+              overflow-y: auto;
+              scrollbar-width: none;
               overflow-wrap: anywhere;
             }
           }
@@ -289,7 +291,8 @@ a {
             justify-content: center;
             gap: 2px 4px;
             flex-wrap: wrap;
-            overflow-y: scroll;
+            overflow-y: auto;
+            scrollbar-width: none;
             a {
               margin: 0;
               padding: 0;

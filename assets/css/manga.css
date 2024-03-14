@@ -4,6 +4,7 @@
 }
 body {
   background-color: #222831;
+  scrollbar-width: none;
 }
 
 .header {
@@ -14,6 +15,7 @@ body {
   justify-content: center;
   gap: 5px;
   padding: 16px 0;
+  overflow-x: hidden;
 }
 .header .main {
   justify-content: space-between;
@@ -23,21 +25,20 @@ body {
   padding: 16px 0;
 }
 .header .main .header-nav {
-  display: inline-flex;
-  flex-wrap: wrap;
-  height: 44px;
+  display: flex;
+  flex: 1 0 max-content;
   align-items: center;
   justify-content: center;
-  gap: 3rem;
-  padding: 0 10px;
-  width: fit-content;
+  gap: clamp(10px, 8%, 3rem);
+  padding: 0 calc(8px + 0.3vw);
+  width: max-content;
 }
 .header .main .header-nav .category-link {
-  width: fit-content;
+  width: max-content;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #00ADB5;
-  font-size: 25px;
+  font-size: calc(15px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
@@ -51,35 +52,36 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px;
-  border-radius: 15px;
+  padding: calc(3px + 0.2vw);
+  border-radius: calc(12px + 0.3vw);
   border: 3px solid #EEEEEE;
   width: 60%;
+  min-width: 7rem;
+  height: fit-content;
   max-width: 400px;
 }
 .header .main .header-search-bar-ctn .header-search-bar .filter-search-bar {
   display: flex;
-  height: fit-content;
   align-items: center;
   justify-content: center;
-  padding: 10px;
+  height: fit-content;
+  padding: calc(4px + 0.2vw);
   background-color: #393E46;
-  border-radius: 8px;
+  border-radius: calc(5px + 0.3vw);
 }
 .header .main .header-search-bar-ctn .header-search-bar .filter-search-bar .filter-search-text {
   width: fit-content;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: 18px;
+  font-size: calc(10px + 0.5vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
-  padding: 2px 4px;
+  padding: 0 calc(2px + 0.2vw);
 }
 .header .main .header-search-bar-ctn .header-search-bar .icon-search {
-  width: 36.3px;
-  height: 35px;
+  height: calc(18px + 0.6vw);
 }
 .header .variable {
   width: 89%;
@@ -91,20 +93,20 @@ body {
   padding: 16px 0;
 }
 .header .variable .header-buttons {
-  height: 35px;
+  height: calc(25px + 0.5vw);
   display: flex;
   align-items: center;
   flex: 1;
-  gap: 2.5rem;
+  gap: calc(20px + 1vw);
 }
 .header .variable .header-buttons .login-btn, .header .variable .header-buttons .register-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  gap: 10px;
-  padding: 10px 25px;
-  border-radius: 12px;
+  gap: calc(8px + 0.3vw);
+  padding: calc(6px + 0.3vw) calc(20px + 0.5vw);
+  border-radius: calc(10px + 0.4vw);
 }
 .header .variable .header-buttons .login-btn {
   background-color: #00ADB5;
@@ -117,7 +119,7 @@ body {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: 18px;
+  font-size: calc(12px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
@@ -130,7 +132,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 1rem;
+  gap: calc(12px + 0.4vw);
   width: fit-content;
   align-items: center;
   position: relative;
@@ -146,7 +148,7 @@ body {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #00ADB5;
-  font-size: 18px;
+  font-size: calc(13px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
@@ -162,7 +164,7 @@ body {
   flex: 1;
   object-position: left;
   object-fit: contain;
-  height: 60px;
+  height: clamp(2rem, 25px + 1.5vw, 60px);
 }
 
 .template {
@@ -177,20 +179,21 @@ body {
 
 .footer {
   display: flex;
-  width: 100%;
-  height: 340px;
-  align-items: flex-end;
-  gap: 3rem;
-  background-color: transparent;
   justify-content: center;
+  align-items: flex-end;
+  gap: calc(2rem + 1vw);
+  width: calc(100% - (13px + 0.4vw) * 2);
+  height: calc(7rem + 10vw);
+  padding: calc(13px + 0.4vw);
+  background-color: transparent;
 }
 .footer .footer-nav-credits {
   display: flex;
   flex-direction: column;
-  width: 37%;
   align-items: center;
-  gap: 9px;
-  padding: 20px 0;
+  gap: calc(5px + 0.3vw);
+  padding: calc(15px + 0.4vw) 0;
+  width: 40%;
 }
 .footer .footer-nav-credits .logo-ctn {
   display: flex;
@@ -201,50 +204,48 @@ body {
   object-position: center;
 }
 .footer .footer-nav-credits .footer-nav {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  position: relative;
-  flex: 0 0 auto;
+  gap: calc(8px + 0.5vw);
 }
 .footer .footer-nav-credits .footer-nav .header-nav-text {
-  width: 221px;
-  height: 25px;
-  margin-top: -1px;
+  width: fit-content;
+  height: calc(15px + 0.4vw);
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: 18px;
+  font-size: calc(13px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
 }
 .footer .footer-nav-credits .credits {
-  width: 630px;
+  width: 90%;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: 16px;
+  font-size: calc(11px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
 }
 .footer .footer-nav-credits .copyright {
-  width: 528px;
+  width: 70%;
   height: 20px;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: 16px;
+  font-size: calc(11px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
 }
 .footer .footer-img-reading {
+  height: 100%;
+  width: 50%;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: 50% 50%;
-  height: 100%;
-  width: 37%;
 }
 
 .manga-presentation {
@@ -264,12 +265,15 @@ body {
 .manga-presentation .manga-banner img.background-img {
   position: absolute;
   width: 100%;
-  height: 100%;
+  height: inherit;
   top: 0;
   left: 0;
   object-fit: cover;
+  object-position: center;
+  filter: blur(8px) grayscale(20%) brightness(50%);
 }
 .manga-presentation .manga-banner .banner-text {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -373,8 +377,8 @@ body {
 .manga-presentation .manga-card-ctn-abs {
   position: absolute;
   top: calc(1.5rem + 1.5vw);
-  left: 0;
-  width: 100%;
+  right: 0;
+  width: calc(100% - (1.5rem + 1.5vw) * 2);
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -385,7 +389,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(200px + 15vw);
+  width: calc(180px + 14vw);
   aspect-ratio: 12/16;
   padding: calc(10px + 0.5vw);
   border-radius: calc(7px + 0.4vw);
@@ -411,17 +415,16 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 80%;
+  width: 60%;
+  padding: 0 calc(22px + 0.5vw);
 }
 .manga-presentation .manga-info .manga-description p {
   width: 100%;
-  text-align: justify;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: calc(14px + 0.8vw);
-  letter-spacing: 0;
-  line-height: normal;
+  font-size: calc(13px + 0.3vw);
+  text-align: justify;
 }
 .manga-presentation .manga-info .manga-description .manga-tag-list {
   display: flex;
@@ -454,7 +457,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  width: 100%;
+  width: calc(100% - 50px);
   padding: 10px 25px;
 }
 .manga-chapters .chapters-header {
@@ -530,6 +533,7 @@ body {
   border-radius: 0 12px 12px 12px;
   background-color: #393E46;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .manga-chapters .chapters-list:nth-child(even) {
   background-color: rgba(238, 238, 238, 0.2);

@@ -1,6 +1,8 @@
-{{define "staticPath"}}static{{end}}
+{{define "staticPath"}}../static{{end}}
 
 {{define "title"}}MangaThorg - {{.Manga.Attributes.Title.En}}{{end}}
+
+{{define "cssFile"}}manga{{end}}
 
 {{define "page"}}
 
@@ -13,33 +15,33 @@
             <div class="manga-attributes">
                 <div class="attribute">
                     <div class="attribute-label">Author</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Author Name>*/}}</div></div>
+                    <div class="div-attr-ctn"><div class="attr-text">Author{{/*<Author Name>*/}}</div></div>
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">Status</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Status>*/}}</div></div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Attributes.Status}}</div></div>
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">Public</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{/*<Public>*/}}</div></div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Attributes.PublicationDemographic}}</div></div>
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">Rating</div>
                     <div class="rating-tag">
                         <img class="icon-star-outline" src="img/icon-star-outline.png" />
-                        <div class="attr-text">{{/*<Rating-bayesian>*/}}</div>
+                        <div class="attr-text">{{.Stat.Rating.Bayesian}}</div>
                     </div>
                 </div>
             </div>
             <a href="/chapter/{{.Manga.Attributes.LatestUploadedChapter}}" class="manga-read-btn">
-                <div class="manga-read-btn-text">Read to {{/*Ch. <chapter-nb>*/}}</div>
+                <div class="manga-read-btn-text">Read to {{.Manga.Attributes.LastChapter}}</div>
                 <img class="icon-menu-book" src="img/icon-menu-book.svg"  alt="read-to logo"/>
             </a>
         </div>
         <a href="" class="manga-remove"><img class="bookmark-remove" src="img/bookmark-remove.png" /></a>
     </div>
     <div class="manga-card-ctn-abs">
-        <div class="manga-card"><img class="manga-card-img" src="img/ending-maker-cover-1.png" /></div>
+        <div class="manga-card"><img class="manga-card-img" src="https://uploads.mangadex.org/covers/{{.Manga.Id}}/{{.Cover.Attributes.FileName}}" alt="{{.Manga.Attributes.Title.En}}" /></div>
     </div>
     <div class="manga-info">
         <div class="manga-description">
@@ -68,12 +70,12 @@
     <div class="chapters-list">
         {{range .Chapters}}
             <div class="chapter">
-                <p class="chapter-title">{{/*<Chapter number and title>*/}}</p>
+                <p class="chapter-title">{{.Attributes.Title}} {{.Attributes.Chapter}}</p>
                 <div class="source">
                     <img class="icon-group" src="img/icon-group-34.png" />
-                    <div class="source-name">{{/*<Scanlation-group>*/}}</div>
+                    <div class="source-name">Scanlation group{{/*<Scanlation-group>*/}}</div>
                 </div>
-                <a href="/chapter/{{/*<chapter-id>*/}}" class="chapter-link"><img class="icon-menu-book" src="img/icon-menu-book-29.png" /></a>
+                <a href="/chapter/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="img/icon-menu-book-29.png" /></a>
             </div>
         {{end}}
     </div>

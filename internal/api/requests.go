@@ -203,6 +203,7 @@ func FeedRequest(id string) models.ApiMangaFeed {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		log.Println("retrieving feed from cache") // testing
+		apiMangaFeed.Sort("desc")
 		return apiMangaFeed
 	}
 	var apiMangaFeed models.ApiMangaFeed
@@ -210,6 +211,8 @@ func FeedRequest(id string) models.ApiMangaFeed {
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
+
+	apiMangaFeed.Sort("desc")
 
 	err = apiMangaFeed.SingleCacheData(id).Write(dataPath+models.Status.MangaFeeds+".json", true)
 	if err != nil {
