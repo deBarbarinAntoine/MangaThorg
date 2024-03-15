@@ -1,0 +1,325 @@
+@import url("https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap");
+@font-face {
+  font-family: "Tilt Neon", sans-serif;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(238, 238, 238, 0.2) #222831;
+}
+* a {
+  text-decoration: none;
+  color: #EEEEEE;
+}
+
+body {
+  background-color: #222831;
+  scrollbar-width: none;
+}
+
+.header {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 16px 0;
+  overflow-x: hidden;
+}
+.header .main {
+  justify-content: space-between;
+  width: 90%;
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+}
+.header .main .header-nav {
+  display: flex;
+  flex: 1 0 max-content;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 8%, 3rem);
+  padding: 0 calc(8px + 0.3vw);
+  width: max-content;
+}
+.header .main .header-nav .category-link {
+  width: max-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #00ADB5;
+  font-size: calc(15px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.header .main .header-search-bar-ctn {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+.header .main .header-search-bar-ctn .header-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: calc(3px + 0.2vw);
+  border-radius: calc(12px + 0.3vw);
+  border: 3px solid #EEEEEE;
+  width: 60%;
+  min-width: 7rem;
+  height: fit-content;
+  max-width: 400px;
+}
+.header .main .header-search-bar-ctn .header-search-bar .filter-search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: fit-content;
+  padding: calc(4px + 0.2vw);
+  background-color: #393E46;
+  border-radius: calc(5px + 0.3vw);
+}
+.header .main .header-search-bar-ctn .header-search-bar .filter-search-bar .filter-search-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(10px + 0.5vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  padding: 0 calc(2px + 0.2vw);
+}
+.header .main .header-search-bar-ctn .header-search-bar .icon-search {
+  height: calc(18px + 0.6vw);
+}
+.header .variable {
+  width: 89%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 2rem;
+  padding: 16px 0;
+}
+.header .variable .header-buttons {
+  height: calc(25px + 0.5vw);
+  display: flex;
+  align-items: center;
+  flex: 1;
+  gap: calc(20px + 1vw);
+}
+.header .variable .header-buttons .login-btn, .header .variable .header-buttons .register-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  gap: calc(8px + 0.3vw);
+  padding: calc(6px + 0.3vw) calc(20px + 0.5vw);
+  border-radius: calc(10px + 0.4vw);
+}
+.header .variable .header-buttons .login-btn {
+  background-color: #00ADB5;
+}
+.header .variable .header-buttons .register-btn {
+  background-color: #393E46;
+}
+.header .variable .header-buttons .header-btn-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.header .variable .filler {
+  display: flex;
+  flex: 1;
+}
+.header .variable .header-msg {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(12px + 0.4vw);
+  width: fit-content;
+  align-items: center;
+  position: relative;
+}
+.header .variable .header-msg .line-top {
+  width: 174px;
+  position: relative;
+  height: 2px;
+}
+.header .variable .header-msg .invitation-msg {
+  position: relative;
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #00ADB5;
+  font-size: calc(13px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.header .variable .header-msg .line-bottom {
+  width: 237px;
+  position: relative;
+  height: 2px;
+}
+
+.logo {
+  display: flex;
+  flex: 1;
+  object-position: left;
+  object-fit: contain;
+  height: clamp(2rem, 25px + 1.5vw, 60px);
+}
+
+.template {
+  display: flex;
+  flex-direction: column;
+  min-height: 60vh;
+  align-items: center;
+  gap: 50px;
+  position: relative;
+  background-color: #222831;
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: calc(2rem + 1vw);
+  width: calc(100% - (13px + 0.4vw) * 2);
+  height: calc(7rem + 10vw);
+  padding: calc(13px + 0.4vw);
+  background-color: transparent;
+}
+.footer .footer-nav-credits {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(5px + 0.3vw);
+  padding: calc(15px + 0.4vw) 0;
+  width: 40%;
+}
+.footer .footer-nav-credits .logo-ctn {
+  display: flex;
+  justify-content: center;
+  width: 70%;
+}
+.footer .footer-nav-credits .logo-ctn .logo {
+  object-position: center;
+}
+.footer .footer-nav-credits .footer-nav {
+  display: flex;
+  align-items: center;
+  gap: calc(8px + 0.5vw);
+}
+.footer .footer-nav-credits .footer-nav .header-nav-text {
+  width: fit-content;
+  height: calc(15px + 0.4vw);
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(13px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.footer .footer-nav-credits .credits {
+  width: 90%;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(11px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.footer .footer-nav-credits .copyright {
+  width: 70%;
+  height: 20px;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(11px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.footer .footer-img-reading {
+  height: 100%;
+  width: 50%;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+}
+
+.ctn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 30px;
+}
+.ctn .error-txt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 25%;
+}
+.ctn .error-txt .text-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+.ctn .error-txt .text-container .text-wrapper {
+  width: max-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(24px + 3vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.ctn .error-txt .text-container .div {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(24px + 3vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.ctn .error-img {
+  width: 30vw;
+  height: 60vh;
+  box-shadow: inset 0px -12px 35px 25px #222831, inset 0px 0px 5px #222831;
+  background-size: contain;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
+}
+.ctn .error-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  width: 35%;
+}
+.ctn .error-info p.p {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(24px + 3vw);
+  text-align: left;
+  letter-spacing: 0;
+  line-height: calc(42px + 5vw);
+}
+
+/*# sourceMappingURL=miscellaneous.css.map */

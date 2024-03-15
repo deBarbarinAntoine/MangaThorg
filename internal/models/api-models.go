@@ -62,6 +62,19 @@ type Chapter struct {
 	} `json:"relationships"`
 }
 
+type ChapterUsefullData struct {
+	Id                 string
+	Title              string
+	Volume             string
+	Chapter            string
+	Pages              int
+	TranslatedLanguage string
+	Uploader           string
+	UpdatedAt          string
+	ScanlationGroupId  string
+	ScanlationGroup    string
+}
+
 type ChapterWhole struct {
 	Info  Chapter
 	Scans ApiChapterScan
@@ -91,7 +104,7 @@ type MangaUsefullData struct {
 	CoverId                string
 	CoverImg               string
 	Rating                 float64
-	Chapters               []Chapter
+	Chapters               []ChapterUsefullData
 	NbChapter              int
 }
 

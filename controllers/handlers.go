@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"log/slog"
@@ -61,7 +60,15 @@ func indexHandlerNoMeth(w http.ResponseWriter, r *http.Request) {
 	log.Println("HTTP ApiErr", http.StatusMethodNotAllowed)
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	utils.Logger.Warn("indexHandlerNoMeth", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusMethodNotAllowed))
-	w.Write([]byte("ApiErr " + fmt.Sprint(http.StatusMethodNotAllowed) + " !"))
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/error404.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
@@ -69,7 +76,15 @@ func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
 	log.Println("HTTP ApiErr", http.StatusNotFound)
 	w.WriteHeader(http.StatusNotFound)
 	utils.Logger.Warn("indexHandlerOther", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
-	w.Write([]byte("ApiErr " + fmt.Sprint(http.StatusNotFound) + " !"))
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/error404.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func loginHandlerGet(w http.ResponseWriter, r *http.Request) {

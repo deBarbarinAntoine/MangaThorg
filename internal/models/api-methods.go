@@ -453,9 +453,40 @@ func (data *Manga) Format() MangaUsefullData {
 	return manga
 }
 
-func (manga *MangaUsefullData) Fill(stats Statistics, chapters []Chapter) {
+func (manga *MangaUsefullData) Fill(stats Statistics, feed ApiMangaFeed) {
 	manga.Rating = math.Round(stats.Rating.Bayesian*10) / 10
-	manga.Chapters = chapters
+	manga.Chapters = feed.Format()
+}
+
+func (data *ApiMangaFeed) Format() []ChapterUsefullData {
+	var chapters []ChapterUsefullData
+	for _, chapter := range data.Data {
+		chapters = append(chapters, chapter.Format())
+	}
+	return chapters
+}
+
+func (data *Chapter) Format() ChapterUsefullData {
+	var chapter = ChapterUsefullData{
+		Id:                 data.Id,
+		Title:              data.Attributes.Title,
+		Volume:             data.Attributes.Volume,
+		Chapter:            data.Attributes.Chapter,
+		Pages:              data.Attributes.Pages,
+		TranslatedLanguage: data.Attributes.TranslatedLanguage,
+		Uploader:           data.Attributes.Uploader,
+		UpdatedAt:          data.Attributes.UpdatedAt,
+		ScanlationGroupId:  "",
+		ScanlationGroup:    "",
+	}
+	for _, relationship := range data.Relationships {
+		if relationship.Type == "scanlation_group" {
+			chapter.ScanlationGroupId = relationship.Id
+			chapter.ScanlationGroup = relationship.Attributes.Name
+			break
+		}
+	}
+	return chapter
 }
 
 func (data *ApiTags) CheckResponse() error {

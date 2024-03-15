@@ -23,25 +23,25 @@
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">Public</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{if .PublicationDemographic}}{{.PublicationDemographic}}{{else}}None{{end}}</div></div>
+                    <div class="div-attr-ctn"><div class="attr-text">{{if .PublicationDemographic}}{{.PublicationDemographic}}{{else}}N/A{{end}}</div></div>
                 </div>
                 <div class="attribute">
                     <div class="attribute-label">Rating</div>
                     <div class="rating-tag">
-                        <img class="icon-star-outline" src="img/icon-star-outline.png" />
+                        <img class="icon-star-outline" src="../static/img/rating-icon.png" alt="rating-icon" />
                         <div class="attr-text">{{.Rating}}</div>
                     </div>
                 </div>
             </div>
             <a href="/chapter/{{.FirstChapterId}}" class="manga-read-btn">
                 <div class="manga-read-btn-text">Begin reading</div>
-                <img class="icon-menu-book" src="img/icon-menu-book.svg"  alt="read-to logo"/>
+                <img class="icon-menu-book" src="../static/img/open-book.png"  alt="read-to logo"/>
             </a>
         </div>
         <a href="" class="manga-remove"><img class="bookmark-remove" src="img/bookmark-remove.png" /></a>
     </div>
     <div class="manga-card-ctn-abs">
-        <div class="manga-card"><img class="manga-card-img" src="/covers/{{.Id}}/{{.CoverImg}}" alt="{{.Title}}" /></div>
+        <div class="manga-card"><div class="manga-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}')"></div></div>
     </div>
     <div class="manga-info">
         <div class="manga-description">
@@ -70,12 +70,12 @@
     <div class="chapters-list">
         {{range .Chapters}}
             <div class="chapter">
-                <p class="chapter-title">Ch. {{.Attributes.Chapter}}{{if .Attributes.Title}}: {{.Attributes.Title}}{{end}} </p>
+                <p class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}} </p>
                 <div class="source">
-                    <img class="icon-group" src="img/icon-group-34.png" />
-                    <div class="source-name">Scanlation group{{/*<Scanlation-group>*/}}</div>
+                    <img class="icon-group" src="../static/img/scanlation-group.png" />
+                    <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
                 </div>
-                <a href="/chapter/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="img/icon-menu-book-29.png" /></a>
+                <a href="/chapter/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
             </div>
         {{end}}
     </div>

@@ -3,6 +3,15 @@
 @font-face {
   font-family: "Tilt Neon", sans-serif;
 }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(238, 238, 238, 0.2) #222831;
+}
+* a {
+  text-decoration: none;
+  color: #EEEEEE;
+}
+
 body {
   background-color: #222831;
   scrollbar-width: none;
@@ -171,7 +180,7 @@ body {
 .template {
   display: flex;
   flex-direction: column;
-  min-height: 1024px;
+  min-height: 60vh;
   align-items: center;
   gap: 50px;
   position: relative;

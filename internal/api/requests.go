@@ -39,7 +39,7 @@ func FetchMangaById(id string) models.MangaUsefullData {
 	apiManga := MangaRequestById(id)
 
 	manga = apiManga.Data.Format()
-	manga.Fill(StatRequest(id), FeedRequest(id).Data)
+	manga.Fill(StatRequest(id), FeedRequest(id))
 
 	return manga
 }

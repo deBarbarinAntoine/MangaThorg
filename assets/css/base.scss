@@ -9,6 +9,15 @@ $foreground: #393E46;
 $blue-elem: #00ADB5;
 $bright-foreground: #EEEEEE33;
 
+* {
+  scrollbar-width: thin;
+  scrollbar-color: $bright-foreground $background;
+  a {
+    text-decoration: none;
+    color: $font-color;
+  }
+}
+
 body {
   background-color: $background;
   scrollbar-width: none;
@@ -197,7 +206,7 @@ body {
 .template {
   display: flex;
   flex-direction: column;
-  min-height: 1024px;
+  min-height: 60vh;
   align-items: center;
   gap: 50px;
   position: relative;

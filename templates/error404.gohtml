@@ -1,0 +1,20 @@
+{{define "staticPath"}}http://localhost:8080/static{{end}}
+
+{{define "title"}}MangaThorg - Sorry{{.Title}}{{end}}
+
+{{define "cssFile"}}miscellaneous{{end}}
+
+{{define "page"}}
+
+<div class="ctn">
+    <div class="error-txt">
+        <div class="text-container">
+            <div class="text-wrapper">ERROR</div>
+            <div class="div">404</div>
+        </div>
+    </div>
+    <div class="error-img" style="background-image: url('http://localhost:8080/static/img/error-img.png')"></div>
+    <div class="error-info"><p class="p">We didn’t find what you were looking for...</p></div>
+</div>
+
+{{end}}

@@ -2,6 +2,15 @@
 @font-face {
   font-family: "Tilt Neon", sans-serif;
 }
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(238, 238, 238, 0.2) #222831;
+}
+* a {
+  text-decoration: none;
+  color: #EEEEEE;
+}
+
 body {
   background-color: #222831;
   scrollbar-width: none;
@@ -170,7 +179,7 @@ body {
 .template {
   display: flex;
   flex-direction: column;
-  min-height: 1024px;
+  min-height: 60vh;
   align-items: center;
   gap: 50px;
   position: relative;
@@ -279,16 +288,20 @@ body {
   justify-content: flex-end;
   align-items: center;
   width: 60%;
+  height: calc(100% - 24px);
 }
 .manga-presentation .manga-banner .banner-text .manga-title {
-  width: fit-content;
+  width: 90%;
   text-align: center;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: calc(2rem + 2vw);
+  font-size: calc(25px + 1.5vw);
   letter-spacing: 0;
   line-height: normal;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .manga-presentation .manga-banner .banner-text .manga-attributes {
   display: flex;
@@ -317,6 +330,10 @@ body {
   letter-spacing: 0;
   line-height: normal;
 }
+.manga-presentation .manga-banner .banner-text .manga-attributes .attribute .rating-tag {
+  display: flex;
+  gap: calc(3px + 0.3vw);
+}
 .manga-presentation .manga-banner .banner-text .manga-attributes .attribute .rating-tag img.icon-star-outline {
   width: calc(1rem + 1vw);
   height: calc(1rem + 1vw);
@@ -329,7 +346,7 @@ body {
   padding: calc(3px + 0.2vw) calc(8px + 0.4vw);
   border-radius: calc(5px + 0.4vw);
 }
-.manga-presentation .manga-banner .banner-text .manga-attributes .attribute .div-attr-ctn .attr-text {
+.manga-presentation .manga-banner .banner-text .manga-attributes .attribute .attr-text {
   width: fit-content;
   text-align: center;
   font-family: "Tilt Neon", sans-serif;
@@ -379,6 +396,7 @@ body {
   top: calc(1.5rem + 1.5vw);
   right: 0;
   width: calc(100% - (1.5rem + 1.5vw) * 2);
+  height: 500px;
   display: flex;
   justify-content: flex-end;
   align-items: center;
@@ -389,7 +407,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: calc(180px + 14vw);
+  width: calc(100px + 18vw);
   aspect-ratio: 12/16;
   padding: calc(10px + 0.5vw);
   border-radius: calc(7px + 0.4vw);
@@ -397,11 +415,12 @@ body {
   background-color: #EEEEEE;
   box-shadow: 0 12px 12px 7px rgba(0, 0, 0, 0.2509803922);
 }
-.manga-presentation .manga-card-ctn-abs .manga-card img.manga-card-img {
-  max-height: 100%;
-  max-width: 100%;
-  object-position: center;
-  object-fit: cover;
+.manga-presentation .manga-card-ctn-abs .manga-card .manga-card-img {
+  width: 100%;
+  height: 100%;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
   border-radius: calc(4px + 0.3vw);
 }
 .manga-presentation .manga-info {
@@ -423,7 +442,7 @@ body {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: calc(13px + 0.3vw);
+  font-size: calc(14px + 0.4vw);
   text-align: justify;
 }
 .manga-presentation .manga-info .manga-description .manga-tag-list {
@@ -437,7 +456,7 @@ body {
 }
 .manga-presentation .manga-info .manga-description .manga-tag-list .manga-tag {
   display: flex;
-  padding: calc(2px + 0.1vw) calc(5px + 0.2vw);
+  padding: calc(3px + 0.2vw) calc(5px + 0.3vw);
   background-color: #393E46;
   border-radius: calc(3px + 0.2vw);
   align-items: center;
@@ -447,7 +466,7 @@ body {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
-  font-size: calc(9px + 0.3vw);
+  font-size: calc(12px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
@@ -463,12 +482,11 @@ body {
 .manga-chapters .chapters-header {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: flex-end;
   width: 100%;
 }
 .manga-chapters .chapters-header .title-ctn {
   display: flex;
-  align-items: center;
   gap: 10px;
   padding: 0 10px;
   background-color: #393E46;
@@ -489,7 +507,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 20px;
-  padding: 10px 0;
+  padding: 10px;
 }
 .manga-chapters .chapters-header .sorting .sort-title {
   width: 100px;
@@ -535,19 +553,20 @@ body {
   overflow-y: auto;
   overflow-x: hidden;
 }
-.manga-chapters .chapters-list:nth-child(even) {
-  background-color: rgba(238, 238, 238, 0.2);
-}
 .manga-chapters .chapters-list .chapter {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
+  width: calc(100% - 40px);
   height: 50px;
   padding: 3px 20px;
 }
+.manga-chapters .chapters-list .chapter:nth-child(even) {
+  background-color: rgba(238, 238, 238, 0.2);
+}
 .manga-chapters .chapters-list .chapter p.chapter-title {
-  flex: 2 0 auto;
+  flex: 1 0 auto;
+  width: 12vw;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #EEEEEE;
@@ -556,7 +575,7 @@ body {
   line-height: normal;
 }
 .manga-chapters .chapters-list .chapter .source {
-  flex: 1 1 content;
+  flex: 1 1 auto;
   display: flex;
   align-items: center;
   gap: 7px;
@@ -566,10 +585,9 @@ body {
   height: 37px;
 }
 .manga-chapters .chapters-list .chapter .source .source-name {
-  width: fit-content;
+  width: 12vw;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
-  text-align: center;
   color: #EEEEEE;
   font-size: 18px;
   letter-spacing: 0;
