@@ -16,6 +16,8 @@ var client = http.Client{
 	Timeout: time.Second * 5,
 }
 
+var ApiErrorStatus bool = false
+
 func (r MangaRequest) Params() MangaRequestParam {
 	return MangaRequestParam{
 		Order:              "order[" + r.OrderType + "]",
@@ -65,7 +67,7 @@ func (r MangaRequest) ToQuery() url.Values {
 	return q
 }
 
-func (data *ApiManga) SingleCacheData(order string) SingleCacheData {
+func (data *ApiManga) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	var cache SingleCacheData
 	if len(data.Data) == 1 {
 		cache.Id = data.Data[0].Id
@@ -73,21 +75,23 @@ func (data *ApiManga) SingleCacheData(order string) SingleCacheData {
 	cache.UpdatedTime = time.Now()
 	cache.Order = order
 	cache.Data = data
+	cache.Page = pag
 	return cache
 }
 
-func (data *ApiCover) SingleCacheData(order string) SingleCacheData {
+func (data *ApiCover) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	var cache SingleCacheData
 	if len(data.Data) == 1 {
 		cache.Id = data.Data[0].Id
 	}
 	cache.UpdatedTime = time.Now()
 	cache.Order = order
+	cache.Page = pag
 	cache.Data = data
 	return cache
 }
 
-func (data *ApiTags) SingleCacheData(order string) SingleCacheData {
+func (data *ApiTags) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	if order != "" {
 		log.Println(errors.New("error: ApiTags.SingleCacheData() order not null"))
 		return SingleCacheData{}
@@ -95,6 +99,7 @@ func (data *ApiTags) SingleCacheData(order string) SingleCacheData {
 	var cache SingleCacheData
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
+	cache.Page = pag
 	return cache
 }
 
@@ -114,25 +119,29 @@ func (data *Manga) SingleCacheData(id string) SingleCacheData {
 	return cache
 }
 
-func (data *ApiMangaFeed) SingleCacheData(id string) SingleCacheData {
+func (data *ApiMangaFeed) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
+	cache.Order = order
+	cache.Page = pag
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
 }
 
-func (data *ApiChapterScan) SingleCacheData(id string) SingleCacheData {
+func (data *ApiChapterScan) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
+	cache.Page = pag
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
 }
 
-func (data *ApiMangaStats) SingleCacheData(id string) SingleCacheData {
+func (data *ApiMangaStats) SingleCacheData(id string, order string, pag int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
+	cache.Page = pag
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
@@ -332,7 +341,10 @@ func Request(url string, query url.Values) ([]byte, error) {
 	return body, err
 }
 
-func (data *ApiMangaStats) Stats(id string) Statistics {
+func (data *ApiMangaStats) Stats(id string) Statistics { // fixme
+	if data.Statistics == nil {
+		log.Println("ApiMangaStats.Stats(): data.Statistics is null") // testing
+	}
 	m := data.Statistics.(map[string]interface{})
 	if value, ok := m[id].(interface{}); ok {
 		var stats Statistics
@@ -456,6 +468,8 @@ func (data *Manga) Format() MangaUsefullData {
 func (manga *MangaUsefullData) Fill(stats Statistics, feed ApiMangaFeed) {
 	manga.Rating = math.Round(stats.Rating.Bayesian*10) / 10
 	manga.Chapters = feed.Format()
+	manga.NbChapter = feed.Total
+	manga.FirstChapterId = manga.Chapters[0].Id
 }
 
 func (data *ApiMangaFeed) Format() []ChapterUsefullData {
@@ -493,10 +507,14 @@ func (data *ApiTags) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -504,10 +522,14 @@ func (data *ApiCover) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -515,10 +537,14 @@ func (data *ApiManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -526,10 +552,14 @@ func (data *ApiSingleManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -537,10 +567,14 @@ func (data *ApiMangaFeed) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -548,10 +582,14 @@ func (data *ApiChapterScan) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }
 
@@ -559,9 +597,13 @@ func (data *ApiMangaStats) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
+			if err.Status >= 500 {
+				ApiErrorStatus = true
+			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
+	ApiErrorStatus = false
 	return nil
 }

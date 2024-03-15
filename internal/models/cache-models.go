@@ -45,5 +45,6 @@ type SingleCacheData struct {
 	Id          string      `json:"id"`
 	UpdatedTime time.Time   `json:"updated_time"`
 	Order       string      `json:"order"`
+	Page        int         `json:"page"`
 	Data        interface{} `json:"data"`
 }

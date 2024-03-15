@@ -1,0 +1,24 @@
+{{define "staticPath"}}../../../static{{end}}
+
+{{define "title"}}MangaThorg - {{.Manga}} Chapter {{.ChapterNb}}{{end}}
+
+{{define "cssFile"}}miscellaneous{{end}}
+
+{{define "page"}}
+
+    <h2>{{.Manga}}</h2>
+        <h3>Chapter {{.ChapterNb}}</h3>
+
+<div class="chapter-scan-list">
+
+    {{$hash := .Scan.Hash}}
+    {{$id := .Id}}
+    {{$quality := .Quality}}
+    {{$alt := .Alt}}
+
+    {{range .Scan.Data }}
+        <img class="chapter-scan" src="/scan/{{$id}}/{{$quality}}/{{$hash}}/{{.}}" alt="{{$alt}}">
+    {{end}}
+</div>
+
+{{end}}

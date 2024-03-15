@@ -25,9 +25,10 @@ func Init() {
 	Mux.HandleFunc("GET /image", controllers.ShowCoverImageHandlerGetBundle)
 	Mux.HandleFunc("GET /tags", controllers.TagsRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /feed", controllers.FeedRequestHandlerGetBundle)
-	Mux.HandleFunc("GET /scan", controllers.ChapterScanRequestHandlerGetBundle)
+	Mux.HandleFunc("GET /chapter/{mangaId}/{chapterNb}/{chapterId}", controllers.ChapterHandlerGetBundle)
 	Mux.HandleFunc("GET /mangatest", controllers.MangaWholeRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /covers/{manga}/{img}", controllers.CoversHandlerGetBundle)
+	Mux.HandleFunc("GET /scan/{chapterId}/{quality}/{hash}/{img}", controllers.ScanHandlerGetBundle)
 
 	// Handling MethodNotAllowed error on /
 	Mux.HandleFunc("/{$}", controllers.IndexHandlerNoMethBundle)

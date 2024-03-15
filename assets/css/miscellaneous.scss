@@ -1,5 +1,32 @@
 @import "base";
 
+.chapter-scan-list {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: fit-content;
+  img.chapter-scan {
+    object-fit: contain;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+
+  .page-link {
+    width: fit-content;
+    font-family: "Tilt Neon", sans-serif;
+    font-weight: 400;
+    color: $font-color;
+    font-size: calc(18px + 3vw);
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+}
+
 .ctn {
   display: flex;
   align-items: center;

@@ -33,7 +33,7 @@ func retrieveCacheData(info string) models.CacheData {
 	return cacheData
 }
 
-func retrieveSingleCacheData(info string, id string) models.SingleCacheData {
+func retrieveSingleCacheData(info string, id string, order string, pag int) models.SingleCacheData {
 	cacheData := retrieveCacheData(info)
 
 	if id == "" && cacheData != nil {
@@ -44,7 +44,7 @@ func retrieveSingleCacheData(info string, id string) models.SingleCacheData {
 	}
 
 	for _, datum := range cacheData {
-		if datum.Id == id {
+		if datum.Id == id && datum.Order == order && datum.Page == pag {
 			return datum
 		}
 	}
@@ -116,9 +116,9 @@ func isCache(r models.MangaRequest) (bool, string, string) {
 func cacheRequest(r models.MangaRequest) models.SingleCacheData {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
-		return retrieveSingleCacheData(models.Status.Popular, "")
+		return retrieveSingleCacheData(models.Status.Popular, "", "", 1)
 	case reflect.DeepEqual(r, TopLatestUploadedRequest):
-		return retrieveSingleCacheData(models.Status.LastUploaded, "")
+		return retrieveSingleCacheData(models.Status.LastUploaded, "", "", 1)
 	default:
 		return models.SingleCacheData{}
 	}
@@ -189,7 +189,7 @@ func updateCacheStatus(info string, id string) {
 
 func cacheCover(id string, index int, covers *[]models.Cover) bool {
 	if checkStatus(models.Status.Covers, id) {
-		coverCache := retrieveSingleCacheData(models.Status.Covers, id)
+		coverCache := retrieveSingleCacheData(models.Status.Covers, id, "", 1)
 
 		// checking if the cover has been found
 		if reflect.DeepEqual(coverCache, models.SingleCacheData{}) {

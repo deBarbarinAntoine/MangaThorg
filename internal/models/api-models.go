@@ -6,7 +6,7 @@ import (
 )
 
 type ApiData interface {
-	SingleCacheData(order string) SingleCacheData
+	SingleCacheData(id string, order string, pag int) SingleCacheData
 	SendRequest(baseURL string, endpoint string, query url.Values) error
 	CheckResponse() error
 }

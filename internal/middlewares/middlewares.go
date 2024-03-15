@@ -83,6 +83,19 @@ var OnlyVisitors models.Middleware = func(next http.HandlerFunc) http.HandlerFun
 	}
 }
 
+// CheckApi is a models.Middleware that checks if the API is working properly,
+// and if no, it redirects to the API error handler.
+var CheckApi models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		next.ServeHTTP(w, r)
+		log.Println("middlewares.CheckApi()")
+		if models.ApiErrorStatus {
+			http.Redirect(w, r, "/error50X", http.StatusSeeOther)
+			return
+		}
+	}
+}
+
 // Join is used to concatenate various middlewares, for better visibility.
 // it takes the http.HandlerFunc corresponding to the route, and then
 // any number of models.Middleware that will be concatenated in order like this:

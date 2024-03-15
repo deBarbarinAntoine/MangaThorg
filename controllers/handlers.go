@@ -10,6 +10,7 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -251,7 +252,7 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 		LatestUploaded []models.MangaUsefullData
 		Popular        []models.MangaUsefullData
 	}{
-		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa"),
+		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa", "asc", 1),
 		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest),
 		Popular:        api.FetchManga(api.TopPopularRequest),
 	}
@@ -267,11 +268,40 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if mangaId == "" {
 		http.Redirect(w, r, "/principal", http.StatusNotFound)
 	}
+	var order, pagination string = "desc", "1"
+	if r.URL.Query().Has("order") {
+		order = r.URL.Query().Get("order")
+	}
+	if r.URL.Query().Has("pag") {
+		pagination = r.URL.Query().Get("pag")
+	}
+	pag, errAtoi := strconv.Atoi(pagination)
+	if errAtoi != nil {
+		pag = 1
+	}
 	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "base", api.FetchMangaById(mangaId))
+	manga := api.FetchMangaById(mangaId, order, pag)
+	var pages []int
+	pageMax := (manga.NbChapter / 15) - 1
+	for i := range pageMax {
+		pages = append(pages, i+1)
+	}
+	var data = struct {
+		Manga       models.MangaUsefullData
+		CurrentPage int
+		Pages       []int
+		Order       string
+	}{
+		Manga:       manga,
+		CurrentPage: pag,
+		Pages:       pages,
+		Order:       order,
+	}
+	log.Println("pages:", data.Pages)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -300,7 +330,7 @@ func tagsRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 func feedRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.FeedRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
+	json.NewEncoder(w).Encode(api.FeedRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd", "desc", 1))
 }
 
 func chapterScanRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
@@ -312,7 +342,7 @@ func chapterScanRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 func mangaWholeRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.FetchMangaById("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
+	json.NewEncoder(w).Encode(api.FetchMangaById("d1a9fdeb-f713-407f-960c-8326b586e6fd", "desc", 1))
 }
 
 func coverHandlerGet(w http.ResponseWriter, r *http.Request) {
@@ -326,5 +356,72 @@ func coverHandlerGet(w http.ResponseWriter, r *http.Request) {
 	_, err := w.Write(api.ImageProxy(mangaId, img))
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func scanHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	chapterId := r.PathValue("chapterId")
+	quality := r.PathValue("quality")
+	hash := r.PathValue("hash")
+	img := r.PathValue("img")
+	if chapterId == "" || quality == "" || hash == "" || img == "" {
+		log.Println("empty value")
+		return
+	}
+	w.Header().Set("Content-Type", "image/jpeg")
+	i, err := w.Write(api.ScanProxy(chapterId, quality, hash, img))
+	if err != nil || i == 0 {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		w.WriteHeader(http.StatusNotFound)
+	}
+}
+
+func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	mangaId := r.PathValue("mangaId")
+	chapterNb := r.PathValue("chapterNb")
+	chapterId := r.PathValue("chapterId")
+	if chapterId == "" || mangaId == "" || chapterNb == "" {
+		http.Redirect(w, r, "/error404", http.StatusNotFound)
+		return
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/chapter.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	scan := api.ScanRequest(chapterId)
+	var data = struct {
+		Manga     string
+		ChapterNb string
+		Id        string
+		Quality   string
+		Alt       string
+		Scan      struct {
+			Hash      string
+			Data      []string
+			DataSaver []string
+		}
+	}{
+		Manga:     api.FetchMangaById(mangaId, "desc", 1).Title,
+		ChapterNb: chapterNb,
+		Id:        chapterId,
+		Quality:   "data",
+		Alt:       "",
+		Scan: struct {
+			Hash      string
+			Data      []string
+			DataSaver []string
+		}{
+			Hash:      scan.Chapter.Hash,
+			Data:      scan.Chapter.Data,
+			DataSaver: scan.Chapter.DataSaver,
+		},
+	}
+	data.Alt = data.Manga + " - Ch. " + data.ChapterNb
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
