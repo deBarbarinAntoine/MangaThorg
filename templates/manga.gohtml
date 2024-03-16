@@ -57,14 +57,21 @@
     </div>
 </div>
 
+{{$current := .CurrentPage}}
+
         <!-- Manga Chapter-list -->
 <div class="manga-chapters">
     <div class="chapters-header">
         <div class="title-ctn"><div class="title">Chapters</div></div>
         <div class="sorting">
             <div class="sort-title">Sort:</div>
-            <div class="sort-tag {{if eq .Order "desc"}}selected{{end}}"><div class="sort-tag-text">Descending</div></div>
-            <div class="sort-tag {{if eq .Order "asc"}}selected{{end}}"><div class="sort-tag-text">Ascending</div></div>
+            {{if eq .Order "desc"}}
+                <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
+                <a href="?order=asc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Ascending</div></a>
+            {{else if eq .Order "asc"}}
+                <a href="?order=desc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Descending</div></a>
+                <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
+            {{end}}
         </div>
     </div>
     <div class="chapters-list">
@@ -83,7 +90,6 @@
 </div>
 
 <div class="pagination">
-    {{$current := .CurrentPage}}
     {{$order := .Order}}
 
     {{range .Pages}}

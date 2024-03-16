@@ -3,7 +3,6 @@ package api
 import (
 	"encoding/json"
 	"errors"
-	"log"
 	"log/slog"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
@@ -33,23 +32,23 @@ func retrieveCacheData(info string) models.CacheData {
 	return cacheData
 }
 
-func retrieveSingleCacheData(info string, id string, order string, pag int) models.SingleCacheData {
+func retrieveSingleCacheData(info string, id string, order string, offset int) models.SingleCacheData {
 	cacheData := retrieveCacheData(info)
 
 	if id == "" && cacheData != nil {
 		return cacheData[0]
 	} else if cacheData == nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: CacheData not found")))
-		return models.SingleCacheData{}
+		return models.SingleCacheData{Data: nil}
 	}
 
 	for _, datum := range cacheData {
-		if datum.Id == id && datum.Order == order && datum.Page == pag {
+		if datum.Id == id && datum.Order == order && datum.Offset == offset {
 			return datum
 		}
 	}
 	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: SingleCacheData not found")))
-	return models.SingleCacheData{}
+	return models.SingleCacheData{Data: nil}
 }
 
 func checkCache(info string, id string) bool {
@@ -59,7 +58,7 @@ func checkCache(info string, id string) bool {
 
 	cacheData := retrieveCacheData(info)
 
-	return cacheData.Exists(id)
+	return cacheData.Exists(id, "", 0)
 }
 
 func checkStatus(info string, id string) bool {
@@ -87,8 +86,6 @@ func checkStatus(info string, id string) bool {
 		return status.Categories != nil && slices.Contains(status.Categories, id)
 	case models.Status.ChaptersScan:
 		return status.ChaptersScan != nil && slices.Contains(status.ChaptersScan, id)
-	case models.Status.Covers:
-		return status.Covers != nil && slices.Contains(status.Covers, id)
 	case models.Status.MangaFeeds:
 		return status.MangaFeeds != nil && slices.Contains(status.MangaFeeds, id)
 	case models.Status.MangaStats:
@@ -116,9 +113,9 @@ func isCache(r models.MangaRequest) (bool, string, string) {
 func cacheRequest(r models.MangaRequest) models.SingleCacheData {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
-		return retrieveSingleCacheData(models.Status.Popular, "", "", 1)
+		return retrieveSingleCacheData(models.Status.Popular, "", "", 0)
 	case reflect.DeepEqual(r, TopLatestUploadedRequest):
-		return retrieveSingleCacheData(models.Status.LastUploaded, "", "", 1)
+		return retrieveSingleCacheData(models.Status.LastUploaded, "", "", 0)
 	default:
 		return models.SingleCacheData{}
 	}
@@ -153,11 +150,6 @@ func updateCacheStatus(info string, id string) {
 			return
 		}
 		status.ChaptersScan = append(status.ChaptersScan, id)
-	case models.Status.Covers:
-		if slices.Contains(status.Covers, id) {
-			return
-		}
-		status.Covers = append(status.Covers, id)
 	case models.Status.MangaFeeds:
 		if slices.Contains(status.MangaFeeds, id) {
 			return
@@ -185,29 +177,6 @@ func updateCacheStatus(info string, id string) {
 	if errWrite != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errWrite))
 	}
-}
-
-func cacheCover(id string, index int, covers *[]models.Cover) bool {
-	if checkStatus(models.Status.Covers, id) {
-		coverCache := retrieveSingleCacheData(models.Status.Covers, id, "", 1)
-
-		// checking if the cover has been found
-		if reflect.DeepEqual(coverCache, models.SingleCacheData{}) {
-			log.Println("failed to retrieve cover from cache")
-			deleteCacheStatus(models.Status.Covers, id)
-			return false
-		}
-
-		apiCover, err := coverCache.Cover()
-		if err != nil {
-			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-		}
-
-		log.Println("retrieving cover from cache") // testing
-		(*covers)[index] = apiCover
-		return true
-	}
-	return false
 }
 
 func isOldCache(data models.SingleCacheData) bool {
@@ -248,11 +217,6 @@ func deleteCacheStatus(info string, id string) {
 		if index != -1 {
 			status.ChaptersScan = append(status.ChaptersScan[:index], status.ChaptersScan[index+1:]...)
 		}
-	case models.Status.Covers:
-		index := slices.Index(status.Covers, id)
-		if index != -1 {
-			status.Covers = append(status.Covers[:index], status.Covers[index+1:]...)
-		}
 	case models.Status.MangaFeeds:
 		index := slices.Index(status.MangaFeeds, id)
 		if index != -1 {
@@ -292,7 +256,7 @@ func deleteCacheData(info string, data models.SingleCacheData) {
 	default:
 		cacheData := retrieveCacheData(info)
 		var err error
-		cacheData, err = cacheData.Delete(data.Id)
+		cacheData, err = cacheData.Delete(data.Id, data.Order, data.Offset)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}

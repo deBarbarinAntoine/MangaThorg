@@ -267,25 +267,40 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	mangaId := r.PathValue("id")
 	if mangaId == "" {
 		http.Redirect(w, r, "/principal", http.StatusNotFound)
+		return
 	}
-	var order, pagination string = "desc", "1"
+	var order, pagination string
 	if r.URL.Query().Has("order") {
 		order = r.URL.Query().Get("order")
+	} else {
+		order = "desc"
 	}
 	if r.URL.Query().Has("pag") {
 		pagination = r.URL.Query().Get("pag")
+	} else {
+		pagination = "1"
 	}
 	pag, errAtoi := strconv.Atoi(pagination)
 	if errAtoi != nil {
+		pag = 1
+	}
+	if order != "asc" && order != "desc" {
+		order = "desc"
+	}
+	if pag < 1 {
 		pag = 1
 	}
 	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	manga := api.FetchMangaById(mangaId, order, pag)
+	offset := (pag - 1) * 15
+	manga := api.FetchMangaById(mangaId, order, offset)
 	var pages []int
-	pageMax := (manga.NbChapter / 15) - 1
+	pageMax := manga.NbChapter / 15
+	if manga.NbChapter%15 > 0 {
+		pageMax++
+	}
 	for i := range pageMax {
 		pages = append(pages, i+1)
 	}
@@ -304,20 +319,6 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-	}
-}
-
-func showCoverImageHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	cover := api.CoverRequest([]string{"48f71892-0983-4149-9b26-ae7e5dd97728"})
-	html := "<img src=\"https://uploads.mangadex.org/covers/cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa/" + cover[0].Attributes.FileName + "\" />"
-	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "index", template.HTML(html))
-	if err != nil {
-		log.Fatalln(err)
 	}
 }
 

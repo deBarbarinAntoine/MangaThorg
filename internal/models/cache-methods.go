@@ -6,18 +6,18 @@ import (
 	"os"
 )
 
-func (cache CacheData) Exists(id string) bool {
+func (cache CacheData) Exists(id string, order string, offset int) bool {
 	for _, data := range cache {
-		if data.Id == id {
+		if data.Id == id && data.Order == order && data.Offset == offset {
 			return true
 		}
 	}
 	return false
 }
 
-func (cache CacheData) Select(id string) SingleCacheData {
+func (cache CacheData) Select(id string, order string, offset int) SingleCacheData {
 	for _, data := range cache {
-		if data.Id == id {
+		if data.Id == id && data.Order == order && data.Offset == offset {
 			return data
 		}
 	}
@@ -26,7 +26,7 @@ func (cache CacheData) Select(id string) SingleCacheData {
 
 func (cache CacheData) Update(newDatum SingleCacheData) (CacheData, error) {
 	for ind, data := range cache {
-		if data.Id == newDatum.Id {
+		if data.Id == newDatum.Id && data.Order == newDatum.Order && data.Offset == newDatum.Offset {
 			cache[ind] = newDatum
 			return cache, nil
 		}
@@ -34,11 +34,11 @@ func (cache CacheData) Update(newDatum SingleCacheData) (CacheData, error) {
 	return nil, errors.New("SingleCacheData not found")
 }
 
-func (cache CacheData) Delete(id string) (CacheData, error) {
+func (cache CacheData) Delete(id string, order string, offset int) (CacheData, error) {
 	var idx int
 	var found bool
 	for i, single := range cache {
-		if single.Id == id {
+		if single.Id == id && single.Order == order && single.Offset == offset {
 			idx = i
 			found = true
 			break
@@ -74,19 +74,6 @@ func (datum SingleCacheData) Manga() (Manga, error) {
 		return Manga{}, err
 	}
 	return manga, nil
-}
-
-func (datum SingleCacheData) Cover() (Cover, error) {
-	var cover Cover
-	data, err := json.Marshal(datum.Data)
-	if err != nil {
-		return Cover{}, err
-	}
-	err = json.Unmarshal(data, &cover)
-	if err != nil {
-		return Cover{}, err
-	}
-	return cover, nil
 }
 
 func (datum SingleCacheData) ApiTags() (ApiTags, error) {
@@ -155,7 +142,7 @@ func (datum SingleCacheData) Write(filePath string, Append bool) error {
 			}
 		}
 	}
-	if cacheData.Exists(datum.Id) {
+	if cacheData.Exists(datum.Id, datum.Order, datum.Offset) {
 		var err error
 		cacheData, err = cacheData.Update(datum)
 		if err != nil {

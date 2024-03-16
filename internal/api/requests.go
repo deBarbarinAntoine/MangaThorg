@@ -35,19 +35,19 @@ var TopLatestUploadedRequest = models.MangaRequest{
 //
 //}
 
-func FetchMangaById(id string, order string, pag int) models.MangaUsefullData {
+func FetchMangaById(id string, order string, offset int) models.MangaUsefullData {
 	var manga models.MangaUsefullData
 	apiManga := MangaRequestById(id)
 
 	manga = apiManga.Data.Format()
-	manga.Fill(StatRequest(id), FeedRequest(id, order, pag))
+	manga.Fill(StatRequest(id), FeedRequest(id, order, offset))
 
 	return manga
 }
 
 func MangaRequestById(id string) models.ApiSingleManga {
 	if checkStatus(models.Status.Mangas, id) {
-		mangaCache := retrieveSingleCacheData(models.Status.Mangas, id, "", 1)
+		mangaCache := retrieveSingleCacheData(models.Status.Mangas, id, "", 0)
 		manga, err := mangaCache.Manga()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -68,7 +68,7 @@ func MangaRequestById(id string) models.ApiSingleManga {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = apiSingleManga.Data.SingleCacheData(id).Write(dataPath+models.Status.Mangas+".json", false)
+	err = apiSingleManga.Data.SingleCacheData(id, "desc", 0).Write(dataPath+models.Status.Mangas+".json", false)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -85,23 +85,6 @@ func FetchManga(request models.MangaRequest) []models.MangaUsefullData {
 	apiManga := MangaRequest(request)
 
 	return apiManga.Format()
-}
-
-func wrapMangas(mangas []models.Manga, covers []models.Cover, coversId []string) []models.MangaWhole {
-	var result []models.MangaWhole
-	for i, manga := range mangas {
-		for _, cover := range covers {
-			if coversId[i] == cover.Id {
-				var mangaWhole = models.MangaWhole{
-					Manga: manga,
-					Cover: cover,
-				}
-				result = append(result, mangaWhole)
-				break
-			}
-		}
-	}
-	return result
 }
 
 func MangaRequest(request models.MangaRequest) models.ApiManga {
@@ -122,7 +105,7 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	}
 
 	if info != "" {
-		err = apiManga.SingleCacheData("", request.OrderValue, 1).Write(dataPath+info+".json", id != "")
+		err = apiManga.SingleCacheData("", request.OrderValue, 0).Write(dataPath+info+".json", id != "")
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
@@ -132,46 +115,9 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	return apiManga
 }
 
-func CoverRequest(ids []string) []models.Cover {
-	var allCovers = make([]models.Cover, len(ids))
-	var toRequest = make(map[int]bool)
-	for i, id := range ids {
-		toRequest[i] = !cacheCover(id, i, &allCovers)
-	}
-
-	if len(toRequest) == 0 {
-		return allCovers
-	}
-
-	var apiCoverResponse models.ApiCover
-	var query = make(url.Values)
-	for i := range toRequest {
-		query.Add("ids[]", ids[i])
-	}
-	err := apiCoverResponse.SendRequest(baseURL, "cover", query)
-	if err != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-	}
-
-	covers, errDiv := apiCoverResponse.Divide()
-	if errDiv != nil {
-		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-	}
-
-	for _, cover := range covers {
-		cache := cover.SingleCacheData()
-		err = cache.Write(dataPath+models.Status.Covers+".json", true)
-		if err != nil {
-			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-		}
-		updateCacheStatus(models.Status.Covers, cache.Id)
-	}
-	return append(allCovers, covers...)
-}
-
 func TagsRequest() models.ApiTags {
 	if checkStatus(models.Status.Tags, "") {
-		tagCache := retrieveSingleCacheData(models.Status.Tags, "", "", 1)
+		tagCache := retrieveSingleCacheData(models.Status.Tags, "", "", 0)
 		apiTags, err := tagCache.ApiTags()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -186,7 +132,7 @@ func TagsRequest() models.ApiTags {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = apiTags.SingleCacheData("", "", 1).Write(dataPath+models.Status.Tags+".json", false)
+	err = apiTags.SingleCacheData("", "", 0).Write(dataPath+models.Status.Tags+".json", false)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -195,17 +141,18 @@ func TagsRequest() models.ApiTags {
 	return apiTags
 }
 
-func FeedRequest(id, order string, pag int) models.ApiMangaFeed {
+func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 
 	// retrieving the total number of chapters
 	var total int
 	if checkStatus(models.Status.MangaFeeds, id) {
-		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, "", 1)
+		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, "desc", 0)
 		apiMangaFeed, err := feedCache.ApiMangaFeed()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
+		log.Println("total from cache:", total) // testing
 	} else {
 		var apiMangaFeed models.ApiMangaFeed
 
@@ -220,18 +167,19 @@ func FeedRequest(id, order string, pag int) models.ApiMangaFeed {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
+		log.Println("total from request:", total) // testing
 	}
 
-	// setting the offset according to the page number
-	var offset int
-	if total >= pag*15 {
-		pag = total / 15
+	// checking the offset value
+	if total != 0 && total <= offset {
+		offset = (total / 15) - 1
 	}
-	offset = pag * 15
+
+	log.Println("offset:", offset) // testing
 
 	if checkStatus(models.Status.MangaFeeds, id) {
-		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, "", 1)
-		if !reflect.DeepEqual(feedCache, models.SingleCacheData{}) {
+		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, order, offset)
+		if feedCache.Data != nil {
 			apiMangaFeed, err := feedCache.ApiMangaFeed()
 			if err != nil {
 				utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -256,7 +204,7 @@ func FeedRequest(id, order string, pag int) models.ApiMangaFeed {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = apiMangaFeed.SingleCacheData(id, order, pag).Write(dataPath+models.Status.MangaFeeds+".json", true)
+	err = apiMangaFeed.SingleCacheData(id, order, offset).Write(dataPath+models.Status.MangaFeeds+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -267,7 +215,7 @@ func FeedRequest(id, order string, pag int) models.ApiMangaFeed {
 
 func ScanRequest(id string) models.ApiChapterScan {
 	if checkStatus(models.Status.ChaptersScan, id) {
-		scanCache := retrieveSingleCacheData(models.Status.ChaptersScan, id, "", 1)
+		scanCache := retrieveSingleCacheData(models.Status.ChaptersScan, id, "", 0)
 		apiChapterScan, err := scanCache.ApiChapterScan()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -281,7 +229,7 @@ func ScanRequest(id string) models.ApiChapterScan {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = apiChapterScan.SingleCacheData(id, "", 1).Write(dataPath+models.Status.ChaptersScan+".json", true)
+	err = apiChapterScan.SingleCacheData(id, "", 0).Write(dataPath+models.Status.ChaptersScan+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -292,7 +240,7 @@ func ScanRequest(id string) models.ApiChapterScan {
 
 func StatRequest(id string) models.Statistics {
 	if checkStatus(models.Status.MangaStats, id) {
-		statCache := retrieveSingleCacheData(models.Status.MangaStats, id, "", 1)
+		statCache := retrieveSingleCacheData(models.Status.MangaStats, id, "", 0)
 		apiMangaStats, err := statCache.ApiMangaStats()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -310,7 +258,7 @@ func StatRequest(id string) models.Statistics {
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	err = apiMangaStats.SingleCacheData(id, "", 1).Write(dataPath+models.Status.MangaStats+".json", true)
+	err = apiMangaStats.SingleCacheData(id, "", 0).Write(dataPath+models.Status.MangaStats+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}

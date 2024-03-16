@@ -144,7 +144,7 @@
   .manga-card-ctn-abs {
     position: absolute;
     top: calc(1.5rem + 1.5vw);
-    right: 0;
+    right: calc(1rem + 2.5vw);
     width: calc(100% - calc(calc(1.5rem + 1.5vw) * 2));
     height: 500px;
     display: flex;
@@ -364,5 +364,32 @@
         }
       }
     }
+  }
+}
+
+
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  width: fit-content;
+  height: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: $foreground;
+
+  .page-link {
+      width: fit-content;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: $font-color;
+      font-size: calc(14px + .5vw);
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+  }
+  span.page-link {
+    color: $blue-elem;
   }
 }

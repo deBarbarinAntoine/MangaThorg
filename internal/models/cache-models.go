@@ -19,7 +19,6 @@ var Status = struct {
 	Tags:         "tags",
 	Categories:   "categories",
 	Mangas:       "mangas",
-	Covers:       "covers",
 	MangaFeeds:   "manga_feeds",
 	ChaptersScan: "chapters_scan",
 	MangaStats:   "manga_stats",
@@ -31,7 +30,6 @@ type StatusCache struct {
 	Tags         bool     `json:"tags"`
 	Categories   []string `json:"categories"`
 	Mangas       []string `json:"mangas"`
-	Covers       []string `json:"covers"`
 	MangaFeeds   []string `json:"manga_feeds"`
 	ChaptersScan []string `json:"chapters_scan"`
 	MangaStats   []string `json:"manga_stats"`
@@ -45,6 +43,6 @@ type SingleCacheData struct {
 	Id          string      `json:"id"`
 	UpdatedTime time.Time   `json:"updated_time"`
 	Order       string      `json:"order"`
-	Page        int         `json:"page"`
+	Offset      int         `json:"offset"`
 	Data        interface{} `json:"data"`
 }

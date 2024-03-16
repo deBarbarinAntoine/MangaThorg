@@ -267,22 +267,6 @@ body {
   object-fit: contain;
 }
 
-.pagination {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-}
-.pagination .page-link {
-  width: fit-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(18px + 3vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
-}
-
 .ctn {
   display: flex;
   align-items: center;

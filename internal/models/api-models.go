@@ -6,7 +6,7 @@ import (
 )
 
 type ApiData interface {
-	SingleCacheData(id string, order string, pag int) SingleCacheData
+	SingleCacheData(id string, order string, offset int) SingleCacheData
 	SendRequest(baseURL string, endpoint string, query url.Values) error
 	CheckResponse() error
 }
@@ -78,14 +78,6 @@ type ChapterUsefullData struct {
 type ChapterWhole struct {
 	Info  Chapter
 	Scans ApiChapterScan
-}
-
-// MangaWhole is the structure that wraps all manga related info.
-type MangaWhole struct {
-	Manga    Manga
-	Cover    Cover
-	Chapters []Chapter
-	Stat     Statistics
 }
 
 type MangaUsefullData struct {
@@ -232,40 +224,6 @@ type ApiSingleManga struct {
 	Limit    int      `json:"limit,omitempty"`
 	Offset   int      `json:"offset,omitempty"`
 	Total    int      `json:"total,omitempty"`
-}
-
-// ApiCover is the data structure for the Cover request to MangaDex API.
-//
-//	Request: GET https://api.mangadex.org/cover/{manga-id}
-type ApiCover struct {
-	Result   string   `json:"result"`
-	Errors   []ApiErr `json:"errors,omitempty"`
-	Response string   `json:"response"`
-	Data     []Cover  `json:"data"`
-	Limit    int      `json:"limit"`
-	Offset   int      `json:"offset"`
-	Total    int      `json:"total"`
-}
-
-// Cover is the common structure for Covers used by MangaDex API.
-type Cover struct {
-	Id         string `json:"id"`
-	Type       string `json:"type"`
-	Attributes struct {
-		Volume      string `json:"volume"`
-		FileName    string `json:"fileName"`
-		Description string `json:"description"`
-		Locale      string `json:"locale"`
-		Version     int    `json:"version"`
-		CreatedAt   string `json:"createdAt"`
-		UpdatedAt   string `json:"updatedAt"`
-	} `json:"attributes"`
-	Relationships []struct {
-		Id         string      `json:"id"`
-		Type       string      `json:"type"`
-		Related    string      `json:"related"`
-		Attributes interface{} `json:"attributes"`
-	} `json:"relationships"`
 }
 
 // ApiTags is the data structure for the Tag request to MangaDex API.

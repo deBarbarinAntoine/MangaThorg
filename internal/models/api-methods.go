@@ -67,7 +67,7 @@ func (r MangaRequest) ToQuery() url.Values {
 	return q
 }
 
-func (data *ApiManga) SingleCacheData(id string, order string, pag int) SingleCacheData {
+func (data *ApiManga) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	if len(data.Data) == 1 {
 		cache.Id = data.Data[0].Id
@@ -75,23 +75,11 @@ func (data *ApiManga) SingleCacheData(id string, order string, pag int) SingleCa
 	cache.UpdatedTime = time.Now()
 	cache.Order = order
 	cache.Data = data
-	cache.Page = pag
+	cache.Offset = offset
 	return cache
 }
 
-func (data *ApiCover) SingleCacheData(id string, order string, pag int) SingleCacheData {
-	var cache SingleCacheData
-	if len(data.Data) == 1 {
-		cache.Id = data.Data[0].Id
-	}
-	cache.UpdatedTime = time.Now()
-	cache.Order = order
-	cache.Page = pag
-	cache.Data = data
-	return cache
-}
-
-func (data *ApiTags) SingleCacheData(id string, order string, pag int) SingleCacheData {
+func (data *ApiTags) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	if order != "" {
 		log.Println(errors.New("error: ApiTags.SingleCacheData() order not null"))
 		return SingleCacheData{}
@@ -99,19 +87,11 @@ func (data *ApiTags) SingleCacheData(id string, order string, pag int) SingleCac
 	var cache SingleCacheData
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
-	cache.Page = pag
+	cache.Offset = offset
 	return cache
 }
 
-func (data *Cover) SingleCacheData() SingleCacheData {
-	var cache SingleCacheData
-	cache.Id = data.Id
-	cache.UpdatedTime = time.Now()
-	cache.Data = data
-	return cache
-}
-
-func (data *Manga) SingleCacheData(id string) SingleCacheData {
+func (data *Manga) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
 	cache.UpdatedTime = time.Now()
@@ -119,29 +99,29 @@ func (data *Manga) SingleCacheData(id string) SingleCacheData {
 	return cache
 }
 
-func (data *ApiMangaFeed) SingleCacheData(id string, order string, pag int) SingleCacheData {
+func (data *ApiMangaFeed) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
 	cache.Order = order
-	cache.Page = pag
+	cache.Offset = offset
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
 }
 
-func (data *ApiChapterScan) SingleCacheData(id string, order string, pag int) SingleCacheData {
+func (data *ApiChapterScan) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
-	cache.Page = pag
+	cache.Offset = offset
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
 }
 
-func (data *ApiMangaStats) SingleCacheData(id string, order string, pag int) SingleCacheData {
+func (data *ApiMangaStats) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
-	cache.Page = pag
+	cache.Offset = offset
 	cache.UpdatedTime = time.Now()
 	cache.Data = data
 	return cache
@@ -181,28 +161,6 @@ func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query u
 	query.Add("includes[]", "cover_art")
 	query.Add("includes[]", "author")
 
-	body, err := Request(baseURL+endpoint, query)
-	if err != nil {
-		return err
-	}
-
-	err = json.Unmarshal(body, data)
-	if err != nil {
-		return err
-	}
-
-	err = data.CheckResponse()
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (data *ApiCover) SendRequest(baseURL string, endpoint string, query url.Values) error {
-	if query == nil {
-		query = make(url.Values)
-	}
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
@@ -361,55 +319,12 @@ func (data *ApiMangaStats) Stats(id string) Statistics { // fixme
 	return Statistics{}
 }
 
-func (data *ApiCover) Divide() ([]Cover, error) {
-	if data.Response == "collection" {
-		var apiCovers []Cover
-		for _, cover := range data.Data {
-			apiCovers = append(apiCovers, cover)
-		}
-		return apiCovers, nil
-	}
-	return nil, errors.New("error: data is not a collection")
-}
-
-func (data *ApiSingleManga) CoverId() string {
-	for _, relationship := range data.Data.Relationships {
-		if relationship.Type == "cover_art" {
-			return relationship.Id
-		}
-	}
-	log.Println("cover_id not found")
-	return ""
-}
-
-func (data *ApiManga) CoversId() ([]string, error) {
-	var ids []string
-
-	for _, manga := range data.Data {
-		for _, relationship := range manga.Relationships {
-			if relationship.Type == "cover_art" {
-				ids = append(ids, relationship.Id)
-			}
-		}
-	}
-	var err error
-	if len(ids) != len(data.Data) {
-		err = errors.New("apiManga.CoversId: ids and mangas number doesn't match")
-	}
-
-	return ids, err
-}
-
 func (data *ApiManga) Format() []MangaUsefullData {
 	var formattedMangas []MangaUsefullData
 	for _, datum := range data.Data {
 		formattedMangas = append(formattedMangas, datum.Format())
 	}
 	return formattedMangas
-}
-
-func (data *ApiSingleManga) Format() MangaUsefullData {
-	return data.Data.Format()
 }
 
 func (data *Manga) Format() MangaUsefullData {
@@ -504,21 +419,6 @@ func (data *Chapter) Format() ChapterUsefullData {
 }
 
 func (data *ApiTags) CheckResponse() error {
-	if len(data.Errors) > 0 {
-		var msg string
-		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
-			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
-		}
-		return errors.New(msg)
-	}
-	ApiErrorStatus = false
-	return nil
-}
-
-func (data *ApiCover) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
