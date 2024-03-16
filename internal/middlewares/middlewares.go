@@ -87,7 +87,9 @@ var OnlyVisitors models.Middleware = func(next http.HandlerFunc) http.HandlerFun
 // and if no, it redirects to the API error handler.
 var CheckApi models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+
 		next.ServeHTTP(w, r)
+
 		log.Println("middlewares.CheckApi()")
 		if models.ApiErrorStatus {
 			http.Redirect(w, r, "/error50X", http.StatusSeeOther)

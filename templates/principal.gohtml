@@ -30,7 +30,7 @@
   <!-- Popular Mangas -->
 <div class="category">
   <div class="category-title"><div class="category-title-text">Popular</div></div>
-  <div class="category-list">
+  <div class="category-list principal-list">
     {{range .Popular}}
       <div class="category-card">
         <div class="category-card-cover">
@@ -58,9 +58,9 @@
 </div>
 
   <!-- Latest Uploaded Mangas -->
-  <div class="category">
+<div class="category">
   <div class="category-title"><div class="category-title-text">Latest Uploaded</div></div>
-  <div class="category-list">
+  <div class="category-list principal-list">
     {{range .LatestUploaded}}
       <div class="category-card">
         <div class="category-card-cover">
@@ -71,7 +71,6 @@
               Description
             </div>
             <div class="description-ctn">{{.Description}}</div>
-
           </div>
           <div class="hover-tags">
             {{range .Tags}}

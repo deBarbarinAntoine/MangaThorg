@@ -1,0 +1,17 @@
+{{define "staticPath"}}static{{end}}
+
+{{define "title"}}MangaThorg - Categories{{end}}
+
+{{define "cssFile"}}miscellaneous{{end}}
+
+{{define "page"}}
+
+<div class="tags-title"><div class="tags-title-text">Categories</div></div>
+
+<div class="tags">
+    {{range .}}
+        <a href="/category/{{.Id}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.Attributes.Name.En}}</div></a>
+    {{end}}
+</div>
+
+{{end}}

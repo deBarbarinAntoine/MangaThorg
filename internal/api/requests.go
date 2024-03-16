@@ -31,10 +31,6 @@ var TopLatestUploadedRequest = models.MangaRequest{
 	Offset:       0,
 }
 
-//func CategoryRequest(category string) []models.MangaWhole {
-//
-//}
-
 func FetchMangaById(id string, order string, offset int) models.MangaUsefullData {
 	var manga models.MangaUsefullData
 	apiManga := MangaRequestById(id)
@@ -81,7 +77,7 @@ func MangaRequestById(id string) models.ApiSingleManga {
 	return apiSingleManga
 }
 
-func FetchManga(request models.MangaRequest) []models.MangaUsefullData {
+func FetchManga(request models.MangaRequest) models.MangasInBulk {
 	apiManga := MangaRequest(request)
 
 	return apiManga.Format()
@@ -105,13 +101,12 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	}
 
 	if info != "" {
-		err = apiManga.SingleCacheData("", request.OrderValue, 0).Write(dataPath+info+".json", id != "")
+		err = apiManga.SingleCacheData("", request.OrderValue, request.Offset).Write(dataPath+info+".json", id != "")
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		updateCacheStatus(info, id)
 	}
-
 	return apiManga
 }
 
@@ -139,6 +134,17 @@ func TagsRequest() models.ApiTags {
 	updateCacheStatus(models.Status.Tags, "")
 
 	return apiTags
+}
+
+func TagSelect(id string) models.ApiTag {
+	tags := TagsRequest()
+	for _, tag := range tags.Data {
+		if tag.Id == id {
+			return tag
+		}
+	}
+	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("tag [id:"+id+"] not found")))
+	return models.ApiTag{}
 }
 
 func FeedRequest(id, order string, offset int) models.ApiMangaFeed {

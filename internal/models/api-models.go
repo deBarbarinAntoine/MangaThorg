@@ -80,6 +80,11 @@ type ChapterWhole struct {
 	Scans ApiChapterScan
 }
 
+type MangasInBulk struct {
+	Mangas   []MangaUsefullData
+	NbMangas int
+}
+
 type MangaUsefullData struct {
 	Id                     string
 	Title                  string

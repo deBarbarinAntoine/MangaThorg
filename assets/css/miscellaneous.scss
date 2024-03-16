@@ -10,6 +10,56 @@
   }
 }
 
+.tags-title {
+  width: 90%;
+  height: fit-content;
+  margin-top: 3rem;
+
+  .tags-title-text {
+    padding-left: 3rem;
+    width: fit-content;
+    font-family: "Tilt Neon", sans-serif;
+    font-weight: 400;
+    color: $font-color;
+    font-size: calc(26px + 1vw);
+    letter-spacing: 0;
+    line-height: normal;
+  }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 90%;
+  height: fit-content;
+
+  .tag {
+    width: fit-content;
+    height: fit-content;
+    padding: calc(10px + 1vw) calc(20px + 1vw);
+    border-radius: calc(10px + .3vw);
+    background-color: $foreground;
+    transition: background-color ease-in-out 300ms;
+
+    .tag-name {
+      width: max-content;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: $font-color;
+      font-size: calc(10px + 1vw);
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+
+    &:hover {
+      background-color: $blue-elem;
+    }
+  }
+}
+
+
 .ctn {
   display: flex;
   align-items: center;

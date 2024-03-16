@@ -34,14 +34,19 @@ body {
   align-items: center;
   padding: 16px 0;
 }
+.header .main .logo-link {
+  flex: 1 1 auto;
+  width: 30%;
+  height: fit-content;
+}
 .header .main .header-nav {
   display: flex;
-  flex: 1 0 max-content;
+  flex: 1 0 content;
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 8%, 3rem);
   padding: 0 calc(8px + 0.3vw);
-  width: max-content;
+  width: 30%;
 }
 .header .main .header-nav .category-link {
   width: max-content;
@@ -56,7 +61,8 @@ body {
 .header .main .header-search-bar-ctn {
   display: flex;
   justify-content: flex-end;
-  flex: 1;
+  flex: 1 1 auto;
+  width: 30%;
 }
 .header .main .header-search-bar-ctn .header-search-bar {
   display: flex;
@@ -430,13 +436,19 @@ a {
   letter-spacing: 0;
   line-height: normal;
 }
+.category .principal-list {
+  overflow: clip;
+  flex-wrap: nowrap;
+}
+.category .list-wrap {
+  flex-wrap: wrap;
+}
 .category .category-list {
   display: flex;
   align-items: flex-start;
   gap: 2vw;
   padding: 0 1rem;
   width: calc(100% - 2rem);
-  overflow: clip;
 }
 .category .category-list .category-card {
   display: flex;
@@ -613,6 +625,68 @@ a {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  height: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #393E46;
+}
+.pagination .page-link {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(14px + 0.5vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.pagination span.page-link {
+  color: #00ADB5;
+}
+
+.sorting {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: calc(10px + 0.5vw);
+  width: 95%;
+  padding: calc(5px + 0.4vw);
+}
+.sorting .sort-title {
+  width: 100px;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.4vw);
+  letter-spacing: 0;
+  line-height: normal;
+}
+.sorting .sort-tag {
+  display: flex;
+  align-items: flex-start;
+  gap: calc(4px + 0.3vw);
+  padding: calc(2px + 0.2vw) calc(4px + 0.3vw);
+  border-radius: 8px;
+  background-color: #393E46;
+}
+.sorting .sort-tag .sort-tag-text {
+  width: fit-content;
+  text-align: center;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(14px + 0.4vw);
+  letter-spacing: 0;
+  line-height: normal;
+}
+.sorting .selected {
+  background-color: #00ADB5;
 }
 
 /*# sourceMappingURL=style.css.map */

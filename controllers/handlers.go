@@ -253,8 +253,8 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Popular        []models.MangaUsefullData
 	}{
 		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa", "asc", 1),
-		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest),
-		Popular:        api.FetchManga(api.TopPopularRequest),
+		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest).Mangas,
+		Popular:        api.FetchManga(api.TopPopularRequest).Mangas,
 	}
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
@@ -421,6 +421,89 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	data.Alt = data.Manga + " - Ch. " + data.ChapterNb
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	tmpl, err := template.ParseFiles(utils.Path+"templates/tags.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	err = tmpl.ExecuteTemplate(w, "base", api.TagsRequest().Data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	tagId := r.PathValue("tagId")
+	if tagId == "" {
+		http.Redirect(w, r, "/error404", http.StatusNotFound)
+		return
+	}
+	var order, pagination string
+	if r.URL.Query().Has("order") {
+		order = r.URL.Query().Get("order")
+	} else {
+		order = "desc"
+	}
+	if r.URL.Query().Has("pag") {
+		pagination = r.URL.Query().Get("pag")
+	} else {
+		pagination = "1"
+	}
+	pag, errAtoi := strconv.Atoi(pagination)
+	if errAtoi != nil {
+		pag = 1
+	}
+	if order != "asc" && order != "desc" {
+		order = "desc"
+	}
+	if pag < 1 {
+		pag = 1
+	}
+	offset := (pag - 1) * 18
+
+	var request = models.MangaRequest{
+		OrderType:    "rating",
+		OrderValue:   order,
+		IncludedTags: []string{tagId},
+		ExcludedTags: nil,
+		Limit:        18,
+		Offset:       offset,
+	}
+
+	var data = struct {
+		Tag         models.ApiTag
+		Response    models.MangasInBulk
+		CurrentPage int
+		TotalPages  int
+		Order       string
+		Previous    int
+		Next        int
+	}{
+		Tag:         api.TagSelect(tagId),
+		Response:    api.FetchManga(request),
+		CurrentPage: pag,
+		Order:       order,
+		Previous:    pag - 1,
+		Next:        pag + 1,
+	}
+	data.TotalPages = data.Response.NbMangas / 18
+	if data.Response.NbMangas%18 > 0 {
+		data.TotalPages++
+	}
+
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)

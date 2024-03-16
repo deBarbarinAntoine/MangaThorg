@@ -40,14 +40,20 @@ body {
     align-items: center;
     padding: 16px 0;
 
+    .logo-link {
+      flex: 1 1 auto;
+      width: 30%;
+      height: fit-content;
+    }
+
     .header-nav {
       display: flex;
-      flex: 1 0 max-content;
+      flex: 1 0 content;
       align-items: center;
       justify-content: center;
       gap: clamp(10px, 8%, 3rem);
       padding: 0 calc(8px + .3vw);
-      width: max-content;
+      width: 30%;
 
       .category-link {
         width: max-content;
@@ -64,7 +70,8 @@ body {
     .header-search-bar-ctn {
       display: flex;
       justify-content: flex-end;
-      flex: 1;
+      flex: 1 1 auto;
+      width: 30%;
 
       .header-search-bar {
         display: flex;

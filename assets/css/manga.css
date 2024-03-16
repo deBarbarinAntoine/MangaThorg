@@ -33,14 +33,19 @@ body {
   align-items: center;
   padding: 16px 0;
 }
+.header .main .logo-link {
+  flex: 1 1 auto;
+  width: 30%;
+  height: fit-content;
+}
 .header .main .header-nav {
   display: flex;
-  flex: 1 0 max-content;
+  flex: 1 0 content;
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 8%, 3rem);
   padding: 0 calc(8px + 0.3vw);
-  width: max-content;
+  width: 30%;
 }
 .header .main .header-nav .category-link {
   width: max-content;
@@ -55,7 +60,8 @@ body {
 .header .main .header-search-bar-ctn {
   display: flex;
   justify-content: flex-end;
-  flex: 1;
+  flex: 1 1 auto;
+  width: 30%;
 }
 .header .main .header-search-bar-ctn .header-search-bar {
   display: flex;
@@ -262,6 +268,7 @@ body {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: 75px;
 }
 .manga-presentation .manga-banner {
   position: relative;
@@ -289,6 +296,7 @@ body {
   align-items: center;
   width: 60%;
   height: calc(100% - 24px);
+  z-index: 2;
 }
 .manga-presentation .manga-banner .banner-text .manga-title {
   width: 90%;
@@ -428,6 +436,9 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: calc(8px + 0.4vw);
+  height: fit-content;
+  min-height: calc(0.75 * (150px + 18vw));
+  z-index: 2;
 }
 .manga-presentation .manga-info .manga-description {
   display: flex;

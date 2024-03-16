@@ -21,8 +21,8 @@ var ApiErrorStatus bool = false
 func (r MangaRequest) Params() MangaRequestParam {
 	return MangaRequestParam{
 		Order:              "order[" + r.OrderType + "]",
-		IncludedTags:       "includedTags",
-		ExcludedTags:       "excludedTags",
+		IncludedTags:       "includedTags[]",
+		ExcludedTags:       "excludedTags[]",
 		TranslatedLanguage: "availableTranslatedLanguage[]",
 		Title:              "title",
 		Author:             "author",
@@ -64,6 +64,7 @@ func (r MangaRequest) ToQuery() url.Values {
 	q[params.ContentRating] = []string{"safe"}
 	q[params.Limit] = []string{strconv.Itoa(r.Limit)}
 	q[params.Offset] = []string{strconv.Itoa(r.Offset)}
+
 	return q
 }
 
@@ -319,11 +320,12 @@ func (data *ApiMangaStats) Stats(id string) Statistics { // fixme
 	return Statistics{}
 }
 
-func (data *ApiManga) Format() []MangaUsefullData {
-	var formattedMangas []MangaUsefullData
+func (data *ApiManga) Format() MangasInBulk {
+	var formattedMangas MangasInBulk
 	for _, datum := range data.Data {
-		formattedMangas = append(formattedMangas, datum.Format())
+		formattedMangas.Mangas = append(formattedMangas.Mangas, datum.Format())
 	}
+	formattedMangas.NbMangas = data.Total
 	return formattedMangas
 }
 

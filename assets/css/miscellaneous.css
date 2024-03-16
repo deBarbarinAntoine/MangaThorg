@@ -33,14 +33,19 @@ body {
   align-items: center;
   padding: 16px 0;
 }
+.header .main .logo-link {
+  flex: 1 1 auto;
+  width: 30%;
+  height: fit-content;
+}
 .header .main .header-nav {
   display: flex;
-  flex: 1 0 max-content;
+  flex: 1 0 content;
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 8%, 3rem);
   padding: 0 calc(8px + 0.3vw);
-  width: max-content;
+  width: 30%;
 }
 .header .main .header-nav .category-link {
   width: max-content;
@@ -55,7 +60,8 @@ body {
 .header .main .header-search-bar-ctn {
   display: flex;
   justify-content: flex-end;
-  flex: 1;
+  flex: 1 1 auto;
+  width: 30%;
 }
 .header .main .header-search-bar-ctn .header-search-bar {
   display: flex;
@@ -265,6 +271,51 @@ body {
 }
 .chapter-scan-list img.chapter-scan {
   object-fit: contain;
+}
+
+.tags-title {
+  width: 90%;
+  height: fit-content;
+  margin-top: 3rem;
+}
+.tags-title .tags-title-text {
+  padding-left: 3rem;
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(26px + 1vw);
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  width: 90%;
+  height: fit-content;
+}
+.tags .tag {
+  width: fit-content;
+  height: fit-content;
+  padding: calc(10px + 1vw) calc(20px + 1vw);
+  border-radius: calc(10px + 0.3vw);
+  background-color: #393E46;
+  transition: background-color ease-in-out 300ms;
+}
+.tags .tag .tag-name {
+  width: max-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(10px + 1vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.tags .tag:hover {
+  background-color: #00ADB5;
 }
 
 .ctn {
