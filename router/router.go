@@ -16,6 +16,7 @@ func Init() {
 	Mux.HandleFunc("POST /login", controllers.LoginHandlerPostBundle)
 	Mux.HandleFunc("GET /register", controllers.RegisterHandlerGetBundle)
 	Mux.HandleFunc("POST /register", controllers.RegisterHandlerPostBundle)
+	Mux.HandleFunc("GET /forgot-password", controllers.ForgotPasswordHandlerGetBundle)
 	Mux.HandleFunc("GET /home", controllers.HomeHandlerGetBundle)
 	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
 	Mux.HandleFunc("GET /confirm", controllers.ConfirmHandlerGetBundle)

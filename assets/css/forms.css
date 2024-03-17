@@ -280,124 +280,225 @@ body {
   background-position: 50% 50%;
 }
 
-.chapter-scan-list {
+.credentials-ctn {
   display: flex;
-  flex-direction: column;
-  width: 40%;
-  height: fit-content;
-}
-.chapter-scan-list img.chapter-scan {
-  object-fit: contain;
-}
-
-.tags-title {
-  width: 90%;
-  height: fit-content;
-  margin-top: 3rem;
-}
-.tags-title .tags-title-text {
-  padding-left: 3rem;
-  width: fit-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(26px + 1vw);
-  letter-spacing: 0;
-  line-height: normal;
-}
-
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-  width: 90%;
-  height: fit-content;
-}
-.tags .tag {
-  width: fit-content;
-  height: fit-content;
-  padding: calc(10px + 1vw) calc(20px + 1vw);
-  border-radius: calc(10px + 0.3vw);
-  background-color: #393E46;
-  transition: background-color ease-in-out 300ms;
-}
-.tags .tag .tag-name {
-  width: max-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(10px + 1vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
-}
-.tags .tag:hover {
-  background-color: #00ADB5;
-}
-
-.ctn {
-  display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 10px 30px;
+  gap: 0;
+  width: 100%;
+  height: max(400px + 13vw, 50vh);
+  min-height: fit-content;
+  margin: 75px 0;
 }
-.ctn .error-txt {
+.credentials-ctn div.around-form {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  padding: calc(20px + 0.5vw) 0;
+  z-index: 3;
+}
+.credentials-ctn div.around-form div.img-filler {
+  width: 100%;
+}
+.credentials-ctn div.around-form div.form-img-ctn img.form-img {
+  object-fit: contain;
+  max-width: 100%;
+  max-height: 100%;
+}
+.credentials-ctn div.before-img {
+  justify-content: flex-start;
   align-items: flex-end;
-  width: 25%;
 }
-.ctn .error-txt .text-container {
-  display: flex;
-  flex-direction: column;
+.credentials-ctn div.before-img div.img-filler {
+  height: 57%;
+}
+.credentials-ctn div.before-img div.form-img-ctn {
+  height: 43%;
+}
+.credentials-ctn div.after-img {
   justify-content: flex-end;
-  align-items: flex-end;
 }
-.ctn .error-txt .text-container .text-wrapper {
-  width: max-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(24px + 3vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
+.credentials-ctn div.after-img div.img-filler {
+  height: 50%;
 }
-.ctn .error-txt .text-container .div {
+.credentials-ctn div.after-img div.form-img-ctn {
+  height: 50%;
+}
+.credentials-ctn form.credentials-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(12px + 0.5vw);
+  align-items: center;
+  height: 100%;
   width: fit-content;
+  min-width: 15vw;
+  border: 3px #EEEEEE solid;
+  border-radius: 20px;
+  padding: calc(12px + 0.5vw) 4%;
+  box-shadow: 0 12px 12px 7px rgba(0, 0, 0, 0.2509803922);
+}
+.credentials-ctn form.credentials-form .credentials-title {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
   color: #EEEEEE;
-  font-size: calc(24px + 3vw);
-  text-align: center;
+  font-size: calc(20px + 0.6vw);
+  margin: calc(10px + 0.6vw) 0 calc(20px + 1.2vw) 0;
+}
+.credentials-ctn form.credentials-form .message {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  color: #7D0A0A;
+  font-size: calc(12px + 0.4vw);
+}
+.credentials-ctn form.credentials-form .form-main-ctn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(10px + 0.3vw);
+  width: 100%;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control {
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  margin: calc(5px + 0.2vw) 0;
+  width: 100%;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input {
+  background-color: transparent;
+  border: 0;
+  border-bottom: 2px #EEEEEE solid;
+  display: block;
+  width: 100%;
+  padding: calc(10px + 0.4vw) 0;
+  font-size: calc(12px + 0.4vw);
+  color: #EEEEEE;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
   letter-spacing: 0;
   line-height: normal;
 }
-.ctn .error-img {
-  width: 30vw;
-  height: 60vh;
-  box-shadow: inset 0px -12px 35px 25px #222831, inset 0px 0px 5px #222831;
-  background-size: contain;
-  background-position: 50% 50%;
-  background-repeat: no-repeat;
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input:focus, .credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input:valid {
+  outline: 0;
+  border-bottom-color: #00ADB5;
 }
-.ctn .error-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  gap: 10px;
-  width: 35%;
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input:focus + label.form-label span.label-text, .credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input:valid + label.form-label span.label-text {
+  color: #00ADB5;
+  transform: translateY(-30px);
 }
-.ctn .error-info p.p {
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label {
+  position: absolute;
+  top: 15px;
+  left: 0;
+  pointer-events: none;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.label-text {
+  display: inline-block;
+  font-size: calc(14px + 0.4vw);
+  min-width: 5px;
+  color: #EEEEEE;
+  transition: 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(24px + 3vw);
-  text-align: left;
   letter-spacing: 0;
-  line-height: calc(42px + 5vw);
+  line-height: normal;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-1 {
+  transition-delay: 0ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-2 {
+  transition-delay: 50ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-3 {
+  transition-delay: 100ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-4 {
+  transition-delay: 150ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-5 {
+  transition-delay: 200ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-6 {
+  transition-delay: 250ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-7 {
+  transition-delay: 300ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn .form-control input.form-input + label.form-label span.input-letter-8 {
+  transition-delay: 350ms;
+}
+.credentials-ctn form.credentials-form .form-main-ctn div.forgot-passwd-msg-ctn {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+.credentials-ctn form.credentials-form .form-main-ctn div.forgot-passwd-msg-ctn a.forgot-passwd-msg {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  color: #00ADB5;
+  font-size: calc(9px + 0.3vw);
+}
+.credentials-ctn form.credentials-form .form-main-ctn div.forgot-passwd-msg-ctn a.forgot-passwd-msg:hover {
+  color: #EEEEEE;
+}
+.credentials-ctn form.credentials-form button.form-btn {
+  width: 100%;
+  padding: calc(3px + 0.3vw) 0;
+  background-color: #00ADB5;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  color: #EEEEEE;
+  font-size: calc(14px + 0.4vw);
+  border-radius: calc(8px + 0.3vw);
+  margin: calc(10px + 0.6vw) 0;
+}
+.credentials-ctn form.credentials-form a.credentials-cancel-btn {
+  width: 100%;
+  padding: calc(3px + 0.3vw) 0;
+  background-color: #7D0A0A;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  text-align: center;
+  color: #EEEEEE;
+  font-size: calc(14px + 0.4vw);
+  border-radius: calc(8px + 0.3vw);
+  margin: calc(10px + 0.6vw) 0;
+}
+.credentials-ctn form.credentials-form div.alternate-msg-ctn {
+  display: flex;
+  justify-content: space-between;
+  gap: calc(14px + 0.4vw);
+  width: 100%;
+  margin-bottom: calc(18px + 0.6vw);
+}
+.credentials-ctn form.credentials-form div.alternate-msg-ctn span.alternate-msg {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  color: #EEEEEE;
+  font-size: calc(10px + 0.4vw);
+}
+.credentials-ctn form.credentials-form div.alternate-msg-ctn a.alternate-link {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: normal;
+  color: #00ADB5;
+  font-size: calc(10px + 0.4vw);
+}
+.credentials-ctn form.credentials-form div.alternate-msg-ctn a.alternate-link:hover {
+  color: #EEEEEE;
 }
 
-/*# sourceMappingURL=miscellaneous.css.map */
+/*# sourceMappingURL=forms.css.map */

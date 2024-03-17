@@ -11,6 +11,20 @@
   text-decoration: none;
   color: #EEEEEE;
 }
+* input {
+  outline: none;
+  background: none;
+  border: none;
+}
+* input:focus, * input:focus-visible, * input:focus-within {
+  outline: none;
+  background: none;
+  border: none;
+}
+* button {
+  border: none;
+  background: none;
+}
 
 body {
   background-color: #222831;
@@ -168,6 +182,9 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+}
+.header .variable .header-msg .invitation-msg:hover {
+  color: #EEEEEE;
 }
 .header .variable .header-msg .line-bottom {
   width: 237px;

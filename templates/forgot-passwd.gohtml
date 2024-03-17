@@ -1,0 +1,42 @@
+{{define "staticPath"}}../static{{end}}
+
+{{define "title"}}MangaThorg - Forgot Password{{end}}
+
+{{define "cssFile"}}forms{{end}}
+
+{{define "page"}}
+
+    <div class="credentials-ctn">
+
+        <div class="around-form before-img">
+            <div class="form-img-ctn">
+                <img src="../static/img/peeking-img-left.png" alt="peeking manga character" class="form-img">
+            </div>
+            <div class="img-filler"></div>
+        </div>
+        <form action="/forgot-password" method="post" class="credentials-form">
+            <span class="credentials-title">Forgotten password</span>
+            {{.Message}}
+
+            <div class="form-main-ctn">
+                <div class="form-control">
+                    <input id="email" class="form-input" type="email" required>
+                    <label class="form-label" for="email">
+                        <span class="label-text input-letter-1">E</span><span class="label-text input-letter-2">m</span><span class="label-text input-letter-3">a</span><span class="label-text input-letter-4">i</span><span class="label-text input-letter-5">l</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="form-btn" type="submit">Send</button>
+            <a href="/login" class="credentials-cancel-btn">Cancel</a>
+        </form>
+        <div class="around-form after-img">
+            <div class="img-filler"></div>
+            <div class="form-img-ctn">
+                <img src="../static/img/peeking-right-img.png" alt="peeking manga character" class="form-img">
+            </div>
+        </div>
+    </div>
+
+
+{{end}}

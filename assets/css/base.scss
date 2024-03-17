@@ -8,6 +8,7 @@ $background: #222831;
 $foreground: #393E46;
 $blue-elem: #00ADB5;
 $bright-foreground: #EEEEEE33;
+$red: #7D0A0A;
 
 * {
   scrollbar-width: thin;
@@ -15,6 +16,20 @@ $bright-foreground: #EEEEEE33;
   a {
     text-decoration: none;
     color: $font-color;
+  }
+  input {
+    outline: none;
+    background: none;
+    border: none;
+    &:focus, &:focus-visible, &:focus-within {
+      outline: none;
+      background: none;
+      border: none;
+    }
+  }
+  button {
+    border: none;
+    background: none;
   }
 }
 
@@ -190,6 +205,9 @@ body {
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
+        &:hover {
+          color: $font-color;
+        }
       }
 
       .line-bottom {

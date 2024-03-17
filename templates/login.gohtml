@@ -1,21 +1,53 @@
-{{define "login"}}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Login</title>
-</head>
-<body>
-<form action="/login" method="post">
-    {{.}}
-    <label for="username">Username
-        <input type="text" name="username" id="username" required autofocus>
-    </label>
-    <label for="password">
-        <input type="password" name="password" id="password" required>
-    </label>
-    <button>Login</button>
-</form>
-</body>
-</html>
+{{define "staticPath"}}../static{{end}}
+
+{{define "title"}}MangaThorg - Login{{end}}
+
+{{define "cssFile"}}forms{{end}}
+
+{{define "page"}}
+
+<div class="credentials-ctn">
+
+    <div class="around-form before-img">
+        <div class="form-img-ctn">
+            <img src="../static/img/peeking-img-left.png" alt="peeking manga character" class="form-img">
+        </div>
+        <div class="img-filler"></div>
+    </div>
+    <form action="/login" method="post" class="credentials-form">
+        <span class="credentials-title">Login</span>
+        {{.Message}}
+
+        <div class="form-main-ctn">
+            <div class="form-control">
+                <input id="username" class="form-input" type="text" required autofocus>
+                <label class="form-label" for="username">
+                    <span class="label-text input-letter-1">U</span><span class="label-text input-letter-2">s</span><span class="label-text input-letter-3">e</span><span class="label-text input-letter-4">r</span><span class="label-text input-letter-5">n</span><span class="label-text input-letter-6">a</span><span class="label-text input-letter-7">m</span><span class="label-text input-letter-8">e</span>
+                </label>
+            </div>
+            <div class="form-control">
+                <input id="password" class="form-input" type="password" required>
+                <label class="form-label" for="password">
+                    <span class="label-text input-letter-1">P</span><span class="label-text input-letter-2">a</span><span class="label-text input-letter-3">s</span><span class="label-text input-letter-4">s</span><span class="label-text input-letter-5">w</span><span class="label-text input-letter-6">o</span><span class="label-text input-letter-7">r</span><span class="label-text input-letter-8">d</span>
+                </label>
+            </div>
+            <div class="forgot-passwd-msg-ctn">
+                <a href="/forgot-password" class="forgot-passwd-msg">Forgot your password?</a>
+            </div>
+        </div>
+
+        <button class="form-btn" type="submit">Login</button>
+        <div class="alternate-msg-ctn">
+            <span class="alternate-msg">Don't have an account yet?</span><a href="/register" class="alternate-link">Sign up</a>
+        </div>
+    </form>
+    <div class="around-form after-img">
+        <div class="img-filler"></div>
+        <div class="form-img-ctn">
+            <img src="../static/img/peeking-right-img.png" alt="peeking manga character" class="form-img">
+        </div>
+    </div>
+</div>
+
+
 {{end}}

@@ -99,11 +99,16 @@ func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
 			message = "<div class=\"message\">You need to login to access that area!</div>"
 		}
 	}
-	tmpl, err := template.ParseFiles(utils.Path + "templates/login.gohtml")
+	var data = struct {
+		Message template.HTML
+	}{
+		Message: message,
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/login.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "login", message)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -140,11 +145,16 @@ func registerHandlerGet(w http.ResponseWriter, r *http.Request) {
 			message = "<div class=\"message\">Password needs 8 characters min, 1 digit, 1 lowercase, 1 uppercase and 1 symbol.</div>"
 		}
 	}
-	tmpl, err := template.ParseFiles(utils.Path + "templates/register.gohtml")
+	var data = struct {
+		Message template.HTML
+	}{
+		Message: message,
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/register.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "register", message)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -199,6 +209,27 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	utils.TempUsers = append(utils.TempUsers, newTempUser)
 	log.Printf("newTempUser: %#v\n", newTempUser)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
+}
+
+func forgotPasswordHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	var message template.HTML
+	if r.URL.Query().Has("confirm") {
+		message = "<div class=\"message\">A mail has been sent to set a new password!</div>"
+	}
+	var data = struct {
+		Message template.HTML
+	}{
+		Message: message,
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/forgot-passwd.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
