@@ -1,5 +1,24 @@
 @import "base";
 
+h2.chapter-scan-manga-title,
+h3.chapter-scan-title {
+  width: 100%;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: $font-color;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+h2.chapter-scan-manga-title {
+  font-size: calc(22px + 1.2vw);
+}
+
+h3.chapter-scan-title {
+  font-size: calc(20px + 1vw);
+}
+
 .chapter-scan-list {
   display: flex;
   flex-direction: column;
@@ -7,6 +26,18 @@
   height: fit-content;
   img.chapter-scan {
     object-fit: contain;
+  }
+}
+
+@media screen and (max-width: 1080px) {
+  .chapter-scan-list {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 550px) {
+  .chapter-scan-list {
+    width: 100%;
   }
 }
 

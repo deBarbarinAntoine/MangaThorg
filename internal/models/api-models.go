@@ -5,6 +5,21 @@ import (
 	"time"
 )
 
+var MangaPublic = []string{
+	"shounen",
+	"seinen",
+	"shoujo",
+	"josei",
+	"none",
+}
+
+var MangaStatus = []string{
+	"ongoing",
+	"completed",
+	"hiatus",
+	"cancelled",
+}
+
 type ApiData interface {
 	SingleCacheData(id string, order string, offset int) SingleCacheData
 	SendRequest(baseURL string, endpoint string, query url.Values) error
@@ -18,6 +33,14 @@ type ApiErr struct {
 	Title   string      `json:"title"`
 	Detail  string      `json:"detail"`
 	Context interface{} `json:"context"`
+}
+
+type OrderedTags struct {
+	FormatTags []ApiTag
+	GenreTags  []ApiTag
+	ThemeTags  []ApiTag
+	PublicTags []string
+	StatusTags []string
 }
 
 // ApiTag is the common structure for Tags used by MangaDex API.

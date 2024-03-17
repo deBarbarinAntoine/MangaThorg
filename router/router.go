@@ -25,6 +25,7 @@ func Init() {
 	Mux.HandleFunc("GET /manga/{id}", controllers.MangaRequestHandlerGet)
 	Mux.HandleFunc("GET /categories", controllers.TagsHandlerGetBundle)
 	Mux.HandleFunc("GET /category/{tagId}", controllers.CategoryHandlerGetBundle)
+	Mux.HandleFunc("GET /category/{group}/{name}", controllers.CategoryNameHandlerGetBundle)
 	Mux.HandleFunc("GET /feed", controllers.FeedRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /chapter/{mangaId}/{chapterNb}/{chapterId}", controllers.ChapterHandlerGetBundle)
 	Mux.HandleFunc("GET /mangatest", controllers.MangaWholeRequestHandlerGetBundle)

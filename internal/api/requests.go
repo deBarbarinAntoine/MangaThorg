@@ -64,7 +64,7 @@ func MangaRequestById(id string) models.ApiSingleManga {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
 
-	err = apiSingleManga.Data.SingleCacheData(id, "desc", 0).Write(dataPath+models.Status.Mangas+".json", false)
+	err = apiSingleManga.Data.SingleCacheData(id, "desc", 0).Write(dataPath+models.Status.Mangas+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -145,6 +145,24 @@ func TagSelect(id string) models.ApiTag {
 	}
 	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("tag [id:"+id+"] not found")))
 	return models.ApiTag{}
+}
+
+func FetchSortedTags() models.OrderedTags {
+	allTags := TagsRequest().Data
+	var orderedTags models.OrderedTags
+	for _, tag := range allTags {
+		switch tag.Attributes.Group {
+		case "format":
+			orderedTags.FormatTags = append(orderedTags.FormatTags, tag)
+		case "genre":
+			orderedTags.GenreTags = append(orderedTags.GenreTags, tag)
+		case "theme":
+			orderedTags.ThemeTags = append(orderedTags.ThemeTags, tag)
+		}
+	}
+	orderedTags.PublicTags = models.MangaPublic
+	orderedTags.StatusTags = models.MangaStatus
+	return orderedTags
 }
 
 func FeedRequest(id, order string, offset int) models.ApiMangaFeed {

@@ -5,20 +5,34 @@
 {{define "cssFile"}}miscellaneous{{end}}
 
 {{define "page"}}
-
-    <h2>{{.Manga}}</h2>
-        <h3>Chapter {{.ChapterNb}}</h3>
-
-<div class="chapter-scan-list">
-
-    {{$hash := .Scan.Hash}}
-    {{$id := .Id}}
-    {{$quality := .Quality}}
-    {{$alt := .Alt}}
-
-    {{range .Scan.Data }}
-        <img class="chapter-scan" src="/scan/{{$id}}/{{$quality}}/{{$hash}}/{{.}}" alt="{{$alt}}">
-    {{end}}
-</div>
-
+        {{if .IsOk}}
+            <div class="chapter-scan-list">
+            <h2 class="chapter-scan-manga-title">{{.Manga}}</h2>
+            <h3 class="chapter-scan-title">Chapter {{.ChapterNb}}</h3>
+            {{$hash := .Scan.Hash}}
+            {{$id := .Id}}
+            {{$quality := .Quality}}
+            {{$alt := .Alt}}
+            {{if .ToDataSaver}}
+                {{range .Scan.DataSaver }}
+                    <img class="chapter-scan" src="/scan/{{$id}}/{{$quality}}/{{$hash}}/{{.}}" alt="{{$alt}}">
+                {{end}}
+            {{else}}
+                {{range .Scan.Data }}
+                    <img class="chapter-scan" src="/scan/{{$id}}/{{$quality}}/{{$hash}}/{{.}}" alt="{{$alt}}">
+                {{end}}
+            {{end}}
+            </div>
+        {{else}}
+            <div class="ctn">
+                <div class="error-txt">
+                    <div class="text-container">
+                        <div class="text-wrapper">ERROR</div>
+                        <div class="div">404</div>
+                    </div>
+                </div>
+                <div class="error-img" style="background-image: url('http://localhost:8080/static/img/error-img.png')"></div>
+                <div class="error-info"><p class="p">We didn’t find the scans you were looking for...</p></div>
+            </div>
+        {{end}}
 {{end}}

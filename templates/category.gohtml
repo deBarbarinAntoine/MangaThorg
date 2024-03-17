@@ -1,6 +1,6 @@
-{{define "staticPath"}}../static{{end}}
+{{define "staticPath"}}{{.Path}}{{end}}
 
-{{define "title"}}MangaThorg - {{.Tag.Attributes.Name.En}}{{end}}
+{{define "title"}}MangaThorg - {{.Name}}{{end}}
 
 {{define "cssFile"}}style{{end}}
 
@@ -9,7 +9,7 @@
     {{$current := .CurrentPage}}
 
     <div class="category">
-        <div class="category-title"><div class="category-title-text">{{.Tag.Attributes.Name.En}}</div></div>
+        <div class="category-title"><div class="category-title-text">{{.Name}}</div></div>
         <div class="sorting">
             <div class="sort-title">Sort:</div>
             {{if eq .Order "desc"}}

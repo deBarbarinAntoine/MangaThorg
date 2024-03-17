@@ -10,6 +10,7 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -425,12 +426,14 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 	scan := api.ScanRequest(chapterId)
 	var data = struct {
-		Manga     string
-		ChapterNb string
-		Id        string
-		Quality   string
-		Alt       string
-		Scan      struct {
+		IsOk        bool
+		ToDataSaver bool
+		Manga       string
+		ChapterNb   string
+		Id          string
+		Quality     string
+		Alt         string
+		Scan        struct {
 			Hash      string
 			Data      []string
 			DataSaver []string
@@ -451,6 +454,16 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 			DataSaver: scan.Chapter.DataSaver,
 		},
 	}
+	if len(data.Scan.Data) == 0 {
+		if len(data.Scan.DataSaver) == 0 {
+			data.IsOk = false
+		} else {
+			data.ToDataSaver = true
+		}
+	} else {
+		data.IsOk = true
+		data.ToDataSaver = false
+	}
 	data.Alt = data.Manga + " - Ch. " + data.ChapterNb
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
@@ -465,7 +478,7 @@ func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 		log.Fatalln(err)
 	}
 
-	err = tmpl.ExecuteTemplate(w, "base", api.TagsRequest().Data)
+	err = tmpl.ExecuteTemplate(w, "base", api.FetchSortedTags())
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -473,10 +486,6 @@ func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
 	tagId := r.PathValue("tagId")
 	if tagId == "" {
 		http.Redirect(w, r, "/error404", http.StatusNotFound)
@@ -515,7 +524,8 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data = struct {
-		Tag         models.ApiTag
+		Path        string
+		Name        string
 		Response    models.MangasInBulk
 		CurrentPage int
 		TotalPages  int
@@ -523,7 +533,8 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Previous    int
 		Next        int
 	}{
-		Tag:         api.TagSelect(tagId),
+		Path:        "../static",
+		Name:        api.TagSelect(tagId).Attributes.Name.En,
 		Response:    api.FetchManga(request),
 		CurrentPage: pag,
 		Order:       order,
@@ -535,6 +546,97 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		data.TotalPages++
 	}
 
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	group := r.PathValue("group")
+	name := r.PathValue("name")
+	if name == "" || group == "" {
+		http.Redirect(w, r, "/error404", http.StatusNotFound)
+		return
+	}
+	var order, pagination string
+	if r.URL.Query().Has("order") {
+		order = r.URL.Query().Get("order")
+	} else {
+		order = "desc"
+	}
+	if r.URL.Query().Has("pag") {
+		pagination = r.URL.Query().Get("pag")
+	} else {
+		pagination = "1"
+	}
+	pag, errAtoi := strconv.Atoi(pagination)
+	if errAtoi != nil {
+		pag = 1
+	}
+	if order != "asc" && order != "desc" {
+		order = "desc"
+	}
+	if pag < 1 {
+		pag = 1
+	}
+	offset := (pag - 1) * 18
+
+	var request models.MangaRequest
+
+	if group == "public" && slices.Contains(models.MangaPublic, name) {
+		request = models.MangaRequest{
+			OrderType:  "rating",
+			OrderValue: order,
+			Public:     []string{name},
+			Limit:      18,
+			Offset:     offset,
+		}
+	} else if group == "status" && slices.Contains(models.MangaStatus, name) {
+		request = models.MangaRequest{
+			OrderType:  "rating",
+			OrderValue: order,
+			Status:     []string{name},
+			Limit:      18,
+			Offset:     offset,
+		}
+	} else {
+		http.Redirect(w, r, "/error404", http.StatusNotFound)
+		return
+	}
+
+	var data = struct {
+		Path        string
+		Name        string
+		Response    models.MangasInBulk
+		CurrentPage int
+		TotalPages  int
+		Order       string
+		Previous    int
+		Next        int
+	}{
+		Path:        "../../static",
+		Name:        strings.ToTitle(group) + ": " + name,
+		Response:    api.FetchManga(request),
+		CurrentPage: pag,
+		Order:       order,
+		Previous:    pag - 1,
+		Next:        pag + 1,
+	}
+	data.TotalPages = data.Response.NbMangas / 18
+	if data.Response.NbMangas%18 > 0 {
+		data.TotalPages++
+	}
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)

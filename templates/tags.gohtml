@@ -6,12 +6,44 @@
 
 {{define "page"}}
 
-<div class="tags-title"><div class="tags-title-text">Categories</div></div>
+    <div class="tags-title"><div class="tags-title-text">Public</div></div>
 
-<div class="tags">
-    {{range .}}
-        <a href="/category/{{.Id}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.Attributes.Name.En}}</div></a>
-    {{end}}
-</div>
+    <div class="tags">
+        {{range .PublicTags}}
+            <a href="/category/public/{{.}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.}}</div></a>
+        {{end}}
+    </div>
+
+    <div class="tags-title"><div class="tags-title-text">Status</div></div>
+
+    <div class="tags">
+        {{range .StatusTags}}
+            <a href="/category/status/{{.}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.}}</div></a>
+        {{end}}
+    </div>
+
+    <div class="tags-title"><div class="tags-title-text">Format</div></div>
+
+    <div class="tags">
+        {{range .FormatTags}}
+            <a href="/category/{{.Id}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.Attributes.Name.En}}</div></a>
+        {{end}}
+    </div>
+
+    <div class="tags-title"><div class="tags-title-text">Genre</div></div>
+
+    <div class="tags">
+        {{range .GenreTags}}
+            <a href="/category/{{.Id}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.Attributes.Name.En}}</div></a>
+        {{end}}
+    </div>
+
+    <div class="tags-title"><div class="tags-title-text">Theme</div></div>
+
+    <div class="tags">
+        {{range .ThemeTags}}
+            <a href="/category/{{.Id}}?order=desc&pag=1" class="tag"><div class="tag-name">{{.Attributes.Name.En}}</div></a>
+        {{end}}
+    </div>
 
 {{end}}
