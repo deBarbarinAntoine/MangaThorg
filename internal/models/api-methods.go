@@ -19,6 +19,9 @@ var client = http.Client{
 var ApiErrorStatus bool = false
 
 func (r MangaRequest) Params() MangaRequestParam {
+	if r.OrderType == "" {
+		r.OrderType = "rating"
+	}
 	return MangaRequestParam{
 		Order:              "order[" + r.OrderType + "]",
 		IncludedTags:       "includedTags[]",
@@ -38,6 +41,9 @@ func (r MangaRequest) Params() MangaRequestParam {
 func (r MangaRequest) ToQuery() url.Values {
 	var q = make(url.Values)
 	params := r.Params()
+	if r.OrderValue == "" {
+		r.OrderValue = "desc"
+	}
 	q[params.Order] = []string{r.OrderValue}
 	if r.IncludedTags != nil {
 		q[params.IncludedTags] = r.IncludedTags

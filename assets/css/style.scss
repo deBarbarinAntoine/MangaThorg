@@ -455,3 +455,105 @@ a {
     background-color: $blue-elem;
   }
 }
+
+form.searchform {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+
+  .searchbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: calc(3px + .2vw);
+    border-radius: calc(12px + .3vw);
+    border: 3px solid $font-color;
+    width: 60%;
+    min-width: 7rem;
+    height: fit-content;
+    max-width: 400px;
+
+    label {
+
+    }
+    input#title {
+
+    }
+    input#q.search-btn {
+
+      .icon-search {
+        height: calc(18px + .6vw);
+      }
+    }
+  }
+  .advanced-search {
+
+    .advanced-search-header {
+
+      .expand-btn {
+
+        img.arrow-logo {
+
+        }
+      }
+      button {
+
+      }
+    }
+    span.search-tag-title {
+      width: fit-content;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: $font-color;
+      font-size: calc(10px + .6vw);
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
+    .search-tag-list {
+      display: flex;
+      width: 100%;
+      height: fit-content;
+      align-items: center;
+      gap: calc(2px + .2vw) calc(4px + .3vw);
+      flex-wrap: wrap;
+      margin: calc(10px + .6vw) 0;
+
+      .search-tag,
+      .search-tag-simple {
+        display: flex;
+        padding: calc(2px + .2vw) calc(4px + .3vw);
+        background-color: $foreground;
+        border-radius: calc(2px + .2vw);
+        align-items: center;
+
+        span.search-tag-txt {
+          width: fit-content;
+          font-family: "Tilt Neon", sans-serif;
+          font-weight: 400;
+          color: $font-color;
+          font-size: calc(12px + .3vw);
+          text-align: center;
+          letter-spacing: 0;
+          line-height: normal;
+        }
+      }
+
+      .selected {
+        background-color: $blue-elem;
+      }
+      .unselected {
+        background-color: $red;
+      }
+    }
+  }
+}
+
+.hidden-form {
+  position: absolute;
+  visibility: hidden;
+  * {
+    visibility: hidden;
+  }
+}
+

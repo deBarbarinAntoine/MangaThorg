@@ -59,7 +59,7 @@ func fetchConfig() models.MailConfig {
 }
 
 // SendMail sends a mail to models.TempUser to create his account
-func SendMail(temp *models.TempUser) {
+func SendMail(temp *models.TempUser, status string) {
 	// Fetching mail configuration
 	config := fetchConfig()
 
@@ -69,15 +69,26 @@ func SendMail(temp *models.TempUser) {
 	// Generating confirmation Id
 	temp.ConfirmID = generateConfirmationID()
 
+	var subject, templateName string
+
+	switch status {
+	case "creation":
+		subject = "Email verification"
+		templateName = "creation-mail"
+	case "lost":
+		subject = "Set a new password"
+		templateName = "new-password-mail"
+	}
+
 	// Setting the headers
 	header := make(map[string]string)
 	header["From"] = "MangaThorg" + "<" + config.Email + ">"
 	header["To"] = temp.User.Email
-	header["Subject"] = "Email verification"
+	header["Subject"] = subject
 	header["Message-ID"] = generateMessageID(config.Hostname)
 	header["Content-Type"] = "text/html; charset=UTF-8"
 
-	t, err := template.ParseFiles(Path + "templates/mail.gohtml")
+	t, err := template.ParseFiles(Path + "templates/" + templateName + ".gohtml")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -123,7 +134,7 @@ func SendMail(temp *models.TempUser) {
 	if err != nil {
 		panic(err)
 	} else {
-		fmt.Println("Send mail success!")
+		fmt.Println("Mail sent successfully!")
 	}
 }
 

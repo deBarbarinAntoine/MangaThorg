@@ -176,7 +176,6 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
-		log.Println("total from cache:", total) // testing
 	} else {
 		var apiMangaFeed models.ApiMangaFeed
 
@@ -191,15 +190,12 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
-		log.Println("total from request:", total) // testing
 	}
 
 	// checking the offset value
 	if total != 0 && total <= offset {
 		offset = (total / 15) - 1
 	}
-
-	log.Println("offset:", offset) // testing
 
 	if checkStatus(models.Status.MangaFeeds, id) {
 		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, order, offset)

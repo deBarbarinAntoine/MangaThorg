@@ -22,7 +22,7 @@ func Run() {
 	// Running the goroutine to change log file every given time
 	go utils.LogInit()
 
-	// Running the goroutine to automatically remove old TempUsers
+	// Running the goroutine to automatically remove old TempUsers and LostUsers
 	go utils.ManageTempUsers()
 
 	// Running the goroutine to automatically remove old CacheData

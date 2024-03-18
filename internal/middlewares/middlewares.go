@@ -76,7 +76,7 @@ var OnlyVisitors models.Middleware = func(next http.HandlerFunc) http.HandlerFun
 		log.Println("middlewares.OnlyVisitors()")
 		exists := utils.CheckSession(r)
 		if exists {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+			http.Redirect(w, r, "/principal", http.StatusSeeOther)
 			return
 		}
 		next.ServeHTTP(w, r)

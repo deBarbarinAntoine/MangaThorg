@@ -1,6 +1,8 @@
 [
 	{
 		"id": 1,
+		"creation_time": "0001-01-01T00:00:00Z",
+		"last_connection": "0001-01-01T00:00:00Z",
 		"username": "Antoine",
 		"hash": "36a3db4437b94182655f23faa6ff1801e214092b4de8f022c490e79d1e4333f9e4482809ce710aba3bdd11026741257cdca0638cd7f87d379848a838f3797e66",
 		"salt": "elAdroqDRcV4UZUwSeEBJe6rE6wxz9GjVAOW/einxIfpQ41Bnc0B1L0cU9obD1ADbWhXgoVQNrfA3YGJsvXS/g==",
@@ -8,6 +10,8 @@
 	},
 	{
 		"id": 2,
+		"creation_time": "0001-01-01T00:00:00Z",
+		"last_connection": "0001-01-01T00:00:00Z",
 		"username": "henry",
 		"hash": "c1e2c80638ec1657f1a2194419669f15741984c6da0d288d41b6e11460a293e95260cdab5b81cc379f2cb076eecc9bffbacaf31b2f90bfaff4cd20036c67fa5b",
 		"salt": "6V1KitCFiwPmJZXmmyz97ZuczVJqWwbUATTMx6b80wbM+kaqC1KEr3Ow+PeDXB/kIX/syZae0H42vNWo4sjxHQ==",
@@ -15,6 +19,8 @@
 	},
 	{
 		"id": 4,
+		"creation_time": "0001-01-01T00:00:00Z",
+		"last_connection": "0001-01-01T00:00:00Z",
 		"username": "Marie",
 		"hash": "c184eda2fc30aa375c5d78efc7f8731aa68b59dd00c2f762d53349ebd8e54bb32823d4610121a3d5acc55802e6093d377794be7f0d08dc01c0efa55119616e83",
 		"salt": "qcEMwPNfZNm+4Jg2PjWlKowCQ1OIrTmIw/szLIvB64AUlJWX5DW71iP1s1XBvANfqgLdSVDVN89ozAJsM1JCxQ==",
@@ -22,9 +28,11 @@
 	},
 	{
 		"id": 3,
+		"creation_time": "0001-01-01T00:00:00Z",
+		"last_connection": "2024-03-18T20:07:55.338212589+01:00",
 		"username": "thorgdar",
-		"hash": "fdf2cc3c29ce0fba00980e9786110473a25302f3ee050397752df497369013a61934245a547e739a6bab8b5e17d88f5db1f1ef5174324bcaa7624a0a76531f3b",
-		"salt": "rFeQBcd7FyH5SRn+pJuIToJaSp9st3Hh+Te5C56esWkEpfv0VLM5/mUCvfBvLtNVCr65Aq9Q3RDWmJpFVpR8Hg==",
+		"hash": "9223e480c2d4ff032a0cc089fae4477ed7879d1f24f6e9998f529dd0b737d0c14d21db25c2e713075415d922c76d5eb75240decd5bfdeb0fcf9e440efe0d6fd7",
+		"salt": "kXA8RiiJBQjdp6h2okgmHa8z9IoCN4StxZHtK65Hn+72y/uqvtnbUk7eqgmyyBx1b2w+rUUWdyn1SCHgr737dg==",
 		"email": "thorgdar@gmail.com"
 	}
 ]

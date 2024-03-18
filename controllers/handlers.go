@@ -10,6 +10,7 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -98,6 +99,10 @@ func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
 			message = "<div class=\"message\">Wrong username or password!</div>"
 		case "restricted":
 			message = "<div class=\"message\">You need to login to access that area!</div>"
+		}
+	} else if r.URL.Query().Has("status") {
+		if r.URL.Query().Get("status") == "update-pwd" {
+			message = `<div class="message">Your password has been updated!</div>`
 		}
 	}
 	var data = struct {
@@ -206,9 +211,8 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 			Email:     formValues.email,
 		},
 	}
-	utils.SendMail(&newTempUser)
+	utils.SendMail(&newTempUser, "creation")
 	utils.TempUsers = append(utils.TempUsers, newTempUser)
-	log.Printf("newTempUser: %#v\n", newTempUser)
 	http.Redirect(w, r, "/login", http.StatusSeeOther)
 }
 
@@ -231,6 +235,77 @@ func forgotPasswordHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+func forgotPasswordHandlerPost(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+
+	email := r.FormValue("email")
+	if exists, user := utils.EmailExists(email); exists {
+		var temp = models.TempUser{
+			CreationTime: time.Now(),
+			User:         user,
+		}
+		utils.SendMail(&temp, "lost")
+		utils.LostUsers = append(utils.LostUsers, temp)
+	}
+
+	http.Redirect(w, r, "/forgot-password?confirm=true", http.StatusSeeOther)
+}
+
+func updateCredentialsHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	var id string
+	if r.URL.Query().Has("id") {
+		id = r.URL.Query().Get("id")
+	}
+	var message template.HTML
+	if r.URL.Query().Has("err") {
+		switch r.URL.Query().Get("err") {
+		case "match":
+			message = "<div class=\"message\">Both passwords need to be equal!</div>"
+		case "password":
+			message = "<div class=\"message\">Password needs 8 characters min, 1 digit, 1 lowercase, 1 uppercase and 1 symbol.</div>"
+		default:
+			message = "<div class=\"message\">An error has occured!</div>"
+		}
+	}
+	var data = struct {
+		Message template.HTML
+		Id      string
+	}{
+		Message: message,
+		Id:      id,
+	}
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/update-credentials.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	id := r.PathValue("id")
+	password := r.FormValue("password")
+	confirmPassword := r.FormValue("confirm-password")
+	var lostUser models.TempUser
+	for _, user := range utils.LostUsers {
+		if user.ConfirmID == id {
+			lostUser = user
+			break
+		}
+	}
+	if password != confirmPassword || !utils.CheckPasswd(password) {
+		http.Redirect(w, r, "update-credentials?id="+id, http.StatusSeeOther)
+		return
+	}
+	lostUser.User.HashedPwd, lostUser.User.Salt = utils.NewPwd(password)
+	utils.UpdateLostUser(lostUser)
+	http.Redirect(w, r, "/login?status=update-pwd", http.StatusSeeOther)
 }
 
 func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
@@ -347,7 +422,6 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Pages:       pages,
 		Order:       order,
 	}
-	log.Println("pages:", data.Pages)
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -634,6 +708,135 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
+// searchHandlerGet is the handler that serves all search requests and the advanced search page.
+func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+
+	var data struct {
+		Tags        models.OrderedTags
+		Path        string
+		IsResponse  bool
+		Response    models.MangasInBulk
+		CurrentPage int
+		TotalPages  int
+		Order       string
+		Previous    int
+		Next        int
+		Req         string
+	}
+
+	if r.URL.Query().Has("q") {
+
+		var pagination string
+		if r.URL.Query().Has("pag") {
+			pagination = r.URL.Query().Get("pag")
+		} else {
+			pagination = "1"
+		}
+		pag, errAtoi := strconv.Atoi(pagination)
+		if errAtoi != nil {
+			pag = 1
+		}
+		if pag < 1 {
+			pag = 1
+		}
+		offset := (pag - 1) * 18
+
+		var request models.MangaRequest
+
+		request = models.MangaRequest{
+			OrderType:      "rating",
+			OrderValue:     r.URL.Query().Get("order"),
+			IncludedTags:   r.URL.Query()["includedTags[]"],
+			ExcludedTags:   r.URL.Query()["excludedTags[]"],
+			Title:          r.URL.Query().Get("title"),
+			Author:         r.URL.Query().Get("author"),
+			AuthorOrArtist: r.URL.Query().Get("authorOrArtist"),
+			Status:         r.URL.Query()["status[]"],
+			Public:         r.URL.Query()["public[]"],
+			Limit:          18,
+			Offset:         offset,
+		}
+		log.Printf("request: %#v\n", request)
+
+		if request.OrderValue != "asc" && request.OrderValue != "desc" {
+			request.OrderValue = "desc"
+		}
+
+		query := make(url.Values)
+		query.Add("q", "true")
+		query.Add("title", request.Title)
+		query.Add("author", request.Author)
+		query.Add("authorOrArtist", request.AuthorOrArtist)
+		query["includedTags[]"] = request.IncludedTags
+		query["excludedTags[]"] = request.ExcludedTags
+		query["status[]"] = request.Status
+		query["public[]"] = request.Public
+		query.Add("order["+request.OrderType+"]", request.OrderValue)
+		query.Add("pag", strconv.Itoa(pag))
+
+		data = struct {
+			Tags        models.OrderedTags
+			Path        string
+			IsResponse  bool
+			Response    models.MangasInBulk
+			CurrentPage int
+			TotalPages  int
+			Order       string
+			Previous    int
+			Next        int
+			Req         string
+		}{
+			Tags:        api.FetchSortedTags(),
+			Path:        "../static",
+			Response:    api.FetchManga(request),
+			CurrentPage: pag,
+			Order:       request.OrderValue,
+			Previous:    pag - 1,
+			Next:        pag + 1,
+			Req:         query.Encode(),
+		}
+		data.IsResponse = data.Response.Mangas != nil
+		data.TotalPages = data.Response.NbMangas / 18
+		if data.Response.NbMangas%18 > 0 {
+			data.TotalPages++
+		}
+	} else {
+		data = struct {
+			Tags        models.OrderedTags
+			Path        string
+			IsResponse  bool
+			Response    models.MangasInBulk
+			CurrentPage int
+			TotalPages  int
+			Order       string
+			Previous    int
+			Next        int
+			Req         string
+		}{
+			Tags:        api.FetchSortedTags(),
+			Path:        "../static",
+			IsResponse:  false,
+			Response:    models.MangasInBulk{},
+			CurrentPage: 1,
+			TotalPages:  1,
+			Order:       "desc",
+			Previous:    1,
+			Next:        1,
+			Req:         "",
+		}
+	}
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}

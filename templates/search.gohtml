@@ -1,0 +1,154 @@
+{{define "staticPath"}}{{.Path}}{{end}}
+
+{{define "title"}}MangaThorg - Search{{end}}
+
+{{define "cssFile"}}style{{end}}
+
+{{define "page"}}
+
+    <form action="/search" method="get" class="searchform">
+        <div class="searchbar">
+            <label for="title">Title</label>
+            <input name="title" id="title" placeholder="Search..." type="text" autofocus />
+            <input type="submit" name="q" id="q" class="search-btn" value="Search">
+        </div>
+        <div class="advanced-search">
+            <div class="advanced-search-header">
+                <div class="expand-btn"><img src="{{.Path}}/img/arrow.png" alt="arrow-logo" class="arrow-logo" /></div>
+                <button type="reset" class="reset-btn">Reset</button>
+            </div>
+
+
+            <span class="search-tag-title">Status</span>
+            <div class="search-tag-list">
+                {{range .Tags.StatusTags}}
+                    <div class="search-tag-simple" id="{{.}}"><span class="search-tag-txt">{{.}}</span></div>
+                {{end}}
+            </div>
+            <span class="search-tag-title">Public</span>
+            <div class="search-tag-list">
+                {{range .Tags.PublicTags}}
+                    <div class="search-tag-simple" id="{{.}}"><span class="search-tag-txt">{{.}}</span></div>
+                {{end}}
+            </div>
+            <span class="search-tag-title">Format</span>
+            <div class="search-tag-list">
+                {{range .Tags.FormatTags}}
+                    <div class="search-tag" id="{{.Id}}"><span class="search-tag-txt">{{.Attributes.Name.En}}</span></div>
+                {{end}}
+            </div>
+            <span class="search-tag-title">Genre</span>
+            <div class="search-tag-list">
+                {{range .Tags.GenreTags}}
+                    <div class="search-tag" id="{{.Id}}"><span class="search-tag-txt">{{.Attributes.Name.En}}</span></div>
+                {{end}}
+            </div>
+            <span class="search-tag-title">Theme</span>
+            <div class="search-tag-list">
+                {{range .Tags.ThemeTags}}
+                    <div class="search-tag" id="{{.Id}}"><span class="search-tag-txt">{{.Attributes.Name.En}}</span></div>
+                {{end}}
+            </div>
+
+            <div class="hidden-form">
+                <label for="status">
+                    {{range .Tags.StatusTags}}
+                        <input type="checkbox" class="two-way-checkbox" name="status" id="check-{{.}}" value="{{.}}" />
+                    {{end}}
+                </label>
+
+                <label for="public">
+                    {{range .Tags.PublicTags}}
+                        <input type="checkbox" class="two-way-checkbox" name="public" id="check-{{.}}" value="{{.}}" />
+                    {{end}}
+                </label>
+
+                <label for="includedTags[]">
+                    {{range .Tags.FormatTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="includedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                    {{range .Tags.GenreTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="includedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                    {{range .Tags.ThemeTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="includedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                </label>
+
+                <label for="excludedTags[]">
+                    {{range .Tags.FormatTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="excludedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                    {{range .Tags.GenreTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="excludedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                    {{range .Tags.ThemeTags}}
+                        <input type="checkbox" class="three-way-checkbox" name="excludedTags[]" id="check-{{.Id}}" value="{{.Id}}" />
+                    {{end}}
+                </label>
+            </div>
+
+        </div>
+    </form>
+
+    {{if .Req}}
+        {{if .IsResponse}}
+            {{$current := .CurrentPage}}
+            <div class="category">
+                <div class="sorting">
+                    <div class="sort-title">Sort:</div>
+                    {{if eq .Order "desc"}}
+                        <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
+                        <a href="?order=asc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Ascending</div></a>
+                    {{else if eq .Order "asc"}}
+                        <a href="?order=desc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Descending</div></a>
+                        <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
+                    {{end}}
+                </div>
+                <div class="category-list list-wrap">
+                    {{range .Response.Mangas}}
+                        <div class="category-card">
+                            <div class="category-card-cover">
+                                <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
+                                <div class="category-card-hover"></div>
+                                <div class="hover-description">
+                                    <div class="description-title">
+                                        Description
+                                    </div>
+                                    <div class="description-ctn">{{.Description}}</div>
+
+                                </div>
+                                <div class="hover-tags">
+                                    {{range .Tags}}
+                                        <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
+                                    {{end}}
+                                </div>
+                                <div class="hover-buttons">
+                                    <a href="/chapter/{{.Id}}/1/{{.FirstChapterId}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+                                    <a href="/manga/{{.Id}}?order=desc&pag=1" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
+                                </div>
+                            </div>
+                            <div class="category-card-info"><div class="category-card-title">{{.Title}}</div></div>
+                        </div>
+                    {{end}}
+                </div>
+            </div>
+
+            <div class="pagination">
+                {{if eq $current 1}}
+                    <span class="page-link">Previous</span>
+                {{else}}
+                    <a href="?order={{.Order}}&pag={{.Previous}}" class="page-link">Previous</a>
+                {{end}}
+                {{if eq $current .TotalPages}}
+                    <span class="page-link">Next</span>
+                {{else}}
+                    <a href="?order={{.Order}}&pag={{.Next}}" class="page-link">Next</a>
+                {{end}}
+            </div>
+        {{else}}
+            <div class="message">Nothing was found!</div>
+        {{end}}
+    {{end}}
+<script src="{{.Path}}/js/search.js"></script>
+{{end}}

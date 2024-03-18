@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"mangathorg/internal/models"
 	"os"
@@ -11,6 +12,7 @@ import (
 
 var jsonFile = Path + "data/users.json"
 var TempUsers []models.TempUser
+var LostUsers []models.TempUser
 
 // retrieveUsers
 // retrieves all models.User present in jsonFile and stores them in a slice of models.User.
@@ -52,9 +54,24 @@ func CheckUser(user models.User) bool {
 	return true
 }
 
+// CheckEmail checks the mail's format.
 func CheckEmail(email string) bool {
 	reg := regexp.MustCompile("^[\\w&#$.%+-]+@[\\w&#$.%+-]+\\.[a-z]{2,6}?$")
 	return reg.MatchString(email)
+}
+
+// EmailExists return whether the mail address exists in the user's list.
+func EmailExists(email string) (bool, models.User) {
+	users, err := retrieveUsers()
+	if err != nil {
+		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
+	}
+	for _, singleUser := range users {
+		if email == singleUser.Email {
+			return true, singleUser
+		}
+	}
+	return false, models.User{}
 }
 
 // CheckPasswd
@@ -175,6 +192,14 @@ func deleteTempUser(temp models.TempUser) {
 	}
 }
 
+func deleteLostUser(temp models.TempUser) {
+	for i, user := range LostUsers {
+		if user == temp {
+			LostUsers = append(LostUsers[:i], LostUsers[i+1:]...)
+		}
+	}
+}
+
 func PushTempUser(id string) {
 	for _, temp := range TempUsers {
 		if temp.ConfirmID == id {
@@ -186,6 +211,19 @@ func PushTempUser(id string) {
 	}
 }
 
+func UpdateLostUser(lost models.TempUser) {
+	user, ok := SelectUser(lost.User.Username)
+	if !ok {
+		Logger.Error(GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+	}
+	user.Salt = lost.User.Salt
+	user.HashedPwd = lost.User.HashedPwd
+	updateUser(user)
+	deleteLostUser(lost)
+}
+
+// ManageTempUsers
+// is a goroutine that periodically removes old models.TempUser from TempUsers and LostUsers.
 func ManageTempUsers() {
 	time.Sleep(time.Second * 10)
 	duration := SetDailyTimer(2)
@@ -197,7 +235,13 @@ func ManageTempUsers() {
 				deleteTempUser(user)
 			}
 		}
+		for _, user := range LostUsers {
+			if time.Since(user.CreationTime) > time.Hour*12 {
+				Logger.Info("LostUser cleared automatically", slog.Any("user", user))
+				deleteTempUser(user)
+			}
+		}
 		time.Sleep(duration)
-		duration = time.Hour * 24
+		duration = time.Hour * 12
 	}
 }
