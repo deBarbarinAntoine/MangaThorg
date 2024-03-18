@@ -460,6 +460,7 @@ a {
 }
 .category .list-wrap {
   flex-wrap: wrap;
+  justify-content: center;
 }
 .category .category-list {
   display: flex;
