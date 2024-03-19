@@ -461,51 +461,112 @@ form.searchform {
   flex-direction: column;
   width: 90%;
 
-  .searchbar {
+  .search-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: calc(3px + .2vw);
-    border-radius: calc(12px + .3vw);
-    border: 3px solid $font-color;
-    width: 60%;
-    min-width: 7rem;
-    height: fit-content;
-    max-width: 400px;
+    margin-bottom: calc(12px + .6vw);
 
-    label {
+    .searchbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(3px + .2vw) calc(5px + .3vw);
+      border-radius: calc(12px + .3vw);
+      border: 3px solid $font-color;
+      width: 80%;
+      min-width: 7rem;
+      height: fit-content;
+      gap: calc(12px + .5vw);
 
+      label {
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: $font-color;
+        font-size: calc(15px + .4vw);
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+      input#title {
+        flex-grow: 1;
+        color: $font-color;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        font-size: calc(13px + .4vw);
+        letter-spacing: 0;
+        line-height: normal;
+      }
+      input#q.search-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        color: $font-color;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        font-size: calc(12px + .4vw);
+        letter-spacing: 0;
+        line-height: normal;
+        padding: calc(3px + .2vw) calc(8px + .3vw);
+        border-radius: calc(5px + .2vw);
+        background-color: $blue-elem;
+        cursor: pointer;
+      }
     }
-    input#title {
 
-    }
-    input#q.search-btn {
+    .advanced-search-header {
+      display: flex;
+      justify-content: flex-end;
+      gap: calc(15px + .8vw);
 
-      .icon-search {
-        height: calc(18px + .6vw);
+      .expand-btn {
+        width: 1.7rem;
+        height: 1.7rem;
+        cursor: pointer;
+
+        img#arrow-logo {
+          object-position: center;
+          object-fit: contain;
+          max-height: 100%;
+          max-width: 100%;
+          transition: transform 300ms ease-in-out;
+        }
+        .up {
+          transform: rotate(180deg);
+        }
+      }
+      button.reset-btn {
+        padding: calc(2px + .2vw) calc(4px + .3vw);
+        border-radius: calc(3px + .3vw);
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: $font-color;
+        font-size: calc(16px + .3vw);
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+        background-color: $red;
+        cursor: pointer;
       }
     }
   }
-  .advanced-search {
 
-    .advanced-search-header {
+  #advanced-search {
+    position: relative;
+    transition: height 700ms ease 100ms;
 
-      .expand-btn {
-
-        img.arrow-logo {
-
-        }
-      }
-      button {
-
-      }
+    .advanced-search-ctn {
+      height: 100%;
+      width: 100%;
+      bottom: 0;
     }
+
     span.search-tag-title {
       width: fit-content;
       font-family: "Tilt Neon", sans-serif;
       font-weight: 400;
       color: $font-color;
-      font-size: calc(10px + .6vw);
+      font-size: calc(11px + .6vw);
       text-align: center;
       letter-spacing: 0;
       line-height: normal;
@@ -515,7 +576,7 @@ form.searchform {
       width: 100%;
       height: fit-content;
       align-items: center;
-      gap: calc(2px + .2vw) calc(4px + .3vw);
+      gap: calc(2px + .3vw);
       flex-wrap: wrap;
       margin: calc(10px + .6vw) 0;
 
@@ -526,19 +587,19 @@ form.searchform {
         background-color: $foreground;
         border-radius: calc(2px + .2vw);
         align-items: center;
+        cursor: pointer;
 
         span.search-tag-txt {
           width: fit-content;
           font-family: "Tilt Neon", sans-serif;
           font-weight: 400;
           color: $font-color;
-          font-size: calc(12px + .3vw);
+          font-size: calc(14px + .3vw);
           text-align: center;
           letter-spacing: 0;
           line-height: normal;
         }
       }
-
       .selected {
         background-color: $blue-elem;
       }
@@ -546,6 +607,14 @@ form.searchform {
         background-color: $red;
       }
     }
+  }
+  .shrink {
+    height: 0;
+    overflow: hidden;
+  }
+  .expand {
+    height: calc(710px + 3vw);
+    overflow: hidden;
   }
 }
 

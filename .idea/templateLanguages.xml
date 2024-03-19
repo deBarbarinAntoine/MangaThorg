@@ -8,12 +8,10 @@
     <file url="file://$PROJECT_DIR$/templates/forgot-passwd.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/login.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/manga.gohtml" dialect="HTML" />
-    <file url="file://$PROJECT_DIR$/templates/new-password-mail.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/principal.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/register.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/search.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/tags.gohtml" dialect="HTML" />
-    <file url="file://$PROJECT_DIR$/templates/update-credentials.gohtml" dialect="HTML" />
     <file url="PROJECT" dialect="go" />
   </component>
 </project>

@@ -10,7 +10,6 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
-	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -731,7 +730,8 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order       string
 		Previous    int
 		Next        int
-		Req         string
+		PrevReq     string
+		NextReq     string
 	}
 
 	if r.URL.Query().Has("q") {
@@ -772,17 +772,39 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			request.OrderValue = "desc"
 		}
 
-		query := make(url.Values)
-		query.Add("q", "true")
-		query.Add("title", request.Title)
-		query.Add("author", request.Author)
-		query.Add("authorOrArtist", request.AuthorOrArtist)
-		query["includedTags[]"] = request.IncludedTags
-		query["excludedTags[]"] = request.ExcludedTags
-		query["status[]"] = request.Status
-		query["public[]"] = request.Public
-		query.Add("order["+request.OrderType+"]", request.OrderValue)
-		query.Add("pag", strconv.Itoa(pag))
+		//query := make(url.Values)
+		//query.Add("q", "Search")
+		//if request.Title != "" {
+		//	query.Add("title", request.Title)
+		//}
+		//if request.Author != "" {
+		//	query.Add("author", request.Author)
+		//}
+		//if request.AuthorOrArtist != "" {
+		//	query.Add("authorOrArtist", request.AuthorOrArtist)
+		//}
+		//if request.IncludedTags != nil {
+		//	query["includedTags[]"] = request.IncludedTags
+		//}
+		//if request.ExcludedTags != nil {
+		//	query["excludedTags[]"] = request.ExcludedTags
+		//}
+		//if request.Status != nil {
+		//	query["status[]"] = request.Status
+		//}
+		//if request.Public != nil {
+		//	query["public[]"] = request.Public
+		//}
+		//query.Add("order["+request.OrderType+"]", request.OrderValue)
+
+		query := r.URL.Query()
+		query.Del("pag")
+
+		previousPageQuery := query
+		nextPageQuery := query
+
+		previousPageQuery.Add("pag", strconv.Itoa(pag-1))
+		nextPageQuery.Add("pag", strconv.Itoa(pag+1))
 
 		data = struct {
 			Tags        models.OrderedTags
@@ -794,7 +816,8 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order       string
 			Previous    int
 			Next        int
-			Req         string
+			PrevReq     string
+			NextReq     string
 		}{
 			Tags:        api.FetchSortedTags(),
 			Path:        "../static",
@@ -803,7 +826,8 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order:       request.OrderValue,
 			Previous:    pag - 1,
 			Next:        pag + 1,
-			Req:         query.Encode(),
+			PrevReq:     previousPageQuery.Encode(),
+			NextReq:     nextPageQuery.Encode(),
 		}
 		data.IsResponse = data.Response.Mangas != nil
 		data.TotalPages = data.Response.NbMangas / 18
@@ -821,7 +845,8 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order       string
 			Previous    int
 			Next        int
-			Req         string
+			PrevReq     string
+			NextReq     string
 		}{
 			Tags:        api.FetchSortedTags(),
 			Path:        "../static",
@@ -832,7 +857,8 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order:       "desc",
 			Previous:    1,
 			Next:        1,
-			Req:         "",
+			PrevReq:     "",
+			NextReq:     "",
 		}
 	}
 

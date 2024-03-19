@@ -5,27 +5,30 @@ let simpleTags = document.querySelectorAll('.search-tag-simple');
 let checkboxes = document.querySelectorAll('.three-way-checkbox');
 let simpleCheckboxes = document.querySelectorAll('.two-way-checkbox');
 let resetBtn = document.querySelector('.reset-btn');
+let expandBtn = document.querySelector('.expand-btn');
+let arrow = document.querySelector('#arrow-logo');
+let advancedSearch = document.querySelector('#advanced-search');
 
 function ToggleCheckboxes(tag, status) {
     let id = tag.id;
     switch (status) {
         case 'selected':
             for (let checkbox of checkboxes) {
-                if (checkbox.attributes.getNamedItem('value') === id) {
+                if (checkbox.value === id) {
                     checkbox.toggleAttribute('checked');
                 }
             }
             return;
         case 'unselected':
             for (let checkbox of checkboxes) {
-                if (checkbox.getAttribute('value') === id && checkbox.getAttribute('name') === 'excludedTags[]') {
+                if (checkbox.value === id && checkbox.getAttribute('name') === 'excludedTags[]') {
                     checkbox.toggleAttribute('checked');
                 }
             }
             return;
         case 'none':
             for (let checkbox of checkboxes) {
-                if (checkbox.getAttribute('value') === id && checkbox.getAttribute('name') === 'includedTags[]') {
+                if (checkbox.value === id && checkbox.getAttribute('name') === 'includedTags[]') {
                     checkbox.toggleAttribute('checked');
                 }
             }
@@ -65,6 +68,18 @@ function Reset() {
     }
 }
 
+function Expand() {
+    if (arrow.classList.contains('up')) {
+        arrow.classList.remove('up');
+        advancedSearch.classList.remove('expand');
+        advancedSearch.classList.add('shrink');
+    } else {
+        arrow.classList.add('up');
+        advancedSearch.classList.remove('shrink');
+        advancedSearch.classList.add('expand');
+    }
+}
+
 for (let tag of tags) {
     tag.addEventListener('click', ClickTag);
 }
@@ -74,3 +89,5 @@ for (let simpleTag of simpleTags) {
 }
 
 resetBtn.addEventListener('click', Reset);
+
+expandBtn.addEventListener('click', Expand)

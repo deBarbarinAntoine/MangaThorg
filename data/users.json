@@ -29,10 +29,10 @@
 	{
 		"id": 3,
 		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "2024-03-18T20:07:55.338212589+01:00",
+		"last_connection": "2024-03-19T10:42:22.6352258+01:00",
 		"username": "thorgdar",
-		"hash": "9223e480c2d4ff032a0cc089fae4477ed7879d1f24f6e9998f529dd0b737d0c14d21db25c2e713075415d922c76d5eb75240decd5bfdeb0fcf9e440efe0d6fd7",
-		"salt": "kXA8RiiJBQjdp6h2okgmHa8z9IoCN4StxZHtK65Hn+72y/uqvtnbUk7eqgmyyBx1b2w+rUUWdyn1SCHgr737dg==",
+		"hash": "31fa80c5c200fd88a5fd79cfe3ed469b4ccabb10925bd46ed7775944bbf09530081421f0399eebaa3926ad750fe610cdd498653a09ade37eec4fa410c61440ab",
+		"salt": "nWXaJrMkGqfhekPJJNXN8F3/Z3R/Ehjat+wx/qG3Ngcky7HDm+QGI4fiisX9+G+tbERqZ4y37F4aOvQipEzuqg==",
 		"email": "thorgdar@gmail.com"
 	}
 ]

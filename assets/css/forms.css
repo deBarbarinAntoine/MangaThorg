@@ -135,7 +135,7 @@ body {
   flex: 0 0 auto;
   gap: calc(8px + 0.3vw);
   padding: calc(6px + 0.3vw) calc(20px + 0.5vw);
-  border-radius: calc(10px + 0.4vw);
+  border-radius: calc(9px + 0.3vw);
 }
 .header .variable .header-buttons .login-btn {
   background-color: #00ADB5;
