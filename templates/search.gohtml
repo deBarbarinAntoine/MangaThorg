@@ -54,15 +54,15 @@
 
 
             <div class="hidden-form">
-                <label for="status">
+                <label for="status[]">
                     {{range .Tags.StatusTags}}
-                        <input type="checkbox" class="two-way-checkbox" name="status" id="check-{{.}}" value="{{.}}" />
+                        <input type="checkbox" class="two-way-checkbox" name="status[]" id="check-{{.}}" value="{{.}}" />
                     {{end}}
                 </label>
 
-                <label for="public">
+                <label for="public[]">
                     {{range .Tags.PublicTags}}
-                        <input type="checkbox" class="two-way-checkbox" name="public" id="check-{{.}}" value="{{.}}" />
+                        <input type="checkbox" class="two-way-checkbox" name="public[]" id="check-{{.}}" value="{{.}}" />
                     {{end}}
                 </label>
 
@@ -94,7 +94,7 @@
         </div>
     </form>
 
-    {{if .NextReq}}
+    {{if .Req}}
         {{if .IsResponse}}
             {{$current := .CurrentPage}}
             <div class="category">
@@ -141,16 +141,16 @@
                 {{if eq $current 1}}
                     <span class="page-link">Previous</span>
                 {{else}}
-                    <a href="/search?{{.PrevReq}}" class="page-link">Previous</a>
+                    <a href="{{.Req}}&pag={{.Previous}}" class="page-link">Previous</a>
                 {{end}}
                 {{if eq $current .TotalPages}}
                     <span class="page-link">Next</span>
                 {{else}}
-                    <a href="/search?{{.NextReq}}" class="page-link">Next</a>
+                    <a href="{{.Req}}&pag={{.Next}}" class="page-link">Next</a>
                 {{end}}
             </div>
         {{else}}
-            <div class="message">Nothing was found!</div>
+            <div class="message-ctn"><div class="message">Nothing was found!</div></div>
         {{end}}
     {{end}}
 <script src="{{.Path}}/js/search.js"></script>

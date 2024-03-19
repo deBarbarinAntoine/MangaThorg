@@ -39,7 +39,7 @@ function ToggleCheckboxes(tag, status) {
 function ClickSimpleTag(e) {
     e.currentTarget.classList.toggle('selected');
     for (let checkbox of simpleCheckboxes) {
-        if (checkbox.getAttribute('name') === e.currentTarget.id) {
+        if (checkbox.value === e.currentTarget.id) {
             checkbox.toggleAttribute('checked');
         }
     }

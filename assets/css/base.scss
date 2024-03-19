@@ -132,11 +132,22 @@ body {
   .variable {
     width: 89%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     flex: 0 0 auto;
     gap: 2rem;
     padding: 16px 0;
+
+    .header-btn-text {
+      width: fit-content;
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: $font-color;
+      font-size: calc(12px + .4vw);
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+    }
 
     .header-buttons {
       height: calc(25px + .5vw);
@@ -153,6 +164,7 @@ body {
         gap: calc(8px + .3vw);
         padding: calc(6px + .3vw) calc(20px + .5vw);
         border-radius: calc(9px + .3vw);
+        cursor: pointer;
       }
 
       .login-btn {
@@ -161,17 +173,6 @@ body {
 
       .register-btn {
         background-color: $foreground;
-      }
-
-      .header-btn-text {
-        width: fit-content;
-        font-family: "Tilt Neon", sans-serif;
-        font-weight: 400;
-        color: $font-color;
-        font-size: calc(12px + .4vw);
-        text-align: center;
-        letter-spacing: 0;
-        line-height: normal;
       }
     }
 
@@ -215,6 +216,70 @@ body {
         position: relative;
         height: 2px;
       }
+    }
+
+
+    .profile-header {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 90px;
+      padding: 10px;
+
+      .filler {
+        width: 20px;
+      }
+      .username-ctn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 15px 5px 60px;
+        flex: 0 0 auto;
+        background-color: $blue-elem;
+        border-radius: 12px;
+        border: $font-color 2px solid;
+
+        .username-txt {
+          position: relative;
+          width: fit-content;
+          font-family: "Tilt Neon", sans-serif;
+          font-weight: 400;
+          color: $background;
+          font-size: calc(15px + .5vw);
+          text-align: center;
+          letter-spacing: 0;
+          line-height: normal;
+        }
+      }
+      .profile-avatar {
+        position: absolute;
+        width: 75px;
+        height: 75px;
+        left: -20px;
+        border-radius: 50%;
+        border: $font-color 3px solid;
+        overflow: hidden;
+        z-index: 2;
+
+        .avatar-img {
+          object-position: center;
+          object-fit: cover;
+          max-width: 100%;
+        }
+      }
+    }
+    .logout-btn {
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 25px;
+      background-color: $red;
+      border-radius: 12px;
+      cursor: pointer;
     }
   }
 }

@@ -63,11 +63,25 @@ func indexHandlerNoMeth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusMethodNotAllowed)
 	utils.Logger.Warn("indexHandlerNoMeth", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusMethodNotAllowed))
 
-	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/error404.gohtml")
+	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
+	}{
+		AvatarImg: "avatar.jpg",
+	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/error404.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "base", nil)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -79,11 +93,25 @@ func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotFound)
 	utils.Logger.Warn("indexHandlerOther", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
 
-	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/error404.gohtml")
+	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
+	}{
+		AvatarImg: "avatar.jpg",
+	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/error404.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "base", nil)
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -349,19 +377,30 @@ func logoutHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	var data = struct {
+		IsConnected    bool
+		Username       string
+		AvatarImg      string
 		Banner         models.MangaUsefullData
 		LatestUploaded []models.MangaUsefullData
 		Popular        []models.MangaUsefullData
 	}{
+		AvatarImg:      "avatar.jpg",
 		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa", "asc", 1),
 		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest).Mangas,
 		Popular:        api.FetchManga(api.TopPopularRequest).Mangas,
 	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
@@ -396,7 +435,7 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if pag < 1 {
 		pag = 1
 	}
-	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -411,16 +450,27 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		pages = append(pages, i+1)
 	}
 	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
 		Manga       models.MangaUsefullData
 		CurrentPage int
 		Pages       []int
 		Order       string
 	}{
+		AvatarImg:   "avatar.jpg",
 		Manga:       manga,
 		CurrentPage: pag,
 		Pages:       pages,
 		Order:       order,
 	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -493,12 +543,15 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/error404", http.StatusNotFound)
 		return
 	}
-	tmpl, err := template.ParseFiles(utils.Path+"templates/chapter.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/chapter.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
 	scan := api.ScanRequest(chapterId)
 	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
 		IsOk        bool
 		ToDataSaver bool
 		Manga       string
@@ -512,6 +565,7 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 			DataSaver []string
 		}
 	}{
+		AvatarImg: "avatar.jpg",
 		Manga:     api.FetchMangaById(mangaId, "desc", 1).Title,
 		ChapterNb: chapterNb,
 		Id:        chapterId,
@@ -527,6 +581,13 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 			DataSaver: scan.Chapter.DataSaver,
 		},
 	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
 	if len(data.Scan.Data) == 0 {
 		if len(data.Scan.DataSaver) == 0 {
 			data.IsOk = false
@@ -546,12 +607,39 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 
 func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path+"templates/tags.gohtml", utils.Path+"templates/base.gohtml")
+
+	sortedTags := api.FetchSortedTags()
+
+	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
+		FormatTags  []models.ApiTag
+		GenreTags   []models.ApiTag
+		ThemeTags   []models.ApiTag
+		PublicTags  []string
+		StatusTags  []string
+	}{
+		AvatarImg:  "avatar.jpg",
+		FormatTags: sortedTags.FormatTags,
+		GenreTags:  sortedTags.GenreTags,
+		ThemeTags:  sortedTags.ThemeTags,
+		PublicTags: sortedTags.PublicTags,
+		StatusTags: sortedTags.StatusTags,
+	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/tags.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	err = tmpl.ExecuteTemplate(w, "base", api.FetchSortedTags())
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -597,6 +685,9 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
 		Path        string
 		Name        string
 		Response    models.MangasInBulk
@@ -606,6 +697,7 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Previous    int
 		Next        int
 	}{
+		AvatarImg:   "avatar.jpg",
 		Path:        "../static",
 		Name:        api.TagSelect(tagId).Attributes.Name.En,
 		Response:    api.FetchManga(request),
@@ -614,12 +706,19 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Previous:    pag - 1,
 		Next:        pag + 1,
 	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
 		data.TotalPages++
 	}
 
-	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -684,6 +783,9 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var data = struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
 		Path        string
 		Name        string
 		Response    models.MangasInBulk
@@ -693,6 +795,7 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Previous    int
 		Next        int
 	}{
+		AvatarImg:   "avatar.jpg",
 		Path:        "../../static",
 		Name:        strings.ToTitle(group) + ": " + name,
 		Response:    api.FetchManga(request),
@@ -701,12 +804,19 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Previous:    pag - 1,
 		Next:        pag + 1,
 	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
+	}
+
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
 		data.TotalPages++
 	}
 
-	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -721,6 +831,9 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
 	var data struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
 		Tags        models.OrderedTags
 		Path        string
 		IsResponse  bool
@@ -730,8 +843,13 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order       string
 		Previous    int
 		Next        int
-		PrevReq     string
-		NextReq     string
+		Req         string
+	}
+
+	user, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = user.Username
 	}
 
 	if r.URL.Query().Has("q") {
@@ -772,41 +890,29 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			request.OrderValue = "desc"
 		}
 
-		//query := make(url.Values)
-		//query.Add("q", "Search")
-		//if request.Title != "" {
-		//	query.Add("title", request.Title)
-		//}
-		//if request.Author != "" {
-		//	query.Add("author", request.Author)
-		//}
-		//if request.AuthorOrArtist != "" {
-		//	query.Add("authorOrArtist", request.AuthorOrArtist)
-		//}
-		//if request.IncludedTags != nil {
-		//	query["includedTags[]"] = request.IncludedTags
-		//}
-		//if request.ExcludedTags != nil {
-		//	query["excludedTags[]"] = request.ExcludedTags
-		//}
-		//if request.Status != nil {
-		//	query["status[]"] = request.Status
-		//}
-		//if request.Public != nil {
-		//	query["public[]"] = request.Public
-		//}
-		//query.Add("order["+request.OrderType+"]", request.OrderValue)
-
-		query := r.URL.Query()
-		query.Del("pag")
-
-		previousPageQuery := query
-		nextPageQuery := query
-
-		previousPageQuery.Add("pag", strconv.Itoa(pag-1))
-		nextPageQuery.Add("pag", strconv.Itoa(pag+1))
+		var query string
+		query += "?q=Search"
+		query += "&title=" + request.Title
+		query += "&author=" + request.Author
+		query += "&authorOrArtist=" + request.AuthorOrArtist
+		for _, tag := range request.IncludedTags {
+			query += "&includedTags[]=" + tag
+		}
+		for _, tag := range request.ExcludedTags {
+			query += "&excludedTags[]=" + tag
+		}
+		for _, status := range request.Status {
+			query += "&status[]=" + status
+		}
+		for _, public := range request.Public {
+			query += "&public[]=" + public
+		}
+		query += "&order[" + request.OrderType + "]=" + request.OrderValue
 
 		data = struct {
+			IsConnected bool
+			Username    string
+			AvatarImg   string
 			Tags        models.OrderedTags
 			Path        string
 			IsResponse  bool
@@ -816,9 +922,9 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order       string
 			Previous    int
 			Next        int
-			PrevReq     string
-			NextReq     string
+			Req         string
 		}{
+			AvatarImg:   "avatar.jpg",
 			Tags:        api.FetchSortedTags(),
 			Path:        "../static",
 			Response:    api.FetchManga(request),
@@ -826,8 +932,7 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order:       request.OrderValue,
 			Previous:    pag - 1,
 			Next:        pag + 1,
-			PrevReq:     previousPageQuery.Encode(),
-			NextReq:     nextPageQuery.Encode(),
+			Req:         query,
 		}
 		data.IsResponse = data.Response.Mangas != nil
 		data.TotalPages = data.Response.NbMangas / 18
@@ -836,6 +941,9 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		data = struct {
+			IsConnected bool
+			Username    string
+			AvatarImg   string
 			Tags        models.OrderedTags
 			Path        string
 			IsResponse  bool
@@ -845,9 +953,9 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order       string
 			Previous    int
 			Next        int
-			PrevReq     string
-			NextReq     string
+			Req         string
 		}{
+			AvatarImg:   "avatar.jpg",
 			Tags:        api.FetchSortedTags(),
 			Path:        "../static",
 			IsResponse:  false,
@@ -857,12 +965,11 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Order:       "desc",
 			Previous:    1,
 			Next:        1,
-			PrevReq:     "",
-			NextReq:     "",
+			Req:         "",
 		}
 	}
 
-	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}

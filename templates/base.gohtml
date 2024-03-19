@@ -25,18 +25,9 @@
             </div>
         </div>
     </div>
-    <div class="variable">
-        <div class="header-buttons">
-            <a href="/login" class="login-btn"><div class="header-btn-text">Sign in</div></a>
-            <a href="/register" class="register-btn"><div class="header-btn-text">Register</div></a>
-        </div>
-        <div class="header-msg">
-            <img class="line-top" src="{{template "staticPath" .}}/img/line-1-1.svg" alt="line" />
-            <a href="/login" class="invitation-msg">Sign in to have all features available</a>
-            <img class="line-bottom" src="{{template "staticPath" .}}/img/line-2-1.svg" alt="line" />
-        </div>
-        <div class="filler"></div>
-    </div>
+
+    {{template "header-line2" .}}
+
 </header>
 
 <div class="template">{{template "page" .}}</div>

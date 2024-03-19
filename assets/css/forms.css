@@ -115,11 +115,21 @@ body {
 .header .variable {
   width: 89%;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   flex: 0 0 auto;
   gap: 2rem;
   padding: 16px 0;
+}
+.header .variable .header-btn-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
 }
 .header .variable .header-buttons {
   height: calc(25px + 0.5vw);
@@ -136,22 +146,13 @@ body {
   gap: calc(8px + 0.3vw);
   padding: calc(6px + 0.3vw) calc(20px + 0.5vw);
   border-radius: calc(9px + 0.3vw);
+  cursor: pointer;
 }
 .header .variable .header-buttons .login-btn {
   background-color: #00ADB5;
 }
 .header .variable .header-buttons .register-btn {
   background-color: #393E46;
-}
-.header .variable .header-buttons .header-btn-text {
-  width: fit-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(12px + 0.4vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
 }
 .header .variable .filler {
   display: flex;
@@ -189,6 +190,65 @@ body {
   width: 237px;
   position: relative;
   height: 2px;
+}
+.header .variable .profile-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 90px;
+  padding: 10px;
+}
+.header .variable .profile-header .filler {
+  width: 20px;
+}
+.header .variable .profile-header .username-ctn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 15px 5px 60px;
+  flex: 0 0 auto;
+  background-color: #00ADB5;
+  border-radius: 12px;
+  border: #EEEEEE 2px solid;
+}
+.header .variable .profile-header .username-ctn .username-txt {
+  position: relative;
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #222831;
+  font-size: calc(15px + 0.5vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.header .variable .profile-header .profile-avatar {
+  position: absolute;
+  width: 75px;
+  height: 75px;
+  left: -20px;
+  border-radius: 50%;
+  border: #EEEEEE 3px solid;
+  overflow: hidden;
+  z-index: 2;
+}
+.header .variable .profile-header .profile-avatar .avatar-img {
+  object-position: center;
+  object-fit: cover;
+  max-width: 100%;
+}
+.header .variable .logout-btn {
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 25px;
+  background-color: #7D0A0A;
+  border-radius: 12px;
+  cursor: pointer;
 }
 
 .logo {
