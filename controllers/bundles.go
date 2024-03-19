@@ -32,3 +32,5 @@ var ChapterHandlerGetBundle = middlewares.Join(chapterHandlerGet, middlewares.Lo
 var MangaWholeRequestHandlerGetBundle = middlewares.Join(mangaWholeRequestHandlerGet, middlewares.Log, middlewares.UserCheck)
 var CoversHandlerGetBundle = middlewares.Join(coverHandlerGet, middlewares.UserCheck)
 var ScanHandlerGetBundle = middlewares.Join(scanHandlerGet, middlewares.UserCheck)
+var FavoriteHandlerPostBundle = middlewares.Join(favoriteHandlerPost, middlewares.SimpleGuard)
+var FavoriteHandlerDeleteBundle = middlewares.Join(favoriteHandlerDelete, middlewares.SimpleGuard)

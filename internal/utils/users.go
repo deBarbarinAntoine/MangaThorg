@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"mangathorg/internal/models"
 	"os"
+	"reflect"
 	"regexp"
 	"time"
 )
@@ -168,10 +169,10 @@ func SelectUser(username string) (models.User, bool) {
 	return user, ok
 }
 
-// updateUser
+// UpdateUser
 // modifies the models.User in jsonFile that matches
 // `updatedUser`'s Id with `updatedUser`'s content.
-func updateUser(updatedUser models.User) {
+func UpdateUser(updatedUser models.User) {
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -186,7 +187,7 @@ func updateUser(updatedUser models.User) {
 
 func deleteTempUser(temp models.TempUser) {
 	for i, user := range TempUsers {
-		if user == temp {
+		if reflect.DeepEqual(user, temp) {
 			TempUsers = append(TempUsers[:i], TempUsers[i+1:]...)
 		}
 	}
@@ -194,7 +195,7 @@ func deleteTempUser(temp models.TempUser) {
 
 func deleteLostUser(temp models.TempUser) {
 	for i, user := range LostUsers {
-		if user == temp {
+		if reflect.DeepEqual(user, temp) {
 			LostUsers = append(LostUsers[:i], LostUsers[i+1:]...)
 		}
 	}
@@ -218,7 +219,7 @@ func UpdateLostUser(lost models.TempUser) {
 	}
 	user.Salt = lost.User.Salt
 	user.HashedPwd = lost.User.HashedPwd
-	updateUser(user)
+	UpdateUser(user)
 	deleteLostUser(lost)
 }
 

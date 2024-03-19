@@ -12,6 +12,9 @@ import (
 // SessionsData is an in-memory models.Session data storage.
 var SessionsData = make(map[string]models.Session)
 
+// sessionTime is the constant handling the session's maximum opened time without interaction.
+const sessionTime time.Duration = time.Hour * 2
+
 func retrieveSessions() []models.Session {
 	var sessions []models.Session
 	for _, session := range SessionsData {
@@ -50,7 +53,7 @@ func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 	// Generate and set Session ID cookie
 	sessionID := generateSessionID()
 	// Generate expiration time for the cookie
-	expirationTime := time.Now().Add(time.Minute)
+	expirationTime := time.Now().Add(time.Hour * 2)
 
 	newCookie := &http.Cookie{
 		Name:     "session_id",
@@ -69,7 +72,7 @@ func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 
 	// Update the last connection time in `users.json`.
 	user.LastConnection = time.Now()
-	updateUser(user)
+	UpdateUser(user)
 
 	// Create Session data in memory
 	SessionsData[sessionID] = models.Session{
@@ -114,7 +117,7 @@ func CheckSession(r *http.Request) bool {
 func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 	// generating new sessionID and new expiration time
 	newSessionID := generateSessionID()
-	newExpirationTime := time.Now().Add(time.Minute)
+	newExpirationTime := time.Now().Add(sessionTime)
 
 	var newCookie = &http.Cookie{
 		Name:     "session_id",

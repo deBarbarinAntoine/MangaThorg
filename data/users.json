@@ -6,7 +6,11 @@
 		"username": "Antoine",
 		"hash": "36a3db4437b94182655f23faa6ff1801e214092b4de8f022c490e79d1e4333f9e4482809ce710aba3bdd11026741257cdca0638cd7f87d379848a838f3797e66",
 		"salt": "elAdroqDRcV4UZUwSeEBJe6rE6wxz9GjVAOW/einxIfpQ41Bnc0B1L0cU9obD1ADbWhXgoVQNrfA3YGJsvXS/g==",
-		"email": "mail@adebarbarin.com"
+		"email": "mail@adebarbarin.com",
+		"manga_banner": {},
+		"favorites": [
+			{}
+		]
 	},
 	{
 		"id": 2,
@@ -15,7 +19,11 @@
 		"username": "henry",
 		"hash": "c1e2c80638ec1657f1a2194419669f15741984c6da0d288d41b6e11460a293e95260cdab5b81cc379f2cb076eecc9bffbacaf31b2f90bfaff4cd20036c67fa5b",
 		"salt": "6V1KitCFiwPmJZXmmyz97ZuczVJqWwbUATTMx6b80wbM+kaqC1KEr3Ow+PeDXB/kIX/syZae0H42vNWo4sjxHQ==",
-		"email": "htitushg@gmail.com"
+		"email": "htitushg@gmail.com",
+		"manga_banner": {},
+		"favorites": [
+			{}
+		]
 	},
 	{
 		"id": 4,
@@ -24,15 +32,32 @@
 		"username": "Marie",
 		"hash": "c184eda2fc30aa375c5d78efc7f8731aa68b59dd00c2f762d53349ebd8e54bb32823d4610121a3d5acc55802e6093d377794be7f0d08dc01c0efa55119616e83",
 		"salt": "qcEMwPNfZNm+4Jg2PjWlKowCQ1OIrTmIw/szLIvB64AUlJWX5DW71iP1s1XBvANfqgLdSVDVN89ozAJsM1JCxQ==",
-		"email": "nonacidos@gmail.com"
+		"email": "nonacidos@gmail.com",
+		"manga_banner": {},
+		"favorites": [
+			{}
+		]
 	},
 	{
 		"id": 3,
 		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "2024-03-19T17:50:02.333785865+01:00",
+		"last_connection": "2024-03-19T23:02:33.710798795+01:00",
 		"username": "thorgdar",
 		"hash": "a7c7ff59218c8fc322873d95e5f057c5a15c337ef96b7dab230888042ee2c0ef15e295976ef9ba7c0b7595e59a38a853bff3376515144ed26fcd954a72a886d3",
 		"salt": "r3DSp1sNFUOBdkpqBZd9bfSLgXaY/5rcVvXku/lMAVuq1ShRwS5bs0X1Ym2BBA2LdItvw2jkQG1shUbxvJNkfA==",
-		"email": "thorgdar@gmail.com"
+		"email": "thorgdar@gmail.com",
+		"manga_banner": {},
+		"favorites": [
+			{},
+			{
+				"id": "cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa"
+			},
+			{
+				"id": "812f9696-048f-496d-9ed4-84c99345d1fb"
+			},
+			{
+				"id": "4bde51e5-e420-45a4-98e9-7405bf2d59ff"
+			}
+		]
 	}
 ]

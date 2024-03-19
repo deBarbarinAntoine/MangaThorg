@@ -35,6 +35,8 @@ func Init() {
 	Mux.HandleFunc("GET /mangatest", controllers.MangaWholeRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /covers/{manga}/{img}", controllers.CoversHandlerGetBundle)
 	Mux.HandleFunc("GET /scan/{chapterId}/{quality}/{hash}/{img}", controllers.ScanHandlerGetBundle)
+	Mux.HandleFunc("POST /favorite/{mangaId}", controllers.FavoriteHandlerPostBundle)
+	Mux.HandleFunc("DELETE /favorite/{mangaId}", controllers.FavoriteHandlerDeleteBundle)
 
 	// Handling MethodNotAllowed error on /
 	Mux.HandleFunc("/{$}", controllers.IndexHandlerNoMethBundle)

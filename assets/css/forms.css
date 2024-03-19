@@ -77,7 +77,7 @@ body {
   flex: 1 1 auto;
   width: 30%;
 }
-.header .main .header-search-bar-ctn .header-search-bar {
+.header .main .header-search-bar-ctn form.header-search-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -87,9 +87,8 @@ body {
   width: 60%;
   min-width: 7rem;
   height: fit-content;
-  max-width: 400px;
 }
-.header .main .header-search-bar-ctn .header-search-bar .filter-search-bar {
+.header .main .header-search-bar-ctn form.header-search-bar .filter-search-bar {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -97,8 +96,13 @@ body {
   padding: calc(4px + 0.2vw);
   background-color: #393E46;
   border-radius: calc(5px + 0.3vw);
+  cursor: pointer;
+  transition: background-color 150ms ease-in;
 }
-.header .main .header-search-bar-ctn .header-search-bar .filter-search-bar .filter-search-text {
+.header .main .header-search-bar-ctn form.header-search-bar .filter-search-bar:hover {
+  background-color: #00ADB5;
+}
+.header .main .header-search-bar-ctn form.header-search-bar .filter-search-bar .filter-search-text {
   width: fit-content;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
@@ -109,8 +113,24 @@ body {
   line-height: normal;
   padding: 0 calc(2px + 0.2vw);
 }
-.header .main .header-search-bar-ctn .header-search-bar .icon-search {
+.header .main .header-search-bar-ctn form.header-search-bar .search-bar-input {
+  width: 60%;
+  flex-shrink: 1;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(10px + 0.5vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  padding: 0 calc(2px + 0.2vw);
+}
+.header .main .header-search-bar-ctn form.header-search-bar .search-bar-btn {
+  cursor: pointer;
+}
+.header .main .header-search-bar-ctn form.header-search-bar .search-bar-btn .icon-search {
   height: calc(18px + 0.6vw);
+  width: calc(18px + 0.6vw);
 }
 .header .variable {
   width: 89%;

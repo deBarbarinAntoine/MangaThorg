@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"errors"
 	"html/template"
 	"log"
 	"log/slog"
@@ -534,6 +535,84 @@ func scanHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func favoriteHandlerPost(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	mangaId := r.PathValue("mangaId")
+
+	session, sessionId := utils.GetSession(r)
+
+	if sessionId == "" {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("sessionId not found")))
+		http.Error(w, "restricted access: you need a valid session to proceed", http.StatusUnauthorized)
+		return
+	}
+
+	if mangaId == "" {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("mangaId is null")))
+		http.Error(w, "you need to provide a mangaId", http.StatusNotFound)
+		return
+	}
+
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+		http.Error(w, "restricted access: you need a valid user to proceed", http.StatusUnauthorized)
+		return
+	}
+
+	for _, favorite := range user.Favorites {
+		if mangaId == favorite.Id {
+			http.Error(w, "the manga is already present in the favorites", http.StatusConflict)
+			return
+		}
+	}
+
+	user.Favorites = append(user.Favorites, models.MangaUser{Id: mangaId})
+	utils.UpdateUser(user)
+
+	w.Header().Set("result", "Manga added successfully")
+	w.WriteHeader(http.StatusOK)
+}
+
+func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	mangaId := r.PathValue("mangaId")
+
+	session, sessionId := utils.GetSession(r)
+
+	if sessionId == "" {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("sessionId not found")))
+		http.Error(w, "restricted access: you need a valid session to proceed", http.StatusUnauthorized)
+		return
+	}
+
+	if mangaId == "" {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("mangaId is null")))
+		http.Error(w, "you need to provide a mangaId", http.StatusNotFound)
+		return
+	}
+
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+		http.Error(w, "restricted access: you need a valid user to proceed", http.StatusUnauthorized)
+		return
+	}
+
+	for i, favorite := range user.Favorites {
+		if mangaId == favorite.Id {
+			user.Favorites = append(user.Favorites[:i], user.Favorites[i+1:]...)
+			utils.UpdateUser(user)
+			w.Header().Set("result", "Manga deleted successfully")
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+	}
+
+	w.WriteHeader(http.StatusNotFound)
+	w.Header().Set("error", "The manga was not found in the favorites")
+}
+
 func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
@@ -831,19 +910,20 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
 	var data struct {
-		IsConnected bool
-		Username    string
-		AvatarImg   string
-		Tags        models.OrderedTags
-		Path        string
-		IsResponse  bool
-		Response    models.MangasInBulk
-		CurrentPage int
-		TotalPages  int
-		Order       string
-		Previous    int
-		Next        int
-		Req         string
+		ExpandedFilters bool
+		IsConnected     bool
+		Username        string
+		AvatarImg       string
+		Tags            models.OrderedTags
+		Path            string
+		IsResponse      bool
+		Response        models.MangasInBulk
+		CurrentPage     int
+		TotalPages      int
+		Order           string
+		Previous        int
+		Next            int
+		Req             string
 	}
 
 	user, sessionId := utils.GetSession(r)
@@ -910,29 +990,33 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		query += "&order[" + request.OrderType + "]=" + request.OrderValue
 
 		data = struct {
-			IsConnected bool
-			Username    string
-			AvatarImg   string
-			Tags        models.OrderedTags
-			Path        string
-			IsResponse  bool
-			Response    models.MangasInBulk
-			CurrentPage int
-			TotalPages  int
-			Order       string
-			Previous    int
-			Next        int
-			Req         string
+			ExpandedFilters bool
+			IsConnected     bool
+			Username        string
+			AvatarImg       string
+			Tags            models.OrderedTags
+			Path            string
+			IsResponse      bool
+			Response        models.MangasInBulk
+			CurrentPage     int
+			TotalPages      int
+			Order           string
+			Previous        int
+			Next            int
+			Req             string
 		}{
-			AvatarImg:   "avatar.jpg",
-			Tags:        api.FetchSortedTags(),
-			Path:        "../static",
-			Response:    api.FetchManga(request),
-			CurrentPage: pag,
-			Order:       request.OrderValue,
-			Previous:    pag - 1,
-			Next:        pag + 1,
-			Req:         query,
+			ExpandedFilters: r.URL.Query().Has("option"),
+			IsConnected:     data.IsConnected,
+			Username:        data.Username,
+			AvatarImg:       "avatar.jpg",
+			Tags:            api.FetchSortedTags(),
+			Path:            "../static",
+			Response:        api.FetchManga(request),
+			CurrentPage:     pag,
+			Order:           request.OrderValue,
+			Previous:        pag - 1,
+			Next:            pag + 1,
+			Req:             query,
 		}
 		data.IsResponse = data.Response.Mangas != nil
 		data.TotalPages = data.Response.NbMangas / 18
@@ -941,31 +1025,35 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		}
 	} else {
 		data = struct {
-			IsConnected bool
-			Username    string
-			AvatarImg   string
-			Tags        models.OrderedTags
-			Path        string
-			IsResponse  bool
-			Response    models.MangasInBulk
-			CurrentPage int
-			TotalPages  int
-			Order       string
-			Previous    int
-			Next        int
-			Req         string
+			ExpandedFilters bool
+			IsConnected     bool
+			Username        string
+			AvatarImg       string
+			Tags            models.OrderedTags
+			Path            string
+			IsResponse      bool
+			Response        models.MangasInBulk
+			CurrentPage     int
+			TotalPages      int
+			Order           string
+			Previous        int
+			Next            int
+			Req             string
 		}{
-			AvatarImg:   "avatar.jpg",
-			Tags:        api.FetchSortedTags(),
-			Path:        "../static",
-			IsResponse:  false,
-			Response:    models.MangasInBulk{},
-			CurrentPage: 1,
-			TotalPages:  1,
-			Order:       "desc",
-			Previous:    1,
-			Next:        1,
-			Req:         "",
+			ExpandedFilters: r.URL.Query().Has("option"),
+			IsConnected:     data.IsConnected,
+			Username:        data.Username,
+			AvatarImg:       "avatar.jpg",
+			Tags:            api.FetchSortedTags(),
+			Path:            "../static",
+			IsResponse:      false,
+			Response:        models.MangasInBulk{},
+			CurrentPage:     1,
+			TotalPages:      1,
+			Order:           "desc",
+			Previous:        1,
+			Next:            1,
+			Req:             "",
 		}
 	}
 

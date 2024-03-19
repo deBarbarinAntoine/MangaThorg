@@ -19,10 +19,13 @@
             <a href="/categories" class="category-link">CATEGORIES</a>
         </div>
         <div class="header-search-bar-ctn">
-            <div class="header-search-bar">
-                <div class="filter-search-bar"><div class="filter-search-text">Filter</div></div>
-                <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
-            </div>
+            <form method="get" action="/search" class="header-search-bar">
+                <a href="/search?option=filters" class="filter-search-bar"><div class="filter-search-text">Filter</div></a>
+                <input name="title" placeholder="Search..." type="text" class="search-bar-input" required />
+                <button class="search-bar-btn" type="submit" name="q" value="Search">
+                    <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
+                </button>
+            </form>
         </div>
     </div>
 

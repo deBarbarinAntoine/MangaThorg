@@ -14,11 +14,11 @@
                 <input type="submit" name="q" id="q" class="search-btn" value="Search">
             </div>
             <div class="advanced-search-header">
-                <div class="expand-btn"><img src="{{.Path}}/img/arrow.png" alt="arrow-logo" id="arrow-logo" /></div>
+                <div class="expand-btn"><img src="{{.Path}}/img/arrow.png" alt="arrow-logo" id="arrow-logo" {{if .ExpandedFilters}} class="up" {{end}}/></div>
                 <button type="reset" class="reset-btn">Reset</button>
             </div>
         </div>
-        <div id="advanced-search" class="shrink">
+        <div id="advanced-search" {{if .ExpandedFilters}} class="expand" {{else}} class="shrink" {{end}}>
             <div class="advanced-search-ctn">
                 <span class="search-tag-title">Status</span>
                 <div class="search-tag-list">
@@ -94,6 +94,7 @@
         </div>
     </form>
 
+    {{$isConnected := .IsConnected}}{{/*testing favorite handling*/}}
     {{if .Req}}
         {{if .IsResponse}}
             {{$current := .CurrentPage}}
@@ -110,7 +111,7 @@
                 </div>
                 <div class="category-list list-wrap">
                     {{range .Response.Mangas}}
-                        <div class="category-card">
+                        <div class="category-card{{if $isConnected}} add-favorite{{end}}" id="{{.Id}}"> {{/*testing favorite handling*/}}
                             <div class="category-card-cover">
                                 <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
                                 <div class="category-card-hover"></div>
@@ -153,5 +154,8 @@
             <div class="message-ctn"><div class="message">Nothing was found!</div></div>
         {{end}}
     {{end}}
-<script src="{{.Path}}/js/search.js"></script>
+
+    <script src="{{.Path}}/js/search.js"></script>
+    <script src="{{.Path}}/js/favorites.js"></script>{{/*testing favorite handling*/}}
+
 {{end}}

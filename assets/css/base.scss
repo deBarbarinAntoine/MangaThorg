@@ -88,7 +88,7 @@ body {
       flex: 1 1 auto;
       width: 30%;
 
-      .header-search-bar {
+      form.header-search-bar {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -98,7 +98,6 @@ body {
         width: 60%;
         min-width: 7rem;
         height: fit-content;
-        max-width: 400px;
 
         .filter-search-bar {
           display: flex;
@@ -108,6 +107,12 @@ body {
           padding: calc(4px + .2vw);
           background-color: $foreground;
           border-radius: calc(5px + .3vw);
+          cursor: pointer;
+          transition: background-color 150ms ease-in;
+
+          &:hover {
+            background-color: $blue-elem;
+          }
 
           .filter-search-text {
             width: fit-content;
@@ -122,8 +127,25 @@ body {
           }
         }
 
-        .icon-search {
-          height: calc(18px + .6vw);
+        .search-bar-input {
+          width: 60%;
+          flex-shrink: 1;
+          font-family: "Tilt Neon", sans-serif;
+          font-weight: 400;
+          color: $font-color;
+          font-size: calc(10px + .5vw);
+          text-align: center;
+          letter-spacing: 0;
+          line-height: normal;
+          padding: 0 calc(2px + .2vw);
+        }
+        .search-bar-btn {
+          cursor: pointer;
+
+          .icon-search {
+            height: calc(18px + .6vw);
+            width: calc(18px + .6vw);
+          }
         }
       }
     }

@@ -53,6 +53,34 @@ var Guard models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
+// SimpleGuard is a models.Middleware that verify if a user has an opened session
+// through the cookies and let it pass if ok, and send an error if not.
+var SimpleGuard models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		log.Println("middlewares.SimpleGuard()")
+
+		// Checks if the user has a valid opened session
+		ok := utils.CheckSession(r)
+		if !ok {
+			utils.Logger.Warn("Invalid session", slog.Int("req_id", LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusUnauthorized))
+			http.Error(w, "Invalid session", http.StatusUnauthorized)
+			return
+		}
+
+		// retrieving the in-memory current session data
+		cookie, err := r.Cookie("session_id")
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		}
+
+		// copying the cookie in the updatedCookie to retrieve it in the next handler
+		cookie.Name = "updatedCookie"
+		r.AddCookie(cookie)
+
+		next.ServeHTTP(w, r)
+	}
+}
+
 // UserCheck is a models.Middleware that checks if the client is logged,
 // and if yes, it refreshes its sessionID
 var UserCheck models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {

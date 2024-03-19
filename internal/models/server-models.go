@@ -21,13 +21,20 @@ type Credentials struct {
 }
 
 type User struct {
-	Id             int       `json:"id"`
-	CreationTime   time.Time `json:"creation_time"`
-	LastConnection time.Time `json:"last_connection"`
-	Username       string    `json:"username"`
-	HashedPwd      string    `json:"hash"`
-	Salt           string    `json:"salt"`
-	Email          string    `json:"email"`
+	Id             int         `json:"id"`
+	CreationTime   time.Time   `json:"creation_time"`
+	LastConnection time.Time   `json:"last_connection"`
+	Username       string      `json:"username"`
+	HashedPwd      string      `json:"hash"`
+	Salt           string      `json:"salt"`
+	Email          string      `json:"email"`
+	MangaBanner    MangaUser   `json:"manga_banner"`
+	Favorites      []MangaUser `json:"favorites"`
+}
+
+type MangaUser struct {
+	Id              string `json:"id,omitempty"`
+	LastChapterRead string `json:"last_chapter_read,omitempty"`
 }
 
 type TempUser struct {
