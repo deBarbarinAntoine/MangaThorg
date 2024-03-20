@@ -94,7 +94,7 @@
         </div>
     </form>
 
-    {{$isConnected := .IsConnected}}{{/*testing favorite handling*/}}
+    {{$isConnected := .IsConnected}}
     {{if .Req}}
         {{if .IsResponse}}
             {{$current := .CurrentPage}}
@@ -111,11 +111,14 @@
                 </div>
                 <div class="category-list list-wrap">
                     {{range .Response.Mangas}}
-                        <div class="category-card{{if $isConnected}} add-favorite{{end}}" id="{{.Id}}"> {{/*testing favorite handling*/}}
+                        <div class="category-card">
                             <div class="category-card-cover">
                                 <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
                                 <div class="category-card-hover"></div>
                                 <div class="hover-description">
+                                    {{if $isConnected}}
+                                    <div class="favorite-btn {{if .IsFavorite}}remove-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" ></div>
+                                        {{end}}
                                     <div class="description-title">
                                         Description
                                     </div>

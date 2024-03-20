@@ -6,98 +6,103 @@
 
 {{define "page"}}
 
-        <!-- Manga Banner -->
-<div class="manga-presentation">
-    <div class="manga-banner">
-        <img class="background-img" src="/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}" alt="{{.Manga.Title}}" />
-        <div class="banner-text">
-            <div class="manga-title">{{.Manga.Title}}</div>
-            <div class="manga-attributes">
-                <div class="attribute">
-                    <div class="attribute-label">Author</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Author}}</div></div>
-                </div>
-                <div class="attribute">
-                    <div class="attribute-label">Status</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Status}}</div></div>
-                </div>
-                <div class="attribute">
-                    <div class="attribute-label">Public</div>
-                    <div class="div-attr-ctn"><div class="attr-text">{{if .Manga.PublicationDemographic}}{{.Manga.PublicationDemographic}}{{else}}N/A{{end}}</div></div>
-                </div>
-                <div class="attribute">
-                    <div class="attribute-label">Rating</div>
-                    <div class="rating-tag">
-                        <img class="icon-star-outline" src="../static/img/rating-icon.png" alt="rating-icon" />
-                        <div class="attr-text">{{.Manga.Rating}}</div>
+    <!-- Manga Banner -->
+    <div class="manga-presentation">
+        <div class="manga-banner">
+            <img class="background-img" src="/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}" alt="{{.Manga.Title}}" />
+            <div class="banner-text">
+                <div class="manga-title">{{.Manga.Title}}</div>
+                <div class="manga-attributes">
+                    <div class="attribute">
+                        <div class="attribute-label">Author</div>
+                        <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Author}}</div></div>
+                    </div>
+                    <div class="attribute">
+                        <div class="attribute-label">Status</div>
+                        <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Status}}</div></div>
+                    </div>
+                    <div class="attribute">
+                        <div class="attribute-label">Public</div>
+                        <div class="div-attr-ctn"><div class="attr-text">{{if .Manga.PublicationDemographic}}{{.Manga.PublicationDemographic}}{{else}}N/A{{end}}</div></div>
+                    </div>
+                    <div class="attribute">
+                        <div class="attribute-label">Rating</div>
+                        <div class="rating-tag">
+                            <img class="icon-star-outline" src="../static/img/rating-icon.png" alt="rating-icon" />
+                            <div class="attr-text">{{.Manga.Rating}}</div>
+                        </div>
                     </div>
                 </div>
+                <a href="/chapter/{{.Manga.Id}}/1/{{if .Manga.LastChapterRead}}{{.Manga.LastChapterRead}}{{else}}{{.Manga.FirstChapterId}}{{end}}" class="manga-read-btn">
+                    <div class="manga-read-btn-text">{{if .Manga.LastChapterRead}}Keep reading{{else}}Begin reading{{end}}</div>
+                    <img class="icon-menu-book" src="../static/img/open-book.png"  alt="read-to logo"/>
+                </a>
             </div>
-            <a href="/chapter/{{.Manga.Id}}/1/{{.Manga.FirstChapterId}}" class="manga-read-btn">
-                <div class="manga-read-btn-text">Begin reading</div>
-                <img class="icon-menu-book" src="../static/img/open-book.png"  alt="read-to logo"/>
-            </a>
+            {{if .IsConnected}}
+                <div class="favorite-btn{{if .Manga.IsFavorite}} delete-favorite{{else}} add-favorite{{end}}" id="{{.Manga.Id}}"></div>
+            {{end}}
         </div>
-        <a href="" class="manga-remove"><img class="bookmark-remove" src="img/bookmark-remove.png" /></a>
+        <div class="manga-card-ctn-abs">
+            <div class="manga-card"><div class="manga-card-img" style="background-image: url('/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}')"></div></div>
+        </div>
+        <div class="manga-info">
+            <div class="manga-description">
+                <p>
+                    {{.Manga.Description}}
+                </p>
+                <div class="manga-tag-list">
+                    {{range .Manga.Tags}}
+                        <a href="/category/{{.Id}}" class="manga-tag"><div class="manga-tag-text">{{.Attributes.Name.En}}</div></a>
+                    {{end}}
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="manga-card-ctn-abs">
-        <div class="manga-card"><div class="manga-card-img" style="background-image: url('/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}')"></div></div>
-    </div>
-    <div class="manga-info">
-        <div class="manga-description">
-            <p>
-                {{.Manga.Description}}
-            </p>
-            <div class="manga-tag-list">
-                {{range .Manga.Tags}}
-                    <a href="/category/{{.Id}}" class="manga-tag"><div class="manga-tag-text">{{.Attributes.Name.En}}</div></a>
+
+    {{$current := .CurrentPage}}
+
+    <!-- Manga Chapter-list -->
+    <div class="manga-chapters">
+        <div class="chapters-header">
+            <div class="title-ctn"><div class="title">Chapters</div></div>
+            <div class="sorting">
+                <div class="sort-title">Sort:</div>
+                {{if eq .Order "desc"}}
+                    <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
+                    <a href="?order=asc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Ascending</div></a>
+                {{else if eq .Order "asc"}}
+                    <a href="?order=desc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Descending</div></a>
+                    <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
                 {{end}}
             </div>
         </div>
-    </div>
-</div>
-
-{{$current := .CurrentPage}}
-
-        <!-- Manga Chapter-list -->
-<div class="manga-chapters">
-    <div class="chapters-header">
-        <div class="title-ctn"><div class="title">Chapters</div></div>
-        <div class="sorting">
-            <div class="sort-title">Sort:</div>
-            {{if eq .Order "desc"}}
-                <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
-                <a href="?order=asc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Ascending</div></a>
-            {{else if eq .Order "asc"}}
-                <a href="?order=desc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Descending</div></a>
-                <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
+        <div class="chapters-list">
+            {{$id := .Manga.Id}}
+            {{range .Manga.Chapters}}
+                <div class="chapter">
+                    <p class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}} </p>
+                    <div class="source">
+                        <img class="icon-group" src="../static/img/scanlation-group.png" />
+                        <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
+                    </div>
+                    <a href="/chapter/{{$id}}/{{.Chapter}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
+                </div>
             {{end}}
         </div>
     </div>
-    <div class="chapters-list">
-        {{$id := .Manga.Id}}
-        {{range .Manga.Chapters}}
-            <div class="chapter">
-                <p class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}} </p>
-                <div class="source">
-                    <img class="icon-group" src="../static/img/scanlation-group.png" />
-                    <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
-                </div>
-                <a href="/chapter/{{$id}}/{{.Chapter}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
-            </div>
+
+    <div class="pagination">
+        {{$order := .Order}}
+
+        {{range .Pages}}
+            {{if eq . $current}}
+                <span class="page-link">{{.}}</span>
+            {{else}}
+                <a href="?order={{$order}}&pag={{.}}" class="page-link">{{.}}</a>
+            {{end}}
         {{end}}
     </div>
-</div>
 
-<div class="pagination">
-    {{$order := .Order}}
+    <script src="../static/js/favorites.js"></script>
 
-    {{range .Pages}}
-        {{if eq . $current}}
-            <span class="page-link">{{.}}</span>
-        {{else}}
-            <a href="?order={{$order}}&pag={{.}}" class="page-link">{{.}}</a>
-        {{end}}
-    {{end}}
-</div>
 {{end}}

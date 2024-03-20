@@ -126,6 +126,8 @@ type MangaUsefullData struct {
 	Rating                 float64
 	Chapters               []ChapterUsefullData
 	NbChapter              int
+	IsFavorite             bool
+	LastChapterRead        string
 }
 
 // Manga is the common structure for Mangas used by MangaDex API.

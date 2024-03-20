@@ -614,6 +614,7 @@ a {
   background-color: #00ADB5;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -622,6 +623,27 @@ a {
   color: #EEEEEE;
   z-index: 10;
   font-family: "Tilt Neon", sans-serif;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .favorite-btn {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .add-favorite {
+  background-image: url("http://localhost:8080/static/img/darkred-add-favorite.png");
+  width: calc(6px + 1vw);
+  height: calc(6px + 1vw);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite {
+  background-image: url("http://localhost:8080/static/img/darkred-remove-favorite.png");
+  width: calc(6px + 1vw);
+  height: calc(6px + 1vw);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .description-title {
   text-align: center;

@@ -466,11 +466,9 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 	}
 
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
+	session, _ := utils.GetSession(r)
+	data.Username = session.Username
+	data.IsConnected = api.AddSingleFavoriteInfo(r, &data.Manga)
 
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
@@ -786,11 +784,9 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Next:        pag + 1,
 	}
 
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
+	user, _ := utils.GetSession(r)
+	data.Username = user.Username
+	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
 
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
@@ -884,11 +880,9 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Next:        pag + 1,
 	}
 
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
+	user, _ := utils.GetSession(r)
+	data.Username = user.Username
+	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
 
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
@@ -926,11 +920,9 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Req             string
 	}
 
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
+	user, _ := utils.GetSession(r)
+	data.Username = user.Username
+	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
 
 	if r.URL.Query().Has("q") {
 

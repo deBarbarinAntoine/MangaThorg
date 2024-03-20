@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"errors"
 	"log"
 	"log/slog"
 	"mangathorg/internal/models"
@@ -116,13 +117,14 @@ var OnlyVisitors models.Middleware = func(next http.HandlerFunc) http.HandlerFun
 var CheckApi models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 
-		next.ServeHTTP(w, r)
-
-		log.Println("middlewares.CheckApi()")
-		if models.ApiErrorStatus {
-			http.Redirect(w, r, "/error50X", http.StatusSeeOther)
+		_, err := models.Client.Head("https://api.mangadex.org/manga/tag")
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("an error occurred with the API")))
+			http.Redirect(w, r, "/ErrorAPI", http.StatusSeeOther)
 			return
 		}
+
+		next.ServeHTTP(w, r)
 	}
 }
 

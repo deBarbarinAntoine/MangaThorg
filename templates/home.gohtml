@@ -1,0 +1,64 @@
+{{define "staticPath"}}{{.Path}}{{end}}
+
+{{define "title"}}MangaThorg - Home{{end}}
+
+{{define "cssFile"}}style{{end}}
+
+{{define "page"}}
+
+    {{/*    User banner*/}}
+
+    {{/*        Best favorite manga banner*/}}
+
+
+    <div class="category">
+        <div class="category-title"><div class="category-title-text">{{.Name}}</div></div>
+        <div class="sorting">
+            <div class="sort-title">Sort:</div>
+            {{if eq .Order "desc"}}
+                <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
+                <div class="sort-tag"><div class="sort-tag-text">Ascending</div></div>
+            {{else if eq .Order "asc"}}
+                <div class="sort-tag"><div class="sort-tag-text">Descending</div></div>
+                <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
+            {{end}}
+        </div>
+
+        {{if .HasFavorites}}
+
+            <div class="category-list list-wrap">
+                {{range .Favorites}}
+                    <div class="category-card">
+                        <div class="category-card-cover">
+                            <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
+                            <div class="category-card-hover"></div>
+                            <div class="hover-description">
+                                <div class="description-title">
+                                    Description
+                                </div>
+                                <div class="description-ctn">{{.Description}}</div>
+                            </div>
+                            <div class="hover-tags">
+                                {{range .Tags}}
+                                    <a href="/category/{{.Id}}"><div class="hover-tag"><div class="hover-tag-text">{{.Attributes.Name.En}}</div></div></a>
+                                {{end}}
+                            </div>
+                            <div class="hover-buttons">
+                                <a href="/chapter/{{.Id}}/1/{{.FirstChapterId}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+                                <a href="/manga/{{.Id}}?order=desc&pag=1" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
+                            </div>
+                        </div>
+                        <div class="favorite-btn delete-favorite" id="{{.Id}}"></div>
+                        <div class="category-card-info"><div class="category-card-title">{{.Title}}</div></div>
+                    </div>
+                {{end}}
+            </div>
+
+        {{else}}
+            <div class="message">You still don't have any favorites :(</div>
+        {{end}}
+    </div>
+
+    <script src="{{.Path}}/js/favorites.js"></script>
+
+{{end}}

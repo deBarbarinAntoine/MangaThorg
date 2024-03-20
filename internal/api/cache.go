@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"log/slog"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
@@ -277,7 +278,7 @@ func CacheMonitor() {
 	time.Sleep(time.Second * 10)
 	hour := 3
 	var duration time.Duration
-	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.Covers, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}
+	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}
 	for {
 		utils.Logger.Info(utils.GetCurrentFuncName(), slog.String("goroutine", "CacheMonitor"))
 		for _, status := range infos {
@@ -291,4 +292,33 @@ func CacheMonitor() {
 		}
 		time.Sleep(duration)
 	}
+}
+
+func emptyFile(status string) {
+	err := os.WriteFile(dataPath+status+".json", []byte("[]"), 0666)
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		return
+	}
+}
+
+func emptyCacheStatus() {
+	data, err := json.MarshalIndent(models.StatusCache{}, "", "\t")
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		return
+	}
+	err = os.WriteFile(dataPath+"status.json", data, 0666)
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+}
+
+func EmptyCache() {
+	log.Println("Emptying cache...")
+	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}
+	for _, status := range infos {
+		emptyFile(status)
+	}
+	emptyCacheStatus()
 }

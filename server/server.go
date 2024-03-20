@@ -28,6 +28,9 @@ func Run() {
 	// Running the goroutine to automatically remove old CacheData
 	go api.CacheMonitor()
 
+	// Delete all cache data on shutdown
+	defer api.EmptyCache()
+
 	// Running the server
 	log.Fatalln(http.ListenAndServe(":8080", router.Mux))
 }

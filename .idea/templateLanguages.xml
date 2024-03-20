@@ -7,6 +7,7 @@
     <file url="file://$PROJECT_DIR$/templates/error404.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/forgot-passwd.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/header-line2.gohtml" dialect="HTML" />
+    <file url="file://$PROJECT_DIR$/templates/home.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/login.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/manga.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/principal.gohtml" dialect="HTML" />

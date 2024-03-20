@@ -485,17 +485,30 @@ body {
   width: calc(1rem + 1vw);
   height: calc(1rem + 1vw);
 }
-.manga-presentation .manga-banner .manga-remove {
+.manga-presentation .manga-banner .favorite-btn {
   display: flex;
-  align-items: flex-start;
-  gap: calc(8px + 0.4vw);
-  padding: 2px;
-  background-color: #00ADB5;
-  border-radius: calc(8px + 0.5vw);
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  margin: calc(3px + 0.3vw) calc(3px + 0.3vw) 0 0;
 }
-.manga-presentation .manga-banner .manga-remove img.bookmark-remove {
-  width: calc(2rem + 2vw);
-  height: calc(2rem + 2vw);
+.manga-presentation .manga-banner .add-favorite::after {
+  content: "";
+  background-image: url("../../static/img/darkred-add-favorite.png");
+  width: calc(1.6rem + 2vw);
+  height: calc(1.6rem + 2vw);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.manga-presentation .manga-banner .delete-favorite::after {
+  content: "";
+  background-image: url("../../static/img/darkred-remove-favorite.png");
+  width: calc(1.6rem + 2vw);
+  height: calc(1.6rem + 2vw);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .manga-presentation .manga-card-ctn-abs {
   position: absolute;

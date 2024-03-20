@@ -12,11 +12,9 @@ import (
 	"time"
 )
 
-var client = http.Client{
+var Client = http.Client{
 	Timeout: time.Second * 5,
 }
-
-var ApiErrorStatus bool = false
 
 func (r MangaRequest) Params() MangaRequestParam {
 	if r.OrderType == "" {
@@ -286,7 +284,7 @@ func Request(url string, query url.Values) ([]byte, error) {
 		req.URL.RawQuery = query.Encode()
 	}
 
-	res, errRes := client.Do(req)
+	res, errRes := Client.Do(req)
 	if res.Body != nil {
 		defer res.Body.Close()
 	} else {
@@ -430,14 +428,10 @@ func (data *ApiTags) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }
 
@@ -445,14 +439,10 @@ func (data *ApiManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }
 
@@ -460,14 +450,10 @@ func (data *ApiSingleManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }
 
@@ -475,14 +461,10 @@ func (data *ApiMangaFeed) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }
 
@@ -490,14 +472,10 @@ func (data *ApiChapterScan) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }
 
@@ -505,13 +483,9 @@ func (data *ApiMangaStats) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
 		for _, err := range data.Errors {
-			if err.Status >= 500 {
-				ApiErrorStatus = true
-			}
 			msg += "error " + strconv.Itoa(err.Status) + ": " + err.Title + " -> " + err.Detail
 		}
 		return errors.New(msg)
 	}
-	ApiErrorStatus = false
 	return nil
 }

@@ -129,17 +129,33 @@
         }
       }
     }
-    .manga-remove {
+    .favorite-btn {
       display: flex;
-      align-items: flex-start;
-      gap: calc(8px + .4vw);
-      padding: 2px;
-      background-color: $blue-elem;
-      border-radius: calc(8px + .5vw);
-
-      img.bookmark-remove {
-        width: calc(2rem + 2vw);
-        height: calc(2rem + 2vw);
+      justify-content: center;
+      align-items: center;
+      z-index: 5;
+      margin: calc(3px + .3vw) calc(3px + .3vw) 0 0;
+    }
+    .add-favorite {
+      &::after{
+        content: '';
+        background-image: url("../../static/img/darkred-add-favorite.png");
+        width: calc(1.6rem + 2vw);
+        height: calc(1.6rem + 2vw);
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+    }
+    .delete-favorite {
+      &::after{
+        content: '';
+        background-image: url("../../static/img/darkred-remove-favorite.png");
+        width: calc(1.6rem + 2vw);
+        height: calc(1.6rem + 2vw);
+        background-size: contain;
+        background-position: center;
+        background-repeat: no-repeat;
       }
     }
   }

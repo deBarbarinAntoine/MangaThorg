@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
+	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -323,4 +324,42 @@ func ScanProxy(chapterId, quality, hash, img string) []byte {
 	}
 
 	return data
+}
+
+func AddFavoriteInfo(r *http.Request, mangas *[]models.MangaUsefullData) bool {
+	session, sessionId := utils.GetSession(r)
+	if sessionId == "" {
+		return false
+	}
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		return false
+	}
+	for i, manga := range *mangas {
+		for _, favorite := range user.Favorites {
+			if favorite.Id == manga.Id {
+				(*mangas)[i].IsFavorite = true
+				(*mangas)[i].LastChapterRead = favorite.LastChapterRead
+			}
+		}
+	}
+	return true
+}
+
+func AddSingleFavoriteInfo(r *http.Request, manga *models.MangaUsefullData) bool {
+	session, sessionId := utils.GetSession(r)
+	if sessionId == "" {
+		return false
+	}
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		return false
+	}
+	for _, favorite := range user.Favorites {
+		if favorite.Id == manga.Id {
+			manga.IsFavorite = true
+			manga.LastChapterRead = favorite.LastChapterRead
+		}
+	}
+	return true
 }

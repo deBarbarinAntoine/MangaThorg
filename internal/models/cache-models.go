@@ -9,7 +9,6 @@ var Status = struct {
 	Tags         string
 	Categories   string
 	Mangas       string
-	Covers       string
 	MangaFeeds   string
 	ChaptersScan string
 	MangaStats   string
