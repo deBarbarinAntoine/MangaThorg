@@ -290,6 +290,7 @@ a {
                 background-size: contain;
                 background-position: center;
                 background-repeat: no-repeat;
+                z-index: 5;
               }
             .delete-favorite {
                 background-image: url("http://localhost:8080/static/img/darkred-remove-favorite.png");
@@ -298,6 +299,7 @@ a {
                 background-size: contain;
                 background-position: center;
                 background-repeat: no-repeat;
+                z-index: 5;
               }
             .description-title {
               text-align: center;

@@ -396,11 +396,11 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Popular:        api.FetchManga(api.TopPopularRequest).Mangas,
 	}
 
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
+	session, _ := utils.GetSession(r)
+	data.Username = session.Username
+	data.IsConnected = api.AddSingleFavoriteInfo(r, &data.Banner)
+	_ = api.AddFavoriteInfo(r, &data.LatestUploaded)
+	_ = api.AddFavoriteInfo(r, &data.Popular)
 
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
@@ -920,10 +920,6 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Req             string
 	}
 
-	user, _ := utils.GetSession(r)
-	data.Username = user.Username
-	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
-
 	if r.URL.Query().Has("q") {
 
 		var pagination string
@@ -1010,6 +1006,11 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Next:            pag + 1,
 			Req:             query,
 		}
+
+		user, _ := utils.GetSession(r)
+		data.Username = user.Username
+		data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
+
 		data.IsResponse = data.Response.Mangas != nil
 		data.TotalPages = data.Response.NbMangas / 18
 		if data.Response.NbMangas%18 > 0 {
@@ -1047,6 +1048,11 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Next:            1,
 			Req:             "",
 		}
+
+		user, _ := utils.GetSession(r)
+		data.Username = user.Username
+		data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
+
 	}
 
 	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")

@@ -7,6 +7,7 @@
 {{define "page"}}
 
     {{$current := .CurrentPage}}
+    {{$isConnected := .IsConnected}}
 
     <div class="category">
         <div class="category-title"><div class="category-title-text">{{.Name}}</div></div>
@@ -27,6 +28,9 @@
                         <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
                         <div class="category-card-hover"></div>
                         <div class="hover-description">
+                            {{if $isConnected}}
+                                <div class="favorite-btn {{if .IsFavorite}}delete-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" ></div>
+                            {{end}}
                             <div class="description-title">
                                 Description
                             </div>
@@ -39,7 +43,7 @@
                             {{end}}
                         </div>
                         <div class="hover-buttons">
-                            <a href="/chapter/{{.Id}}/1/{{.FirstChapterId}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
+                            <a href="/chapter/{{.Id}}/1/{{if .LastChapterRead}}{{.LastChapterRead}}{{else}}{{.FirstChapterId}}{{end}}" class="hover-btn-read"><span class="hover-btn-text">Read Now</span></a>
                             <a href="/manga/{{.Id}}?order=desc&pag=1" class="hover-btn-info"><span class="hover-btn-text">View Info</span></a>
                         </div>
                     </div>
@@ -62,4 +66,5 @@
         {{end}}
     </div>
 
+    <script src="{{.Path}}/js/favorites.js"></script>
 {{end}}

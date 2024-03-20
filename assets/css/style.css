@@ -636,6 +636,7 @@ a {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  z-index: 5;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite {
   background-image: url("http://localhost:8080/static/img/darkred-remove-favorite.png");
@@ -644,6 +645,7 @@ a {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  z-index: 5;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .description-title {
   text-align: center;
