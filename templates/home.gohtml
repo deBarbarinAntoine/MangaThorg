@@ -4,55 +4,36 @@
 
 {{define "cssFile"}}style{{end}}
 
+{{define "header-line2"}}{{end}}
+
 {{define "page"}}
 
-    {{/*    User banner*/}}
-    <div class="variable">
-        <div class="profile-header">
-            <div class="filler"></div>
-            <a href="/home" class="username-ctn"><div class="username-txt">{{.Username}}</div></a>
-            <div class="filler"></div>
-            <a href="/home" class="profile-avatar"><img src="{{template "staticPath" .}}/img/{{.AvatarImg}}" alt="avatar-img" class="avatar-img"></a>
-        </div>
-        <a href="/logout" class="logout-btn"><span class="header-btn-text">Logout</span></a>
-    </div>
-
-    {{/*        Best favorite manga banner*/}}
+    {{/*        User banner*/}}
     <div class="banner">
-        <img class="background-img" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" />
-        <div class="banner-text">
-            <div class="banner-title">{{.Banner.Title}}</div>
-            <div class="banner-description">
-                {{.Banner.Description}}
+        {{if .HasBanner}}
+            <img class="background-img" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" />
+        {{end}}
+            <div class="profile-header">
+                <div class="filler"></div>
+                <div class="username-ctn"><div class="username-txt">{{.Username}}</div></div>
+                <div class="filler"></div>
+                <div class="profile-avatar"><img src="{{template "staticPath" .}}/img/{{.AvatarImg}}" alt="avatar-img" class="avatar-img"></div>
             </div>
-            <div class="tags">
-                {{range .Banner.Tags}}
-                    <a href="/category/{{.Id}}" class="banner-tag"><div class="banner-tag-text">{{.Attributes.Name.En}}</div></a>
-                {{end}}
-            </div>
-            <div class="banner-buttons">
-                <a href="/chapter/{{.Banner.Id}}/1/{{.Banner.FirstChapterId}}"><div class="read-btn"><div class="banner-btn-text">Read Now</div></div></a>
-                <a href="/manga/{{.Banner.Id}}?order=desc&pag=1"><div class="info-btn"><div class="banner-btn-text">View Info</div></div></a>
-            </div>
+        {{if .HasBanner}}
+            <div class="banner-card"><img class="banner-cover" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" /></div>
+        {{end}}
+        <div class="user-banner-btn-container">
+            <a href="/logout" class="logout-btn"><span class="header-btn-text">Logout</span></a>
+            <a href="/profile" class="profile-btn"><span class="header-btn-text">Profile</span></a>
         </div>
-        <div class="banner-card"><img class="banner-cover" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}.512.jpg" alt="{{.Banner.Title}}" /></div>
     </div>
-
 
     <div class="category">
-        <div class="category-title"><div class="category-title-text">{{.Name}}</div></div>
-        <div class="sorting">
-            <div class="sort-title">Sort:</div>
-            {{if eq .Order "desc"}}
-                <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
-                <div class="sort-tag"><div class="sort-tag-text">Ascending</div></div>
-            {{else if eq .Order "asc"}}
-                <div class="sort-tag"><div class="sort-tag-text">Descending</div></div>
-                <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
-            {{end}}
-        </div>
-
         {{if .HasFavorites}}
+        <div class="category-title"><div class="category-title-text">Your favorites:</div></div>
+        <div class="sorting">
+                <a href="/home" class="sort-tag selected"><div class="sort-tag-text">Refresh</div></a>
+        </div>
 
             <div class="category-list list-wrap">
                 {{range .Favorites}}
@@ -61,6 +42,7 @@
                             <div class="category-card-img" style="background-image: url('/covers/{{.Id}}/{{.CoverImg}}.256.jpg')"></div>
                             <div class="category-card-hover"></div>
                             <div class="hover-description">
+                                    <div class="favorite-btn delete-favorite" id="{{.Id}}" ></div>
                                 <div class="description-title">
                                     Description
                                 </div>

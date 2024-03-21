@@ -33,6 +33,9 @@ var TopLatestUploadedRequest = models.MangaRequest{
 }
 
 func FetchMangaById(id string, order string, offset int) models.MangaUsefullData {
+	if id == "" {
+		return models.MangaUsefullData{}
+	}
 	var manga models.MangaUsefullData
 	apiManga := MangaRequestById(id)
 
@@ -40,6 +43,19 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 	manga.Fill(StatRequest(id), FeedRequest(id, order, offset))
 
 	return manga
+}
+
+func FetchMangasById(favorites []models.MangaUser, order string, offset int) []models.MangaUsefullData {
+	if favorites == nil {
+		return nil
+	}
+	var mangas []models.MangaUsefullData
+
+	for _, favorite := range favorites {
+		mangas = append(mangas, FetchMangaById(favorite.Id, order, offset))
+	}
+
+	return mangas
 }
 
 func MangaRequestById(id string) models.ApiSingleManga {

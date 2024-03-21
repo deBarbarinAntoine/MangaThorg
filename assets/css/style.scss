@@ -30,6 +30,91 @@ a {
     filter: blur(8px) grayscale(20%) brightness(50%);
   }
 
+  // Home page user banner content
+  .profile-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 180px;
+    padding: 10px;
+
+    .filler {
+      width: 20px;
+    }
+    .username-ctn {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 20px 15px 20px 120px;
+      flex: 0 0 auto;
+      background-color: $blue-elem;
+      border-radius: 16px;
+      border: $font-color 4px solid;
+
+      .username-txt {
+        position: relative;
+        width: fit-content;
+        font-family: "Tilt Neon", sans-serif;
+        font-weight: 400;
+        color: $background;
+        font-size: calc(18px + .7vw);
+        text-align: center;
+        letter-spacing: 0;
+        line-height: normal;
+      }
+    }
+    .profile-avatar {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      left: -40px;
+      border-radius: 50%;
+      border: $font-color 4px solid;
+      overflow: hidden;
+      z-index: 2;
+
+      .avatar-img {
+        object-position: center;
+        object-fit: cover;
+        max-width: 100%;
+      }
+    }
+  }
+  .user-banner-btn-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-end;
+    gap: calc(22px + 1vw);
+    z-index: 5;
+
+    a.logout-btn {
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 25px;
+      background-color: $red;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    a.profile-btn {
+      height: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px 25px;
+      background-color: $blue-elem;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+  }
+
+  // Principal page banner content (manga information)
   .banner-text {
     display: flex;
     flex: 0 0 auto;
@@ -163,6 +248,7 @@ a {
   }
 }
 
+// Manga display container
 .category {
   display: flex;
   flex-direction: column;
@@ -290,6 +376,7 @@ a {
                 background-size: contain;
                 background-position: center;
                 background-repeat: no-repeat;
+                cursor: pointer;
                 z-index: 5;
               }
             .delete-favorite {
@@ -299,6 +386,7 @@ a {
                 background-size: contain;
                 background-position: center;
                 background-repeat: no-repeat;
+                cursor: pointer;
                 z-index: 5;
               }
             .description-title {

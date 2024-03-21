@@ -11,6 +11,7 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
+	"reflect"
 	"slices"
 	"strconv"
 	"strings"
@@ -19,17 +20,8 @@ import (
 
 func indexHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	//tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
-	//err = tmpl.ExecuteTemplate(w, "index", "indexHandlerGet")
-	//if err != nil {
-	//	log.Fatalln(err)
-	//}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.StatRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd"))
+	http.Redirect(w, r, "/principal", http.StatusSeeOther)
 }
 
 func indexHandlerPut(w http.ResponseWriter, r *http.Request) {
@@ -338,11 +330,46 @@ func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
 
 func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
+
+	session, _ := utils.GetSession(r)
+	user, ok := utils.SelectUser(session.Username)
+
+	if !ok {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+		http.Redirect(w, r, "/login?err=restricted", http.StatusSeeOther)
+		return
+	}
+
+	var data = struct {
+		Order        string
+		Path         string
+		CreationTime time.Time
+		Username     string
+		Email        string
+		AvatarImg    string
+		HasBanner    bool
+		Banner       models.MangaUsefullData
+		HasFavorites bool
+		Favorites    []models.MangaUsefullData
+	}{
+		Order:        "desc",
+		Path:         "static",
+		CreationTime: user.CreationTime,
+		Username:     user.Username,
+		Email:        user.Email,
+		AvatarImg:    "avatar.jpg",
+		Banner:       api.FetchMangaById(user.MangaBanner.Id, "desc", 0),
+		Favorites:    api.FetchMangasById(user.Favorites, "desc", 0),
+	}
+
+	data.HasFavorites = data.Favorites != nil && len(data.Favorites) > 0
+	data.HasBanner = !reflect.DeepEqual(data.Banner, models.MangaUsefullData{})
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/home.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-	err = tmpl.ExecuteTemplate(w, "index", "homeHandlerGet --- Restricted area! ---")
+	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
 	}

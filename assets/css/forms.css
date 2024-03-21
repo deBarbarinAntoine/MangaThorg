@@ -141,16 +141,6 @@ body {
   gap: 2rem;
   padding: 16px 0;
 }
-.header .variable .header-btn-text {
-  width: fit-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(12px + 0.4vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
-}
 .header .variable .header-buttons {
   height: calc(25px + 0.5vw);
   display: flex;
@@ -269,6 +259,17 @@ body {
   background-color: #7D0A0A;
   border-radius: 12px;
   cursor: pointer;
+}
+
+.header-btn-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
 }
 
 .logo {

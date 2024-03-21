@@ -35,33 +35,23 @@
 	{
 		"id": 3,
 		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "2024-03-20T20:31:29.445956869+01:00",
+		"last_connection": "2024-03-21T12:36:19.2326479+01:00",
 		"username": "thorgdar",
 		"hash": "a7c7ff59218c8fc322873d95e5f057c5a15c337ef96b7dab230888042ee2c0ef15e295976ef9ba7c0b7595e59a38a853bff3376515144ed26fcd954a72a886d3",
 		"salt": "r3DSp1sNFUOBdkpqBZd9bfSLgXaY/5rcVvXku/lMAVuq1ShRwS5bs0X1Ym2BBA2LdItvw2jkQG1shUbxvJNkfA==",
 		"email": "thorgdar@gmail.com",
-		"manga_banner": {},
+		"manga_banner": {
+			"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
+		},
 		"favorites": [
 			{
 				"id": "d7862895-2632-4376-9eea-609d43587f18"
 			},
 			{
-				"id": "baa95345-24fb-47a9-83e9-434ff671f968"
-			},
-			{
-				"id": "5353e8c5-8a6c-402a-895b-0d09feec17d4"
-			},
-			{
 				"id": "cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa"
 			},
 			{
-				"id": "812f9696-048f-496d-9ed4-84c99345d1fb"
-			},
-			{
 				"id": "bcb5258e-7866-4039-97fc-24a978eb588d"
-			},
-			{
-				"id": "6e4ab519-495f-4dc9-9f8a-00f18de96fe8"
 			},
 			{
 				"id": "39d875a6-5df3-4323-a2da-3a0b50af429a"
@@ -74,9 +64,6 @@
 			},
 			{
 				"id": "4bde51e5-e420-45a4-98e9-7405bf2d59ff"
-			},
-			{
-				"id": "0311b163-a021-4c27-bd26-3f83f280115f"
 			},
 			{
 				"id": "438a42fa-2fe4-45f3-9996-eea8f50c7382"
@@ -92,6 +79,18 @@
 			},
 			{
 				"id": "a25e46ec-30f7-4db6-89df-cacbc1d9a900"
+			},
+			{
+				"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
+			},
+			{
+				"id": "77bee52c-d2d6-44ad-a33a-1734c1fe696a"
+			},
+			{
+				"id": "6e4ab519-495f-4dc9-9f8a-00f18de96fe8"
+			},
+			{
+				"id": "812f9696-048f-496d-9ed4-84c99345d1fb"
 			}
 		]
 	}

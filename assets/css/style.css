@@ -142,16 +142,6 @@ body {
   gap: 2rem;
   padding: 16px 0;
 }
-.header .variable .header-btn-text {
-  width: fit-content;
-  font-family: "Tilt Neon", sans-serif;
-  font-weight: 400;
-  color: #EEEEEE;
-  font-size: calc(12px + 0.4vw);
-  text-align: center;
-  letter-spacing: 0;
-  line-height: normal;
-}
 .header .variable .header-buttons {
   height: calc(25px + 0.5vw);
   display: flex;
@@ -272,6 +262,17 @@ body {
   cursor: pointer;
 }
 
+.header-btn-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
 .logo {
   display: flex;
   flex: 1;
@@ -389,6 +390,84 @@ a {
   object-fit: cover;
   object-position: center;
   filter: blur(8px) grayscale(20%) brightness(50%);
+}
+.banner .profile-header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 180px;
+  padding: 10px;
+}
+.banner .profile-header .filler {
+  width: 20px;
+}
+.banner .profile-header .username-ctn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 15px 20px 120px;
+  flex: 0 0 auto;
+  background-color: #00ADB5;
+  border-radius: 16px;
+  border: #EEEEEE 4px solid;
+}
+.banner .profile-header .username-ctn .username-txt {
+  position: relative;
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #222831;
+  font-size: calc(18px + 0.7vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.banner .profile-header .profile-avatar {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  left: -40px;
+  border-radius: 50%;
+  border: #EEEEEE 4px solid;
+  overflow: hidden;
+  z-index: 2;
+}
+.banner .profile-header .profile-avatar .avatar-img {
+  object-position: center;
+  object-fit: cover;
+  max-width: 100%;
+}
+.banner .user-banner-btn-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-end;
+  gap: calc(22px + 1vw);
+  z-index: 5;
+}
+.banner .user-banner-btn-container a.logout-btn {
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 25px;
+  background-color: #7D0A0A;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.banner .user-banner-btn-container a.profile-btn {
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 25px;
+  background-color: #00ADB5;
+  border-radius: 12px;
+  cursor: pointer;
 }
 .banner .banner-text {
   display: flex;
@@ -636,6 +715,7 @@ a {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  cursor: pointer;
   z-index: 5;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite {
@@ -645,6 +725,7 @@ a {
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
+  cursor: pointer;
   z-index: 5;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .description-title {

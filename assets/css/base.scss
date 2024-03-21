@@ -160,17 +160,6 @@ body {
     gap: 2rem;
     padding: 16px 0;
 
-    .header-btn-text {
-      width: fit-content;
-      font-family: "Tilt Neon", sans-serif;
-      font-weight: 400;
-      color: $font-color;
-      font-size: calc(12px + .4vw);
-      text-align: center;
-      letter-spacing: 0;
-      line-height: normal;
-    }
-
     .header-buttons {
       height: calc(25px + .5vw);
       display: flex;
@@ -304,6 +293,17 @@ body {
       cursor: pointer;
     }
   }
+}
+
+.header-btn-text {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: $font-color;
+  font-size: calc(12px + .4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
 }
 
 .logo {
