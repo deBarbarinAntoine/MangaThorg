@@ -1,0 +1,22 @@
+{{define "staticPath"}}http://localhost:8080/static{{end}}
+
+{{define "title"}}MangaThorg - Account Confirmed{{end}}
+
+{{define "cssFile"}}miscellaneous{{end}}
+
+{{define "header-line2"}}{{end}}
+
+{{define "page"}}
+
+    <div class="ctn">
+        <div class="confirm-ctn-left">
+            <div class="text-container">
+                <div class="confirm-msg">Your email is confirmed, you can now access your account.</div>
+                <a href="/login" class="confirm-btn">Sign in</a>
+            </div>
+        </div>
+        <div class="confirm-img"><img src="http://localhost:8080/static/img/confirm-img.png" alt="confirm-img" /></div>
+        <div class="confirm-info"><span class="txt-1">Account</span><span class="txt-2">enabled</span></div>
+    </div>
+
+{{end}}

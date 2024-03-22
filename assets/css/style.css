@@ -66,11 +66,15 @@ body {
   width: max-content;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
-  color: #00ADB5;
+  color: #EEEEEE;
   font-size: calc(15px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 100ms;
+}
+.header .main .header-nav .category-link:hover {
+  color: #00ADB5;
 }
 .header .main .header-search-bar-ctn {
   display: flex;
@@ -193,6 +197,7 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 100ms;
 }
 .header .variable .header-msg .invitation-msg:hover {
   color: #EEEEEE;
@@ -246,9 +251,10 @@ body {
   z-index: 2;
 }
 .header .variable .profile-header .profile-avatar .avatar-img {
-  object-position: center;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  max-width: 100%;
+  object-position: center;
 }
 .header .variable .logout-btn {
   height: fit-content;
@@ -278,7 +284,7 @@ body {
   flex: 1;
   object-position: left;
   object-fit: contain;
-  height: clamp(2rem, 25px + 1.5vw, 60px);
+  height: clamp(1.7rem, 25px + 1.5vw, 60px);
 }
 
 .template {
@@ -313,9 +319,12 @@ body {
 .footer .footer-nav-credits .logo-ctn {
   display: flex;
   justify-content: center;
-  width: 70%;
+  width: 45%;
 }
 .footer .footer-nav-credits .logo-ctn .logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   object-position: center;
 }
 .footer .footer-nav-credits .footer-nav {
@@ -343,6 +352,13 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+}
+.footer .footer-nav-credits .credits .credits-link {
+  color: #00ADB5;
+  transition: color 100ms ease-in 100ms;
+}
+.footer .footer-nav-credits .credits .credits-link:hover {
+  color: #EEEEEE;
 }
 .footer .footer-nav-credits .copyright {
   width: 70%;
@@ -407,11 +423,11 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 20px 15px 20px 120px;
+  padding: calc(5px + 0.7vw) calc(3px + 0.7vw) calc(5px + 0.7vw) 6.5vw;
   flex: 0 0 auto;
   background-color: #00ADB5;
-  border-radius: 16px;
-  border: #EEEEEE 4px solid;
+  border-radius: calc(7px + 0.7vw);
+  border: #EEEEEE calc(2px + 0.1vw) solid;
 }
 .banner .profile-header .username-ctn .username-txt {
   position: relative;
@@ -419,25 +435,26 @@ a {
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
   color: #222831;
-  font-size: calc(18px + 0.7vw);
+  font-size: calc(9px + 1.5vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
 }
 .banner .profile-header .profile-avatar {
   position: absolute;
-  width: 120px;
-  height: 120px;
+  width: calc(35px + 6vw);
+  height: calc(35px + 6vw);
   left: -40px;
   border-radius: 50%;
-  border: #EEEEEE 4px solid;
+  border: #EEEEEE calc(2px + 0.1vw) solid;
   overflow: hidden;
   z-index: 2;
 }
 .banner .profile-header .profile-avatar .avatar-img {
-  object-position: center;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  max-width: 100%;
+  object-position: center;
 }
 .banner .user-banner-btn-container {
   display: flex;
@@ -446,6 +463,9 @@ a {
   align-items: flex-end;
   gap: calc(22px + 1vw);
   z-index: 5;
+}
+.banner .user-banner-btn-container a {
+  width: calc(25px + 7vw);
 }
 .banner .user-banner-btn-container a.logout-btn {
   height: fit-content;
@@ -583,8 +603,8 @@ a {
   box-shadow: 0 12px 12px 7px rgba(0, 0, 0, 0.2509803922);
 }
 .banner .banner-card img.banner-cover {
-  max-height: 100%;
-  max-width: 100%;
+  height: 100%;
+  width: 100%;
   object-position: center;
   object-fit: cover;
   border-radius: calc(3px + 0.2vw);
@@ -599,9 +619,11 @@ a {
 }
 .category .category-title {
   display: flex;
-  align-items: center;
+  justify-content: space-between;
+  align-items: baseline;
   gap: calc(10px + 0.3vw);
-  padding-left: 3rem;
+  width: calc(100% - 6rem);
+  padding: 0 3rem;
 }
 .category .category-title .category-title-text {
   width: fit-content;
@@ -612,6 +634,20 @@ a {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+}
+.category .category-title .category-title-link {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #00ADB5;
+  font-size: calc(13px + 0.7vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  transition: color 100ms ease-in 100ms;
+}
+.category .category-title .category-title-link:hover {
+  color: #EEEEEE;
 }
 .category .principal-list {
   overflow: clip;
@@ -703,15 +739,30 @@ a {
   z-index: 10;
   font-family: "Tilt Neon", sans-serif;
 }
+.category .category-list .category-card .category-card-cover:hover .hover-description .set-banner-btn {
+  position: absolute;
+  top: 0;
+  left: 3px;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .set-banner {
+  background-image: url("http://localhost:8080/static/img/set-banner.png");
+  width: calc(18px + 0.4vw);
+  height: calc(18px + 0.4vw);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  z-index: 5;
+}
 .category .category-list .category-card .category-card-cover:hover .hover-description .favorite-btn {
   position: absolute;
-  top: 3px;
+  top: 0;
   right: 3px;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .add-favorite {
   background-image: url("http://localhost:8080/static/img/darkred-add-favorite.png");
-  width: calc(6px + 1vw);
-  height: calc(6px + 1vw);
+  width: calc(18px + 0.4vw);
+  height: calc(18px + 0.4vw);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -720,8 +771,8 @@ a {
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite {
   background-image: url("http://localhost:8080/static/img/darkred-remove-favorite.png");
-  width: calc(6px + 1vw);
-  height: calc(6px + 1vw);
+  width: calc(18px + 0.4vw);
+  height: calc(18px + 0.4vw);
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -826,6 +877,16 @@ a {
   font-weight: 400;
   color: #EEEEEE;
   font-size: calc(15px + 0.3vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.category .message {
+  width: 100%;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #7D0A0A;
+  font-size: calc(14px + 1.2vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;

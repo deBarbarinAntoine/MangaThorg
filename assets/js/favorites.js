@@ -2,6 +2,7 @@
 
 let addFavoriteBtns = document.querySelectorAll('.add-favorite');
 let deleteFavoriteBtns = document.querySelectorAll('.delete-favorite');
+let setBannerBtns = document.querySelectorAll('.set-banner');
 
 async function sendRequest(method, manga) {
     const response = await fetch(`http://localhost:8080/favorite/${manga}`, {
@@ -46,4 +47,20 @@ function deleteFromFavorites(e) {
 
 for (let deleteFavoriteBtn of deleteFavoriteBtns) {
     deleteFavoriteBtn.addEventListener('click', deleteFromFavorites);
+}
+
+function setBanner(e) {
+    let Res = sendRequest('PUT', e.currentTarget.id);
+    if (Res) {
+        console.log(`Manga ${e.currentTarget.id} has been set as your banner!`);
+        e.currentTarget.classList.remove('set-banner');
+        e.currentTarget.removeEventListener('click', setBanner);
+        location.reload();
+    } else {
+        console.log(`An error occurred!`);
+    }
+}
+
+for (let bannerBtn of setBannerBtns) {
+    bannerBtn.addEventListener('click', setBanner);
 }

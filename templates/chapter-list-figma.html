@@ -1,31 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap');
+
+        @font-face {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #222831;
+            width: 100vw;
+        }
+        header {
+            height: 4rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        .header-logo {
+            height: 80%;
+            width: 80%;
+            object-fit: contain;
+            object-position: left;
+        }
+        .greeting {
+            padding: .8rem 2rem;
+        }
+        .greeting span {
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+            color: #EEEEEE;
+        }
+        span.name {
+            color: #00ADB5;
+        }
+        .msg {
+            padding: .8rem 2rem;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: #EEEEEE;
+        }
+        .link-ctn, .info-ctn {
+            padding: .8rem 2rem;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: #EEEEEE;
+        }
+        a.link {
+            color: #EEEEEE;
+            text-decoration: none;
+            transition: color 100ms ease-in 100ms;
+        }
+        a.link:hover {
+            color: #00ADB5;
+        }
+        footer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+        footer div p {
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: .5rem 0;
+            color: #EEEEEE;
+        }
+    </style>
 </head>
 <body>
-
-<div class="manga-chapters">
-    <div class="chapters-header">
-        <div class="title-ctn"><div class="title">Chapters</div></div>
-        <div class="sorting">
-            <div class="sort-title">Sort:</div>
-            <div class="sort-tag"><div class="sort-tag-text">Descending</div></div>
-            <div class="sort-tag"><div class="sort-tag-text">Ascending</div></div>
-        </div>
+<header>
+    <img class="header-logo" src="http://localhost:8080/static/img/header-logo-1.png" alt="MangaThorg logo" />
+</header>
+<div class="greeting"><span>Hello </span><span class="name">{{.Username}}</span><span>!</span></div><br/><br/>
+<div class="msg"><span>Please follow the link to finish setting your newly created account:</span></div>
+<div class="link-ctn"><a class="link" href="http://localhost:8080/confirm?id={{.ConfirmID}}">Confirm your email</a></div><br/>
+<div class="info-ctn"><p>If you didn't initiate this process, don't click on the link, and your unverified account will be deleted tomorrow at noon (Paris timezone)</p></div>
+<footer>
+    <div>
+        <p>Welcome to the MangaThorg team.</p>
+        <p>Please don't reply to this mail!</p>
     </div>
-    <div class="chapters-list">
-        <div class="chapter">
-            <p class="chapter-title">Ch. 56 - [Season 2 End]</p>
-            <div class="source">
-                <img class="icon-group" src="img/icon-group-34.png" />
-                <div class="source-name">Reaper_Scans</div>
-            </div>
-            <img class="icon-menu-book" src="img/icon-menu-book-29.png" />
-        </div>
-    </div>
-</div>
-
+</footer>
 </body>
 </html>

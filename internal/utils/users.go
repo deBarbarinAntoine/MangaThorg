@@ -206,6 +206,7 @@ func PushTempUser(id string) {
 		if temp.ConfirmID == id {
 			temp.User.Id = GetIdNewUser()
 			temp.User.CreationTime = time.Now()
+			temp.User.Avatar = "profile-avatar-059.jpg"
 			CreateUser(temp.User)
 			deleteTempUser(temp)
 		}

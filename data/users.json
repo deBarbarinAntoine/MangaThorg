@@ -35,13 +35,14 @@
 	{
 		"id": 3,
 		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "2024-03-21T12:36:19.2326479+01:00",
+		"last_connection": "2024-03-21T22:16:10.991449388+01:00",
 		"username": "thorgdar",
-		"hash": "a7c7ff59218c8fc322873d95e5f057c5a15c337ef96b7dab230888042ee2c0ef15e295976ef9ba7c0b7595e59a38a853bff3376515144ed26fcd954a72a886d3",
-		"salt": "r3DSp1sNFUOBdkpqBZd9bfSLgXaY/5rcVvXku/lMAVuq1ShRwS5bs0X1Ym2BBA2LdItvw2jkQG1shUbxvJNkfA==",
+		"avatar": "profile-avatar-044.jpg",
+		"hash": "91d90921ac94f38d23fdf5394143a76d7f613b714ba8e8220383f4e0fa3c82f80f0b3aee3fcf5f0586e172678ec91843ac8e5c5dc2ea30904782743f96341290",
+		"salt": "qF7W1W5Mc9PQeCyPM57NJGLuvdzpieSluBlBKDEFYLOqPenU41L698RcKMilXZDgifk2wXJYqhp2sv8fZRuQMw==",
 		"email": "thorgdar@gmail.com",
 		"manga_banner": {
-			"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
+			"id": "d7862895-2632-4376-9eea-609d43587f18"
 		},
 		"favorites": [
 			{
@@ -81,16 +82,34 @@
 				"id": "a25e46ec-30f7-4db6-89df-cacbc1d9a900"
 			},
 			{
-				"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
-			},
-			{
-				"id": "77bee52c-d2d6-44ad-a33a-1734c1fe696a"
-			},
-			{
 				"id": "6e4ab519-495f-4dc9-9f8a-00f18de96fe8"
 			},
 			{
 				"id": "812f9696-048f-496d-9ed4-84c99345d1fb"
+			},
+			{
+				"id": "0ca1627e-95dd-4118-892a-f144adf02256"
+			},
+			{
+				"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
+			}
+		]
+	},
+	{
+		"id": 5,
+		"creation_time": "2024-03-22T00:57:16.285557925+01:00",
+		"last_connection": "2024-03-22T00:59:40.631237765+01:00",
+		"username": "Thorgan",
+		"avatar": "profile-avatar-054.jpg",
+		"hash": "4388af3c74af934f1368b157a1be6d9144ebef89845483161b97384deb62cbc8d2ffcbd5ab9ef3a1cc915b734e230bdffc373b18c194b84e89941c506bd11ff8",
+		"salt": "CMpFFCcI7Wh2NH3jbge8O22hP134uCC3D4QbuuYZKMPrFm/YuZy6UzRetKFFYMhEw9oy0EVIzL3hPBOi1+i8kA==",
+		"email": "amdebarbarin@gmail.com",
+		"manga_banner": {
+			"id": "4bde51e5-e420-45a4-98e9-7405bf2d59ff"
+		},
+		"favorites": [
+			{
+				"id": "4bde51e5-e420-45a4-98e9-7405bf2d59ff"
 			}
 		]
 	}

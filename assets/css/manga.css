@@ -65,11 +65,15 @@ body {
   width: max-content;
   font-family: "Tilt Neon", sans-serif;
   font-weight: 400;
-  color: #00ADB5;
+  color: #EEEEEE;
   font-size: calc(15px + 0.4vw);
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 100ms;
+}
+.header .main .header-nav .category-link:hover {
+  color: #00ADB5;
 }
 .header .main .header-search-bar-ctn {
   display: flex;
@@ -192,6 +196,7 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 100ms;
 }
 .header .variable .header-msg .invitation-msg:hover {
   color: #EEEEEE;
@@ -245,9 +250,10 @@ body {
   z-index: 2;
 }
 .header .variable .profile-header .profile-avatar .avatar-img {
-  object-position: center;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  max-width: 100%;
+  object-position: center;
 }
 .header .variable .logout-btn {
   height: fit-content;
@@ -277,7 +283,7 @@ body {
   flex: 1;
   object-position: left;
   object-fit: contain;
-  height: clamp(2rem, 25px + 1.5vw, 60px);
+  height: clamp(1.7rem, 25px + 1.5vw, 60px);
 }
 
 .template {
@@ -312,9 +318,12 @@ body {
 .footer .footer-nav-credits .logo-ctn {
   display: flex;
   justify-content: center;
-  width: 70%;
+  width: 45%;
 }
 .footer .footer-nav-credits .logo-ctn .logo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
   object-position: center;
 }
 .footer .footer-nav-credits .footer-nav {
@@ -342,6 +351,13 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+}
+.footer .footer-nav-credits .credits .credits-link {
+  color: #00ADB5;
+  transition: color 100ms ease-in 100ms;
+}
+.footer .footer-nav-credits .credits .credits-link:hover {
+  color: #EEEEEE;
 }
 .footer .footer-nav-credits .copyright {
   width: 70%;

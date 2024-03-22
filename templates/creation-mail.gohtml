@@ -1,15 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tilt+Neon&display=swap');
+
+        @font-face {
+            font-family: 'Tilt Neon', sans-serif;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            width: 100vw;
+        }
+        .main {
+            border-radius: 2rem;
+            padding: 2rem;
+            background-color: #222831;
+        }
+        header {
+            height: 4rem;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            margin: 0 auto;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 2rem;
+            color: #EEEEEE;
+        }
+        .greeting {
+            padding: .8rem 4rem;
+        }
+        .greeting span {
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.5rem;
+            color: #EEEEEE;
+        }
+        span.name {
+            color: #00ADB5;
+        }
+        .msg {
+            padding: .8rem 2rem;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: #EEEEEE;
+        }
+        .link-ctn, .info-ctn {
+            display: flex;
+            justify-content: center;
+            width: calc(100% - 4rem);
+            padding: .8rem 2rem;
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.2rem;
+            color: #EEEEEE;
+        }
+        a.link {
+            color: #EEEEEE;
+            text-decoration: none;
+            transition: color 100ms ease-in 100ms;
+        }
+        a.link:hover {
+            color: #00ADB5;
+        }
+        footer {
+            padding: 2rem;
+        }
+        footer div p {
+            font-family: "Tilt Neon", sans-serif;
+            font-weight: 400;
+            font-size: 1.1rem;
+            text-align: center;
+            margin: .5rem auto;
+            color: #EEEEEE;
+        }
+    </style>
+</head>
 <body>
-    <div><span>Hello </span><span>{{.Username}}!</span></div><br/><br/>
-    <div><span>Please follow the link to finish setting your newly created account:</span></div>
-    <div><a href="http://localhost:8080/confirm?id={{.ConfirmID}}">Confirm your email</a></div><br/>
-    <div><p>If you didn't initiate this process, don't click on the link, and your unverified account will be deleted tomorrow at noon (Paris timezone)</p></div>
+<div class="main">
+    <header>
+        {{/*    <img class="header-logo" src="http://localhost:8080/static/img/header-logo-1.png" alt="MangaThorg logo" />*/}}
+        <h1>MangaThorg</h1>
+    </header>
+    <div class="greeting"><span>Hello </span><span class="name">{{.Username}}</span><span>!</span></div><br/><br/>
+    <div class="msg"><span>Please follow the link to finish setting your newly created account:</span></div>
+    <div class="link-ctn"><a class="link" href="http://localhost:8080/confirm?id={{.ConfirmID}}">Confirm your email</a></div><br/>
+    <div class="info-ctn"><p>If you didn't initiate this process, don't click on the link, and your unverified account will be deleted tomorrow at noon (Paris timezone)</p></div>
     <footer>
         <div>
             <p>Welcome to the MangaThorg team.</p>
             <p>Please don't reply to this mail!</p>
         </div>
     </footer>
+</div>
 </body>
 </html>

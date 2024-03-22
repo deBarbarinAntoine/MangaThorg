@@ -14,8 +14,8 @@
     <div class="main">
         <a href="/principal" class="logo-link"><img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" /></a>
         <div class="header-nav">
-            <div class="category-link">LATEST UPDATES</div>
-            <div class="category-link">POPULAR</div>
+            <a href="/category/special/latest-updates" class="category-link">LATEST UPDATES</a>
+            <a href="/category/special/popular" class="category-link">POPULAR</a>
             <a href="/categories" class="category-link">CATEGORIES</a>
         </div>
         <div class="header-search-bar-ctn">
@@ -37,17 +37,17 @@
 
 <footer class="footer">
     <div class="footer-nav-credits">
-        <div class="logo-ctn">
+        <a href="/" class="logo-ctn">
             <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
-        </div>
-        <div class="footer-nav">
-            <div class="header-nav-text">ABOUT</div>
-            <div class="header-nav-text">TERMS AND CONDITIONS</div>
-            <div class="header-nav-text">SITEMAP</div>
-        </div>
+        </a>
+{{/*        <div class="footer-nav">*/}}
+{{/*            <div class="header-nav-text">ABOUT</div>*/}}
+{{/*            <div class="header-nav-text">TERMS AND CONDITIONS</div>*/}}
+{{/*            <div class="header-nav-text">SITEMAP</div>*/}}
+{{/*        </div>*/}}
         <p class="credits">
-            MangaThorg.com is a Free website based on MangaDex API.<br />No manga content is stored on our server, but
-            comes from <a href="https://mangadex.org">MangaDex</a>.
+            MangaThorg.com is a Free website based on <a href="https://api.mangadex.org" class="credits-link">MangaDex API</a>.<br />No manga content is stored on our server, but
+            comes from <a href="https://mangadex.org" class="credits-link">MangaDex</a>.
         </p>
         <div class="copyright">© MangaThorg.adebarbarin.com</div>
     </div>

@@ -20,6 +20,8 @@ func Init() {
 	Mux.HandleFunc("POST /forgot-password", controllers.ForgotPasswordHandlerPostBundle)
 	Mux.HandleFunc("GET /update-credentials", controllers.UpdateCredentialsHandlerGetBundle)
 	Mux.HandleFunc("POST /update-credentials/{id}", controllers.UpdateCredentialsHandlerPostBundle)
+	Mux.HandleFunc("GET /profile", controllers.ProfileHandlerGetBundle)
+	Mux.HandleFunc("POST /profile", controllers.ProfileHandlerPostBundle)
 	Mux.HandleFunc("GET /home", controllers.HomeHandlerGetBundle)
 	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
 	Mux.HandleFunc("GET /confirm", controllers.ConfirmHandlerGetBundle)
@@ -37,6 +39,7 @@ func Init() {
 	Mux.HandleFunc("GET /scan/{chapterId}/{quality}/{hash}/{img}", controllers.ScanHandlerGetBundle)
 	Mux.HandleFunc("POST /favorite/{mangaId}", controllers.FavoriteHandlerPostBundle)
 	Mux.HandleFunc("DELETE /favorite/{mangaId}", controllers.FavoriteHandlerDeleteBundle)
+	Mux.HandleFunc("PUT /favorite/{mangaId}", controllers.BannerHandlerPutBundle)
 
 	// Handling MethodNotAllowed error on /
 	Mux.HandleFunc("/{$}", controllers.IndexHandlerNoMethBundle)

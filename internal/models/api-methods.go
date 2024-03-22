@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -304,9 +305,10 @@ func Request(url string, query url.Values) ([]byte, error) {
 	return body, err
 }
 
-func (data *ApiMangaStats) Stats(id string) Statistics { // fixme
+func (data *ApiMangaStats) Stats(id string) Statistics {
 	if data.Statistics == nil {
 		log.Println("ApiMangaStats.Stats(): data.Statistics is null") // testing
+		return Statistics{}
 	}
 	m := data.Statistics.(map[string]interface{})
 	if value, ok := m[id].(interface{}); ok {
@@ -326,9 +328,15 @@ func (data *ApiMangaStats) Stats(id string) Statistics { // fixme
 
 func (data *ApiManga) Format() MangasInBulk {
 	var formattedMangas MangasInBulk
+	var wg sync.WaitGroup
 	for _, datum := range data.Data {
-		formattedMangas.Mangas = append(formattedMangas.Mangas, datum.Format())
+		wg.Add(1)
+		go func(data *Manga, mangas *[]MangaUsefullData, wg *sync.WaitGroup) {
+			defer wg.Done()
+			*mangas = append(*mangas, data.Format())
+		}(&datum, &formattedMangas.Mangas, &wg)
 	}
+	wg.Wait()
 	formattedMangas.NbMangas = data.Total
 	return formattedMangas
 }
@@ -342,22 +350,21 @@ func (data *Manga) Format() MangaUsefullData {
 	query.Add("includes[]", "scanlation_group")
 	query.Add("limit", "1")
 
-	// fixme: optimization needed (takes too much time to load)
-	//err := feed.SendRequest("https://api.mangadex.org/", "manga/"+data.Id+"/feed", query)
-	//if err != nil {
-	//	log.Println("request error:", err)
-	//}
-	//var firstChapterId string
-	//if feed.Data != nil {
-	//	firstChapterId = feed.Data[0].Id
-	//}
+	err := feed.SendRequest("https://api.mangadex.org/", "manga/"+data.Id+"/feed", query)
+	if err != nil {
+		log.Println("request error:", err)
+	}
+	var firstChapterId string
+	if feed.Data != nil {
+		firstChapterId = feed.Data[0].Id
+	}
 
 	var manga = MangaUsefullData{
 		Id:                     data.Id,
 		Title:                  data.Attributes.Title.En,
 		Author:                 "",
 		Description:            data.Attributes.Description.En,
-		FirstChapterId:         data.Attributes.LatestUploadedChapter, // fixme: change to FirstChapterId
+		FirstChapterId:         firstChapterId,
 		LastChapterId:          data.Attributes.LatestUploadedChapter,
 		LastChapterNb:          data.Attributes.LastChapter,
 		OriginalLanguage:       data.Attributes.OriginalLanguage,
@@ -390,7 +397,6 @@ func (manga *MangaUsefullData) Fill(stats Statistics, feed ApiMangaFeed) {
 	manga.Rating = math.Round(stats.Rating.Bayesian*10) / 10
 	manga.Chapters = feed.Format()
 	manga.NbChapter = feed.Total
-	manga.FirstChapterId = manga.Chapters[0].Id
 }
 
 func (data *ApiMangaFeed) Format() []ChapterUsefullData {

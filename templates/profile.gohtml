@@ -1,0 +1,50 @@
+{{define "staticPath"}}../static{{end}}
+
+{{define "title"}}MangaThorg - New password{{end}}
+
+{{define "cssFile"}}forms{{end}}
+
+{{define "page"}}
+
+    <div class="credentials-ctn profile-form-ctn">
+        <form action="/profile" method="post" class="credentials-form profile-form">
+            <span class="credentials-title">Modify personal data</span>
+            {{.Message}}
+            {{$avatar := .AvatarImg}}
+
+            <label for="avatar" class="avatars-form">Avatar
+                <div class="avatar-list">
+                    {{range .Avatars}}
+                        <input class="avatar-radio" type="radio" name="avatar" value="{{.}}" id="{{.}}"{{if eq $avatar .}} checked{{end}} />
+                        <div class="avatar-choice{{if eq $avatar .}} selected{{end}}" data-id-value="{{.}}"><img src="../static/img/profile-avatars/{{.}}" alt="{{.}} image" class="avatar-choice-img"></div>
+                    {{end}}
+                </div>
+            </label>
+
+            <div class="form-main-ctn">
+                <div class="form-control">
+                    <input name="password" id="password" class="form-input" type="password" />
+                    <label class="form-label" for="password">
+                        <span class="label-text input-letter-1">P</span><span class="label-text input-letter-2">a</span><span class="label-text input-letter-3">s</span><span class="label-text input-letter-4">s</span><span class="label-text input-letter-5">w</span><span class="label-text input-letter-6">o</span><span class="label-text input-letter-7">r</span><span class="label-text input-letter-8">d</span>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <input name="new-password" id="new-password" class="form-input" type="password" />
+                    <label class="form-label" for="new-password">
+                        <span class="label-text input-letter-1">N</span><span class="label-text input-letter-2">e</span><span class="label-text input-letter-3">w</span><span class="label-text input-letter-4"> </span><span class="label-text input-letter-5">P</span><span class="label-text input-letter-6">a</span><span class="label-text input-letter-7">s</span><span class="label-text input-letter-8">s</span><span class="label-text input-letter-9">w</span><span class="label-text input-letter-10">o</span><span class="label-text input-letter-11">r</span><span class="label-text input-letter-12">d</span>
+                    </label>
+                </div>
+                <div class="form-control">
+                    <input name="confirm-password" id="confirm-password" class="form-input" type="password" />
+                    <label class="form-label" for="confirm-password">
+                        <span class="label-text input-letter-1">C</span><span class="label-text input-letter-2">o</span><span class="label-text input-letter-3">n</span><span class="label-text input-letter-4">f</span><span class="label-text input-letter-5">i</span><span class="label-text input-letter-6">r</span><span class="label-text input-letter-7">m</span>
+                    </label>
+                </div>
+            </div>
+
+            <button class="form-btn" type="submit">Update</button>
+        </form>
+    </div>
+
+    <script src="../static/js/profile.js"></script>
+{{end}}

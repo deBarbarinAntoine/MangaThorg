@@ -25,6 +25,7 @@ type User struct {
 	CreationTime   time.Time   `json:"creation_time"`
 	LastConnection time.Time   `json:"last_connection"`
 	Username       string      `json:"username"`
+	Avatar         string      `json:"avatar,omitempty"`
 	HashedPwd      string      `json:"hash"`
 	Salt           string      `json:"salt"`
 	Email          string      `json:"email"`

@@ -105,7 +105,7 @@
           letter-spacing: 0;
           line-height: normal;
 
-          &:focus, &:valid {
+          &:focus, &:user-valid {
             outline: 0;
             border-bottom-color: $blue-elem;
 
@@ -154,6 +154,18 @@
             }
             span.input-letter-8 {
               transition-delay:350ms
+            }
+            span.input-letter-9 {
+              transition-delay:400ms
+            }
+            span.input-letter-10 {
+              transition-delay:450ms
+            }
+            span.input-letter-11 {
+              transition-delay:550ms
+            }
+            span.input-letter-12 {
+              transition-delay:600ms
             }
           }
         }
@@ -236,3 +248,65 @@
   }
 }
 
+.profile-form-ctn {
+  height: calc(500px + 25vw);
+
+  .profile-form {
+    width: 70%;
+
+    .avatars-form {
+      width: calc(100% - calc(calc(5px + .3vw) * 2));
+      height: calc(75px + 5vw);
+      padding: 0 calc(5px + .3vw);
+      margin-bottom: calc(60px + 2.2vw);
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      letter-spacing: 0;
+      line-height: normal;
+      color: $font-color;
+      font-size: calc(15px + .4vw);
+
+      .avatar-list {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: calc(7px + .3vw);
+        height: inherit;
+        margin-top: calc(14px + .4vw);
+        padding: calc(12px + .5vw) 0;
+        overflow-y: auto;
+        border-radius: 18px;
+        background-color: $foreground;
+
+        .avatar-radio {
+          position: absolute;
+          height: 0;
+          width: 0;
+          visibility: hidden;
+        }
+
+        .avatar-choice {
+          width: calc(45px + 1vw);
+          height: calc(45px + 1vw);
+          border-radius: 50%;
+          overflow: hidden;
+          border: none;
+          box-sizing: border-box;
+
+          img.avatar-choice-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+          }
+        }
+        .selected {
+          border: $blue-elem 3px solid;
+        }
+      }
+    }
+    button.form-btn {
+      max-width: 50%;
+    }
+  }
+}

@@ -10,6 +10,7 @@ import (
 	"net/url"
 	"reflect"
 	"strconv"
+	"sync"
 )
 
 var baseURL string = "https://api.mangadex.org/"
@@ -45,15 +46,23 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 	return manga
 }
 
+func fillMangaListById(id, order string, offset int, mangaList *[]models.MangaUsefullData, wg *sync.WaitGroup) {
+	defer wg.Done()
+	*mangaList = append(*mangaList, FetchMangaById(id, order, offset))
+}
+
 func FetchMangasById(favorites []models.MangaUser, order string, offset int) []models.MangaUsefullData {
 	if favorites == nil {
 		return nil
 	}
 	var mangas []models.MangaUsefullData
+	var wg sync.WaitGroup
 
 	for _, favorite := range favorites {
-		mangas = append(mangas, FetchMangaById(favorite.Id, order, offset))
+		wg.Add(1)
+		go fillMangaListById(favorite.Id, order, offset, &mangas, &wg)
 	}
+	wg.Wait()
 
 	return mangas
 }
