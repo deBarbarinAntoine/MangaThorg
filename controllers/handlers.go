@@ -18,87 +18,43 @@ import (
 	"time"
 )
 
-func indexHandlerGet(w http.ResponseWriter, r *http.Request) {
+// rootHandlerGet
+//
+//	@Description: manages the / route and redirects to the principal page.
+func rootHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
 	http.Redirect(w, r, "/principal", http.StatusSeeOther)
 }
 
-func indexHandlerPut(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	session, sessionID := utils.GetSession(r)
-	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerPut"+sessionID+"\nUsername: "+session.Username+"\nIP address: "+session.IpAddress)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func indexHandlerDelete(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path + "templates/index.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	session, sessionID := utils.GetSession(r)
-	err = tmpl.ExecuteTemplate(w, "index", "indexHandlerPut"+sessionID+"\nUsername: "+session.Username+"\nIP address: "+session.IpAddress)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func indexHandlerNoMeth(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	log.Println("HTTP ApiErr", http.StatusMethodNotAllowed)
-	w.WriteHeader(http.StatusMethodNotAllowed)
-	utils.Logger.Warn("indexHandlerNoMeth", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusMethodNotAllowed))
-
-	var data = struct {
-		IsConnected bool
-		Username    string
-		AvatarImg   string
-	}{
-		AvatarImg: "avatar.jpg",
-	}
-
-	user, sessionId := utils.GetSession(r)
-	if sessionId != "" {
-		data.IsConnected = true
-		data.Username = user.Username
-	}
-
-	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/error404.gohtml")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	err = tmpl.ExecuteTemplate(w, "base", data)
-	if err != nil {
-		log.Fatalln(err)
-	}
-}
-
-func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
+// errorHandler
+//
+//	@Description: displays the Error404 page.
+func errorHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	log.Println("HTTP ApiErr", http.StatusNotFound)
 	w.WriteHeader(http.StatusNotFound)
-	utils.Logger.Warn("indexHandlerOther", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
+	utils.Logger.Warn("errorHandler", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
 
-	var data = struct {
+	var data struct {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
-	}{
-		AvatarImg: "avatar.jpg",
 	}
 
-	user, sessionId := utils.GetSession(r)
+	session, sessionId := utils.GetSession(r)
 	if sessionId != "" {
 		data.IsConnected = true
-		data.Username = user.Username
+		data.Username = session.Username
 	}
+
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+		data.IsConnected = false
+	}
+
+	data.AvatarImg = user.Avatar
 
 	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/error404.gohtml")
 	if err != nil {
@@ -110,6 +66,10 @@ func indexHandlerOther(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// loginHandlerGet
+//
+//	@Description: displays the login form and possible messages according to the
+//	`err` or `status` query keys.
 func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	var message template.HTML
@@ -143,6 +103,9 @@ func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// loginHandlerPost
+//
+//	@Description: login treatment handler
 func loginHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	credentials := models.Credentials{
@@ -157,6 +120,10 @@ func loginHandlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// registerHandlerGet
+//
+//	@Description: displays the register form and possible messages according to the
+//	`err` query key.
 func registerHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	var message template.HTML
@@ -189,6 +156,9 @@ func registerHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// registerHandlerPost
+//
+//	@Description: register treatment handler.
 func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	formValues := struct {
@@ -239,6 +209,10 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login?status=signed-up", http.StatusSeeOther)
 }
 
+// forgotPasswordHandlerGet
+//
+//	@Description: displays the forgot password's form and the possible
+//	confirmation message.
 func forgotPasswordHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	var message template.HTML
@@ -260,6 +234,9 @@ func forgotPasswordHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// forgotPasswordHandlerPost
+//
+//	@Description: forgot password's form treatment handler.
 func forgotPasswordHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
@@ -276,6 +253,10 @@ func forgotPasswordHandlerPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/forgot-password?confirm=true", http.StatusSeeOther)
 }
 
+// updateCredentialsHandlerGet
+//
+//	@Description: displays the update credentials form (for those who forgot their
+//	password and accessed it through the URL sent by mail).
 func updateCredentialsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	var id string
@@ -310,6 +291,9 @@ func updateCredentialsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// updateCredentialsHandlerPost
+//
+//	@Description: update credentials form's treatment handler.
 func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	id := r.PathValue("id")
@@ -331,6 +315,10 @@ func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/login?status=update-pwd", http.StatusSeeOther)
 }
 
+// profileHandlerGet
+//
+//	@Description: displays the profile page with its update user form and possible
+//	messages according to the `err` and `status` query keys.
 func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
@@ -393,6 +381,9 @@ func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// profileHandlerPost
+//
+//	@Description: profile form's treatment handler.
 func profileHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
@@ -434,6 +425,9 @@ func profileHandlerPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/profile?status=updated", http.StatusSeeOther)
 }
 
+// homeHandlerGet
+//
+//	@Description: display the user's home page.
 func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
@@ -481,19 +475,39 @@ func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// TESTING only.
+//
+// logHandlerGet
+//
+//	@Description: fetches the logs according to the query sent.
 func logHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	w.Header().Set("Content-Type", "application/json")
 	if r.URL.Query().Has("level") {
-		json.NewEncoder(w).Encode(utils.FetchAttrLogs("level", r.URL.Query().Get("level")))
+		err := json.NewEncoder(w).Encode(utils.FetchAttrLogs("level", r.URL.Query().Get("level")))
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+			return
+		}
 		return
 	} else if r.URL.Query().Has("user") {
-		json.NewEncoder(w).Encode(utils.FetchAttrLogs("user", r.URL.Query().Get("user")))
+		err := json.NewEncoder(w).Encode(utils.FetchAttrLogs("user", r.URL.Query().Get("user")))
+		if err != nil {
+			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+			return
+		}
 		return
 	}
-	json.NewEncoder(w).Encode(utils.RetrieveLogs())
+	err := json.NewEncoder(w).Encode(utils.RetrieveLogs())
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+		return
+	}
 }
 
+// confirmHandlerGet
+//
+//	@Description: displays the new account's confirmation page.
 func confirmHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	if r.URL.Query().Has("id") {
@@ -511,12 +525,18 @@ func confirmHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// logoutHandlerGet
+//
+//	@Description: logs the user out.
 func logoutHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	utils.Logout(&w, r)
 	http.Redirect(w, r, "/principal", http.StatusSeeOther)
 }
 
+// principalHandlerGet
+//
+//	@Description: displays the principal page.
 func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
@@ -554,6 +574,9 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// mangaHandlerGet
+//
+//	@Description: displays the manga page according to the id put in the URL.
 func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("id")
@@ -611,6 +634,8 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 	}
 
+	//  todo: check if the manga was found, and if not, show the error404 page.
+
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
 	data.IsConnected = api.AddSingleFavoriteInfo(r, &data.Manga)
@@ -627,45 +652,30 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func tagsRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.TagsRequest())
-}
-
-func feedRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.FeedRequest("d1a9fdeb-f713-407f-960c-8326b586e6fd", "desc", 1))
-}
-
-func chapterScanRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.ScanRequest("444b113a-3705-4718-8f91-f46c640ab433"))
-}
-
-func mangaWholeRequestHandlerGet(w http.ResponseWriter, r *http.Request) {
-	log.Println(utils.GetCurrentFuncName())
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(api.FetchMangaById("d1a9fdeb-f713-407f-960c-8326b586e6fd", "desc", 1))
-}
-
+// coverHandlerGet
+//
+//	@Description: sends the manga's cover image according to the mangaId and the
+//	img name.
 func coverHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("manga")
 	img := r.PathValue("img")
 	if mangaId == "" || img == "" {
+		http.Error(w, "invalid request: empty value", http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "image/jpeg")
 	_, err := w.Write(api.ImageProxy(mangaId, img))
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "cover image not found", http.StatusNotFound)
 	}
 }
 
+// scanHandlerGet
+//
+//	@Description: sends the scan's image according to the chapterId, quality, hash
+//	and image name.
 func scanHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	chapterId := r.PathValue("chapterId")
@@ -674,16 +684,21 @@ func scanHandlerGet(w http.ResponseWriter, r *http.Request) {
 	img := r.PathValue("img")
 	if chapterId == "" || quality == "" || hash == "" || img == "" {
 		log.Println("empty value")
+		http.Error(w, "invalid request: empty value", http.StatusBadRequest)
 		return
 	}
 	w.Header().Set("Content-Type", "image/jpeg")
 	i, err := w.Write(api.ScanProxy(chapterId, quality, hash, img))
 	if err != nil || i == 0 {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
-		w.WriteHeader(http.StatusNotFound)
+		http.Error(w, "scan image not found", http.StatusNotFound)
 	}
 }
 
+// favoriteHandlerPost
+//
+//	@Description: adds a favorite to a user according to the mangaId sent in the
+//	URL.
 func favoriteHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
@@ -723,6 +738,10 @@ func favoriteHandlerPost(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
+// favoriteHandlerDelete
+//
+//	@Description: removes a favorite from a user according to the mangaId sent in
+//	the URL.
 func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
@@ -762,6 +781,10 @@ func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("error", "The manga was not found in the favorites")
 }
 
+// bannerHandlerPut
+//
+//	@Description: modifies a user's banner according to the mangaId sent in the
+//	URL.
 func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
@@ -804,6 +827,10 @@ func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("error", "The manga was not found in the favorites")
 }
 
+// chapterHandlerGet
+//
+//	@Description: displays the requested chapter's scans to read it, according to
+//	the mangaId, chapterNb and chapterId sent in the URL.
 func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
@@ -880,6 +907,9 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// tagsHandlerGet
+//
+//	@Description: displays all the available Tag sorted by type.
 func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 
@@ -895,7 +925,6 @@ func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 		PublicTags  []string
 		StatusTags  []string
 	}{
-		AvatarImg:  "avatar.jpg",
 		FormatTags: sortedTags.FormatTags,
 		GenreTags:  sortedTags.GenreTags,
 		ThemeTags:  sortedTags.ThemeTags,
@@ -926,6 +955,10 @@ func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// categoryHandlerGet
+//
+//	@Description: displays the mangas matching a specific Tag (Format, Genre or
+//	Theme only) which id is sent in the URL.
 func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	tagId := r.PathValue("tagId")
@@ -1013,6 +1046,10 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// categoryNameHandlerGet
+//
+//	@Description: displays the mangas matching a specific Tag (Public, Status, or
+//	a special request) which group and name is sent in the URL.
 func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	group := r.PathValue("group")
@@ -1132,7 +1169,10 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// searchHandlerGet is the handler that serves all search requests and the advanced search page.
+// searchHandlerGet
+//
+//	@Description: displays all mangas matching search and advanced search requests
+//	and the search and advanced search form.
 func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 

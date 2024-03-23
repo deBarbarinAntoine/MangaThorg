@@ -33,6 +33,9 @@ var Logger *slog.Logger
 var logs *os.File
 var wg sync.WaitGroup
 
+// closeLog
+//
+//	@Description: closes the log file.
 func closeLog() {
 	if logs != nil {
 		err := logs.Close()
@@ -84,7 +87,13 @@ func (log *Logs) fetchLogInfo(file string) {
 	}
 }
 
-func printFileNames(files []os.DirEntry) []string { // verbose function, for testing
+// printFileNames
+//
+//	@Description: verbose function, for testing
+//	@param files
+//	@return []string
+//	@return for
+func printFileNames(files []os.DirEntry) []string {
 	var result []string
 	for _, file := range files {
 		result = append(result, file.Name())

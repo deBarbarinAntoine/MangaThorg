@@ -16,8 +16,13 @@ import (
 	"os"
 )
 
+// configFile is the config's file absolute path.
 var configFile = Path + "config/config.json"
 
+// generateConfirmationID
+//
+//	@Description: generates a random confirmation ID.
+//	@return string
 func generateConfirmationID() string {
 	b := make([]byte, 32)
 	_, err := rand.Read(b)
@@ -27,6 +32,11 @@ func generateConfirmationID() string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
+// generateMessageID
+//
+//	@Description: generates a message ID to send a mail.
+//	@param domain
+//	@return string
 func generateMessageID(domain string) string {
 	b := make([]byte, 16)
 	_, err := rand.Read(b)
@@ -38,7 +48,10 @@ func generateMessageID(domain string) string {
 
 }
 
-// fetchConfig retrieves the models.MailConfig from config/config.json
+// fetchConfig
+//
+//	@Description: retrieves the models.MailConfig from config/config.json.
+//	@return models.MailConfig
 func fetchConfig() models.MailConfig {
 	var config models.MailConfig
 
@@ -58,7 +71,11 @@ func fetchConfig() models.MailConfig {
 	return config
 }
 
-// SendMail sends a mail to models.TempUser to create his account
+// SendMail
+//
+//	@Description: sends a mail to models.TempUser to create his account.
+//	@param temp
+//	@param status
 func SendMail(temp *models.TempUser, status string) {
 	// Fetching mail configuration
 	config := fetchConfig()
@@ -138,7 +155,12 @@ func SendMail(temp *models.TempUser, status string) {
 	}
 }
 
-// dial returns a smtp client.
+// dial
+//
+//	@Description: returns a smtp client.
+//	@param addr
+//	@return *smtp.Client
+//	@return error
 func dial(addr string) (*smtp.Client, error) {
 	conn, err := tls.Dial("tcp", addr, nil)
 	if err != nil {

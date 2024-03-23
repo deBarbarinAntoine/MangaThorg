@@ -11,8 +11,16 @@ import (
 	"time"
 )
 
+// jsonFile is the models.User's JSON file full path.
 var jsonFile = Path + "data/users.json"
+
+// TempUsers is the models.TempUser's array for newly registered models.User
+// before they confirm their email address.
 var TempUsers []models.TempUser
+
+// LostUsers is the models.TempUser's array for models.User
+// that forgot their password, until they access the link sent to their
+// email address to change their password.
 var LostUsers []models.TempUser
 
 // retrieveUsers
@@ -185,6 +193,8 @@ func UpdateUser(updatedUser models.User) {
 	changeUsers(users)
 }
 
+// deleteTempUser
+// removes a specific models.TempUser from TempUsers.
 func deleteTempUser(temp models.TempUser) {
 	for i, user := range TempUsers {
 		if reflect.DeepEqual(user, temp) {
@@ -193,6 +203,8 @@ func deleteTempUser(temp models.TempUser) {
 	}
 }
 
+// deleteLostUser
+// removes a specific models.TempUser from LostUsers.
 func deleteLostUser(temp models.TempUser) {
 	for i, user := range LostUsers {
 		if reflect.DeepEqual(user, temp) {
@@ -201,6 +213,9 @@ func deleteLostUser(temp models.TempUser) {
 	}
 }
 
+// PushTempUser
+// creates a new user from a models.TempUser
+// which Id matches the `id` param.
 func PushTempUser(id string) {
 	for _, temp := range TempUsers {
 		if temp.ConfirmID == id {
@@ -213,6 +228,9 @@ func PushTempUser(id string) {
 	}
 }
 
+// UpdateLostUser
+// updates the models.User's Hash and Salt with the `lost`
+// models.TempUser's Hash and Salt sent in the param.
 func UpdateLostUser(lost models.TempUser) {
 	user, ok := SelectUser(lost.User.Username)
 	if !ok {

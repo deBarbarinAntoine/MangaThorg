@@ -5,13 +5,12 @@ import (
 	"net/http"
 )
 
+// Mux is the server's ServeMux.
 var Mux = http.NewServeMux()
 
+// Init initializes all routes.
 func Init() {
-	Mux.HandleFunc("GET /{$}", controllers.IndexHandlerGetBundle)
-	Mux.HandleFunc("PUT /{$}", controllers.IndexHandlerPutBundle)
-	Mux.HandleFunc("DELETE /{$}", controllers.IndexHandlerDeleteBundle)
-	Mux.HandleFunc("POST /add", controllers.IndexHandlerPutBundle)
+	Mux.HandleFunc("GET /{$}", controllers.RootHandlerGetBundle)
 	Mux.HandleFunc("GET /login", controllers.LoginHandlerGetBundle)
 	Mux.HandleFunc("POST /login", controllers.LoginHandlerPostBundle)
 	Mux.HandleFunc("GET /register", controllers.RegisterHandlerGetBundle)
@@ -23,7 +22,6 @@ func Init() {
 	Mux.HandleFunc("GET /profile", controllers.ProfileHandlerGetBundle)
 	Mux.HandleFunc("POST /profile", controllers.ProfileHandlerPostBundle)
 	Mux.HandleFunc("GET /home", controllers.HomeHandlerGetBundle)
-	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
 	Mux.HandleFunc("GET /confirm", controllers.ConfirmHandlerGetBundle)
 	Mux.HandleFunc("GET /logout", controllers.LogoutHandlerGetBundle)
 	Mux.HandleFunc("GET /principal", controllers.PrincipalHandlerGetBundle)
@@ -32,18 +30,16 @@ func Init() {
 	Mux.HandleFunc("GET /category/{tagId}", controllers.CategoryHandlerGetBundle)
 	Mux.HandleFunc("GET /category/{group}/{name}", controllers.CategoryNameHandlerGetBundle)
 	Mux.HandleFunc("GET /search", controllers.SearchHandlerGetBundle)
-	Mux.HandleFunc("GET /feed", controllers.FeedRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /chapter/{mangaId}/{chapterNb}/{chapterId}", controllers.ChapterHandlerGetBundle)
-	Mux.HandleFunc("GET /mangatest", controllers.MangaWholeRequestHandlerGetBundle)
 	Mux.HandleFunc("GET /covers/{manga}/{img}", controllers.CoversHandlerGetBundle)
 	Mux.HandleFunc("GET /scan/{chapterId}/{quality}/{hash}/{img}", controllers.ScanHandlerGetBundle)
 	Mux.HandleFunc("POST /favorite/{mangaId}", controllers.FavoriteHandlerPostBundle)
 	Mux.HandleFunc("DELETE /favorite/{mangaId}", controllers.FavoriteHandlerDeleteBundle)
 	Mux.HandleFunc("PUT /favorite/{mangaId}", controllers.BannerHandlerPutBundle)
 
-	// Handling MethodNotAllowed error on /
-	Mux.HandleFunc("/{$}", controllers.IndexHandlerNoMethBundle)
+	// !! TESTING: this route is only for testing purposes for now. You need to disable it if you want to deploy the server.
+	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
 
 	// Handling StatusNotFound error everywhere else
-	Mux.HandleFunc("/", controllers.IndexHandlerOtherBundle)
+	Mux.HandleFunc("/", controllers.ErrorHandlerBundle)
 }

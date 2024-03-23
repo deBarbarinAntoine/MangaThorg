@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+// Run is the main function of the whole HTTP server:
+// it initializes the routes, make the asset folder
+// available to the clients, runs all needed goroutines
+// and the ListenAndServe() function.
 func Run() {
 	// Initializing the routes
 	router.Init()

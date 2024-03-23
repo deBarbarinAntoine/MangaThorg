@@ -13,7 +13,9 @@ import (
 
 var (
 	_, b, _, _ = runtime.Caller(0)
-	Path       = filepath.Dir(filepath.Dir(filepath.Dir(b))) + "/"
+
+	// Path is the absolute path to the project's root directory.
+	Path = filepath.Dir(filepath.Dir(filepath.Dir(b))) + "/"
 )
 
 // durationToString -> just for fun ;)
@@ -46,6 +48,11 @@ func SetDailyTimer(hour int) time.Duration {
 	return d
 }
 
+// GetIP
+//
+//	@Description: gets the client's IP address according to the *http.Request.
+//	@param r
+//	@return string
 func GetIP(r *http.Request) string {
 	ips := r.Header.Get("X-Forwarded-For")
 	splitIps := strings.Split(ips, ",")
@@ -76,6 +83,10 @@ func GetIP(r *http.Request) string {
 	return ""
 }
 
+// GetCurrentFuncName
+//
+//	@Description: gets the name of the function that calls it.
+//	@return string
 func GetCurrentFuncName() string {
 	pc, _, _, _ := runtime.Caller(1)
 	return runtime.FuncForPC(pc).Name()

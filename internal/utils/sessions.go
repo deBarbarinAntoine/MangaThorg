@@ -15,6 +15,10 @@ var SessionsData = make(map[string]models.Session)
 // sessionTime is the constant handling the session's maximum opened time without interaction.
 const sessionTime time.Duration = time.Hour * 2
 
+// retrieveSessions
+//
+//	@Description: fetches all sessions present in SessionsData.
+//	@return []models.Session
 func retrieveSessions() []models.Session {
 	var sessions []models.Session
 	for _, session := range SessionsData {
@@ -23,6 +27,13 @@ func retrieveSessions() []models.Session {
 	return sessions
 }
 
+// GetSession
+//
+//	@Description: fetches the models.Session and sessionId from the cookie present
+//	in the *http.Request.
+//	@param r
+//	@return models.Session
+//	@return string
 func GetSession(r *http.Request) (models.Session, string) {
 	sessionID, err := r.Cookie("updatedCookie")
 	if err != nil {
@@ -32,6 +43,10 @@ func GetSession(r *http.Request) (models.Session, string) {
 	return SessionsData[sessionID.Value], sessionID.Value
 }
 
+// newConnectionID
+//
+//	@Description: gets the first unused ConnectionID for the new models.Session.
+//	@return int
 func newConnectionID() int {
 	sessions := retrieveSessions()
 	var id int
@@ -48,6 +63,15 @@ func newConnectionID() int {
 	return id
 }
 
+// OpenSession
+//
+//	@Description: creates a new models.Session for the user which username matches
+//	the username param and writes the cookie that corresponds to its
+//	models.Session in the *http.ResponseWriter and *http.Request (for further
+//	access).
+//	@param w
+//	@param username
+//	@param r
 func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 
 	// Generate and set Session ID cookie
@@ -114,6 +138,14 @@ func CheckSession(r *http.Request) bool {
 	return true
 }
 
+// RefreshSession
+//
+//	@Description: refreshes the cookie and the sessionId found in the
+//	*http.Request and adds an "updatedCookie" in the *http.Request for further
+//	access.
+//	@param w
+//	@param r
+//	@return error
 func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 	// generating new sessionID and new expiration time
 	newSessionID := generateSessionID()
@@ -123,7 +155,7 @@ func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 		Name:     "session_id",
 		Value:    newSessionID,
 		HttpOnly: true,
-		Secure:   false, // Use only if using HTTPS
+		Secure:   false, // TODO: change when switching to HTTPS in the future.
 		Path:     "/",
 		Expires:  newExpirationTime,
 		SameSite: http.SameSiteStrictMode,
@@ -155,12 +187,17 @@ func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
+// Logout
+//
+//	@Description: sets the cookie as expired and clears the SessionsData.
+//	@param w
+//	@param r
 func Logout(w *http.ResponseWriter, r *http.Request) {
 	var newCookie = &http.Cookie{
 		Name:     "session_id",
 		Value:    "",
 		HttpOnly: true,
-		Secure:   false, // Use only if using HTTPS
+		Secure:   false, // TODO: change when switching to HTTPS in the future.
 		Path:     "/",
 		MaxAge:   -1,
 		SameSite: http.SameSiteStrictMode,
@@ -178,6 +215,10 @@ func Logout(w *http.ResponseWriter, r *http.Request) {
 	delete(SessionsData, cookie.Value)
 }
 
+// generateSessionID
+//
+//	@Description: generates a new random sessionId.
+//	@return string
 func generateSessionID() string {
 	b := make([]byte, 64)
 	_, err := rand.Read(b)
@@ -187,15 +228,28 @@ func generateSessionID() string {
 	return base64.URLEncoding.EncodeToString(b)
 }
 
+// validateSessionID
+//
+//	@Description: checks if the sessionID has the required length.
+//	@param sessionID
+//	@return bool
 func validateSessionID(sessionID string) bool {
 	_, ok := SessionsData[sessionID]
 	return len(sessionID) == 88 && ok
 }
 
+// isExpired
+//
+//	@Description: checks if the models.Session is expired.
+//	@param session
+//	@return bool
 func isExpired(session models.Session) bool {
 	return session.ExpirationTime.Before(time.Now())
 }
 
+// cleanSessions
+//
+//	@Description: clears all expired models.Session from SessionsData.
 func cleanSessions() {
 	for sessionID, session := range SessionsData {
 		if isExpired(session) {
@@ -205,6 +259,11 @@ func cleanSessions() {
 	}
 }
 
+// MonitorSessions
+//
+//	@Description: a simple function that clears all expired models.Session
+//	periodically.
+//	It is meant to be run as a goroutine.
 func MonitorSessions() {
 	for {
 		time.Sleep(time.Hour)
