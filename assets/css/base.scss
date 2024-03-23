@@ -3,6 +3,7 @@
 @font-face {
   font-family: 'Tilt Neon', sans-serif;
 }
+
 $font-color: #EEEEEE;
 $background: #222831;
 $foreground: #393E46;
@@ -13,20 +14,24 @@ $red: #7D0A0A;
 * {
   scrollbar-width: thin;
   scrollbar-color: $bright-foreground $background;
+
   a {
     text-decoration: none;
     color: $font-color;
   }
+
   input {
     outline: none;
     background: none;
     border: none;
+
     &:focus, &:focus-visible, &:focus-within {
       outline: none;
       background: none;
       border: none;
     }
   }
+
   button {
     border: none;
     background: none;
@@ -144,6 +149,7 @@ body {
           line-height: normal;
           padding: 0 calc(2px + .2vw);
         }
+
         .search-bar-btn {
           cursor: pointer;
 
@@ -248,6 +254,7 @@ body {
       .filler {
         width: 20px;
       }
+
       .username-ctn {
         position: relative;
         display: flex;
@@ -271,6 +278,7 @@ body {
           line-height: normal;
         }
       }
+
       .profile-avatar {
         position: absolute;
         width: 75px;
@@ -289,6 +297,7 @@ body {
         }
       }
     }
+
     .logout-btn {
       height: fit-content;
       display: flex;
