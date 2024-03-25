@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// MangaPublic is like an enum with all public related tags.
 var MangaPublic = []string{
 	"shounen",
 	"seinen",
@@ -13,6 +14,7 @@ var MangaPublic = []string{
 	"none",
 }
 
+// MangaStatus is like an enum with all status related tags.
 var MangaStatus = []string{
 	"ongoing",
 	"completed",
@@ -20,6 +22,11 @@ var MangaStatus = []string{
 	"cancelled",
 }
 
+// ApiData
+//
+//	@Description: like a superclass containing ApiChapterScan, ApiManga,
+//	ApiMangaFeed, ApiMangaStats and ApiTags.
+//	It declares three common methods for these types.
 type ApiData interface {
 	SingleCacheData(id string, order string, offset int) SingleCacheData
 	SendRequest(baseURL string, endpoint string, query url.Values) error
@@ -35,6 +42,7 @@ type ApiErr struct {
 	Context interface{} `json:"context"`
 }
 
+// OrderedTags is the structure storing all tags orderly.
 type OrderedTags struct {
 	FormatTags []ApiTag
 	GenreTags  []ApiTag
@@ -58,6 +66,7 @@ type ApiTag struct {
 	Relationships []interface{} `json:"relationships"`
 }
 
+// Chapter is the common structure for Chapters used by MangaDex API.
 type Chapter struct {
 	Id         string `json:"id"`
 	Type       string `json:"type"`
@@ -85,6 +94,8 @@ type Chapter struct {
 	} `json:"relationships"`
 }
 
+// ChapterUsefullData is the structure used in the website to gather all usefull
+// data related to a single chapter.
 type ChapterUsefullData struct {
 	Id                 string
 	Title              string
@@ -98,16 +109,22 @@ type ChapterUsefullData struct {
 	ScanlationGroup    string
 }
 
+// ChapterWhole is the structure used in the website to tie a Chapter to its ApiChapterScan.
 type ChapterWhole struct {
 	Info  Chapter
 	Scans ApiChapterScan
 }
 
+// MangasInBulk is the structure used in the website to gather a list of
+// MangaUsefullData along with its length.
 type MangasInBulk struct {
 	Mangas   []MangaUsefullData
 	NbMangas int
 }
 
+// MangaUsefullData is the structure used in the website to gather all usefull
+// info related to a single Manga, along with its list of ApiTag and list of
+// ChapterUsefullData.
 type MangaUsefullData struct {
 	Id                     string
 	Title                  string
@@ -191,6 +208,8 @@ type Manga struct {
 	} `json:"relationships"`
 }
 
+// MangaRequestParam is the structure used to store the name of the parameters
+// required to emit a manga request.
 type MangaRequestParam struct {
 	Order              string
 	IncludedTags       string
@@ -206,6 +225,7 @@ type MangaRequestParam struct {
 	Offset             string
 }
 
+// MangaRequest is the structure used to store all parameters of a manga request.
 type MangaRequest struct {
 	OrderType      string
 	OrderValue     string
@@ -246,6 +266,7 @@ type ApiManga struct {
 	Total    int      `json:"total,omitempty"`
 }
 
+// ApiSingleManga is the data structure for the Manga request by id to MangaDex API.
 type ApiSingleManga struct {
 	Result   string   `json:"result"`
 	Errors   []ApiErr `json:"errors,omitempty"`
@@ -296,6 +317,8 @@ type ApiChapterScan struct {
 	} `json:"chapter"`
 }
 
+// Statistics is the structure used to extract the usefull data in ApiMangaStats'
+// Statistic interface.
 type Statistics struct {
 	Comments struct {
 		ThreadId     int `json:"threadId"`

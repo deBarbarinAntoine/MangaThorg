@@ -13,8 +13,11 @@ import (
 	"sync"
 )
 
+// baseURL is the common URL used for all MangaDex API requests.
 var baseURL string = "https://api.mangadex.org/"
 
+// TopPopularRequest is the exact request done to retrieve the six most popular
+// mangas for the principal page.
 var TopPopularRequest = models.MangaRequest{
 	OrderType:    "rating",
 	OrderValue:   "desc",
@@ -24,6 +27,8 @@ var TopPopularRequest = models.MangaRequest{
 	Offset:       0,
 }
 
+// TopLatestUploadedRequest is the exact request done to retrieve the six latest
+// uploaded mangas for the principal page.
 var TopLatestUploadedRequest = models.MangaRequest{
 	OrderType:    "latestUploadedChapter",
 	OrderValue:   "desc",
@@ -33,6 +38,14 @@ var TopLatestUploadedRequest = models.MangaRequest{
 	Offset:       0,
 }
 
+// FetchMangaById
+//
+//	@Description: fetches a specific manga according to its id,
+//	with a set of chapters according to the `order` and `offset`.
+//	@param id
+//	@param order
+//	@param offset
+//	@return models.MangaUsefullData
 func FetchMangaById(id string, order string, offset int) models.MangaUsefullData {
 	if id == "" {
 		return models.MangaUsefullData{}
@@ -46,11 +59,27 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 	return manga
 }
 
+// fillMangaListById
+//
+//	@Description: fetches a specific manga according to its id and add it to
+//	`mangaList` (meant to be called as a goroutine to optimize timing).
+//	@param id
+//	@param order
+//	@param offset
+//	@param mangaList
+//	@param wg
 func fillMangaListById(id, order string, offset int, mangaList *[]models.MangaUsefullData, wg *sync.WaitGroup) {
 	defer wg.Done()
 	*mangaList = append(*mangaList, FetchMangaById(id, order, offset))
 }
 
+// FetchMangasById
+//
+//	@Description: fetches a list of mangas according to their ids.
+//	@param favorites
+//	@param order
+//	@param offset
+//	@return []models.MangaUsefullData
 func FetchMangasById(favorites []models.MangaUser, order string, offset int) []models.MangaUsefullData {
 	if favorites == nil {
 		return nil
@@ -67,6 +96,11 @@ func FetchMangasById(favorites []models.MangaUser, order string, offset int) []m
 	return mangas
 }
 
+// MangaRequestById
+//
+//	@Description: requests a single manga according to its id.
+//	@param id
+//	@return models.ApiSingleManga
 func MangaRequestById(id string) models.ApiSingleManga {
 	if checkStatus(models.Status.Mangas, id) {
 		mangaCache := retrieveSingleCacheData(models.Status.Mangas, id, "", 0)
@@ -103,12 +137,22 @@ func MangaRequestById(id string) models.ApiSingleManga {
 	return apiSingleManga
 }
 
+// FetchManga
+//
+//	@Description: fetches mangas according to a request.
+//	@param request
+//	@return models.MangasInBulk
 func FetchManga(request models.MangaRequest) models.MangasInBulk {
 	apiManga := MangaRequest(request)
 
 	return apiManga.Format()
 }
 
+// MangaRequest
+//
+//	@Description: requests a list of mangas.
+//	@param request
+//	@return models.ApiManga
 func MangaRequest(request models.MangaRequest) models.ApiManga {
 	var exists bool
 	var info, id string
@@ -136,6 +180,10 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	return apiManga
 }
 
+// TagsRequest
+//
+//	@Description: requests all tags from MangaDex API.
+//	@return models.ApiTags
 func TagsRequest() models.ApiTags {
 	if checkStatus(models.Status.Tags, "") {
 		tagCache := retrieveSingleCacheData(models.Status.Tags, "", "", 0)
@@ -162,6 +210,11 @@ func TagsRequest() models.ApiTags {
 	return apiTags
 }
 
+// TagSelect
+//
+//	@Description: selects a tag according to its id.
+//	@param id
+//	@return models.ApiTag
 func TagSelect(id string) models.ApiTag {
 	tags := TagsRequest()
 	for _, tag := range tags.Data {
@@ -173,6 +226,11 @@ func TagSelect(id string) models.ApiTag {
 	return models.ApiTag{}
 }
 
+// FetchSortedTags
+//
+//	@Description: fetches all tags (public and status included) and sort them by
+//	type.
+//	@return models.OrderedTags
 func FetchSortedTags() models.OrderedTags {
 	allTags := TagsRequest().Data
 	var orderedTags models.OrderedTags
@@ -191,6 +249,14 @@ func FetchSortedTags() models.OrderedTags {
 	return orderedTags
 }
 
+// FeedRequest
+//
+//	@Description: requests a specific list of chapters according to the manga's
+//	`id`, the `order` and the `offset`.
+//	@param id
+//	@param order
+//	@param offset
+//	@return models.ApiMangaFeed
 func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 
 	// retrieving the total number of chapters
@@ -259,6 +325,11 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 	return apiMangaFeed
 }
 
+// ScanRequest
+//
+//	@Description: requests a chapter's scans according to its `id`.
+//	@param id
+//	@return models.ApiChapterScan
 func ScanRequest(id string) models.ApiChapterScan {
 	if checkStatus(models.Status.ChaptersScan, id) {
 		scanCache := retrieveSingleCacheData(models.Status.ChaptersScan, id, "", 0)
@@ -284,6 +355,11 @@ func ScanRequest(id string) models.ApiChapterScan {
 	return apiChapterScan
 }
 
+// StatRequest
+//
+//	@Description: requests a manga's statistics according to its `id`.
+//	@param id
+//	@return models.Statistics
 func StatRequest(id string) models.Statistics {
 	if checkStatus(models.Status.MangaStats, id) {
 		statCache := retrieveSingleCacheData(models.Status.MangaStats, id, "", 0)
@@ -317,6 +393,12 @@ func StatRequest(id string) models.Statistics {
 	return mangaStats
 }
 
+// ImageProxy
+//
+//	@Description: requests a single cover image.
+//	@param mangaId
+//	@param pictureName
+//	@return []byte
 func ImageProxy(mangaId, pictureName string) []byte {
 	reqUrl := "https://uploads.mangadex.org/covers/" + mangaId + "/" + pictureName
 	data, err := models.Request(reqUrl, nil)
@@ -327,6 +409,14 @@ func ImageProxy(mangaId, pictureName string) []byte {
 	return data
 }
 
+// ScanProxy
+//
+//	@Description: requests a single scan image.
+//	@param chapterId
+//	@param quality
+//	@param hash
+//	@param img
+//	@return []byte
 func ScanProxy(chapterId, quality, hash, img string) []byte {
 	chapter := ScanRequest(chapterId)
 	if chapter.Chapter.Hash != hash && chapter.Chapter.Hash != "" {
@@ -351,6 +441,12 @@ func ScanProxy(chapterId, quality, hash, img string) []byte {
 	return data
 }
 
+// AddFavoriteInfo
+//
+//	@Description: adds some user related data to every manga of the list `mangas`.
+//	@param r
+//	@param mangas
+//	@return bool
 func AddFavoriteInfo(r *http.Request, mangas *[]models.MangaUsefullData) bool {
 	session, sessionId := utils.GetSession(r)
 	if sessionId == "" {
@@ -371,6 +467,12 @@ func AddFavoriteInfo(r *http.Request, mangas *[]models.MangaUsefullData) bool {
 	return true
 }
 
+// AddSingleFavoriteInfo
+//
+//	@Description: adds some user related data to a `manga`.
+//	@param r
+//	@param manga
+//	@return bool
 func AddSingleFavoriteInfo(r *http.Request, manga *models.MangaUsefullData) bool {
 	session, sessionId := utils.GetSession(r)
 	if sessionId == "" {

@@ -6,6 +6,14 @@ import (
 	"os"
 )
 
+// Exists
+//
+//	@Description: checks if a singleCacheData exists in a CacheData.
+//	@receiver cache
+//	@param id
+//	@param order
+//	@param offset
+//	@return bool
 func (cache CacheData) Exists(id string, order string, offset int) bool {
 	for _, data := range cache {
 		if data.Id == id && data.Order == order && data.Offset == offset {
@@ -15,15 +23,13 @@ func (cache CacheData) Exists(id string, order string, offset int) bool {
 	return false
 }
 
-func (cache CacheData) Select(id string, order string, offset int) SingleCacheData {
-	for _, data := range cache {
-		if data.Id == id && data.Order == order && data.Offset == offset {
-			return data
-		}
-	}
-	return SingleCacheData{}
-}
-
+// Update
+//
+//	@Description: updates a SingleCacheData present in a CacheData.
+//	@receiver cache
+//	@param newDatum
+//	@return CacheData
+//	@return error
 func (cache CacheData) Update(newDatum SingleCacheData) (CacheData, error) {
 	for ind, data := range cache {
 		if data.Id == newDatum.Id && data.Order == newDatum.Order && data.Offset == newDatum.Offset {
@@ -31,9 +37,18 @@ func (cache CacheData) Update(newDatum SingleCacheData) (CacheData, error) {
 			return cache, nil
 		}
 	}
-	return nil, errors.New("SingleCacheData not found")
+	return nil, errors.New("singleCacheData not found")
 }
 
+// Delete
+//
+//	@Description: removes a SingleCacheData from a CacheData.
+//	@receiver cache
+//	@param id
+//	@param order
+//	@param offset
+//	@return CacheData
+//	@return error
 func (cache CacheData) Delete(id string, order string, offset int) (CacheData, error) {
 	var idx int
 	var found bool
@@ -50,6 +65,12 @@ func (cache CacheData) Delete(id string, order string, offset int) (CacheData, e
 	return cache, errors.New("singleCacheData not found")
 }
 
+// ApiManga
+//
+//	@Description: converts a SingleCacheData to an ApiManga.
+//	@receiver datum
+//	@return ApiManga
+//	@return error
 func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	var apiManga ApiManga
 	data, err := json.Marshal(datum.Data)
@@ -63,6 +84,12 @@ func (datum SingleCacheData) ApiManga() (ApiManga, error) {
 	return apiManga, nil
 }
 
+// Manga
+//
+//	@Description: converts a SingleCacheData to a Manga.
+//	@receiver datum
+//	@return Manga
+//	@return error
 func (datum SingleCacheData) Manga() (Manga, error) {
 	var manga Manga
 	data, err := json.Marshal(datum.Data)
@@ -76,6 +103,12 @@ func (datum SingleCacheData) Manga() (Manga, error) {
 	return manga, nil
 }
 
+// ApiTags
+//
+//	@Description: converts a SingleCacheData to an ApiTags.
+//	@receiver datum
+//	@return ApiTags
+//	@return error
 func (datum SingleCacheData) ApiTags() (ApiTags, error) {
 	var apiTags ApiTags
 	data, err := json.Marshal(datum.Data)
@@ -89,6 +122,12 @@ func (datum SingleCacheData) ApiTags() (ApiTags, error) {
 	return apiTags, nil
 }
 
+// ApiMangaFeed
+//
+//	@Description: converts a SingleCacheData to an ApiMangaFeed.
+//	@receiver datum
+//	@return ApiMangaFeed
+//	@return error
 func (datum SingleCacheData) ApiMangaFeed() (ApiMangaFeed, error) {
 	var apiMangaFeed ApiMangaFeed
 	data, err := json.Marshal(datum.Data)
@@ -102,6 +141,12 @@ func (datum SingleCacheData) ApiMangaFeed() (ApiMangaFeed, error) {
 	return apiMangaFeed, nil
 }
 
+// ApiChapterScan
+//
+//	@Description: converts a SingleCacheData to an ApiChapterScan.
+//	@receiver datum
+//	@return ApiChapterScan
+//	@return error
 func (datum SingleCacheData) ApiChapterScan() (ApiChapterScan, error) {
 	var apiChapterScan ApiChapterScan
 	data, err := json.Marshal(datum.Data)
@@ -115,6 +160,12 @@ func (datum SingleCacheData) ApiChapterScan() (ApiChapterScan, error) {
 	return apiChapterScan, nil
 }
 
+// ApiMangaStats
+//
+//	@Description: converts a SingleCacheData to an ApiMangaStats.
+//	@receiver datum
+//	@return ApiMangaStats
+//	@return error
 func (datum SingleCacheData) ApiMangaStats() (ApiMangaStats, error) {
 	var apiMangaStats ApiMangaStats
 	data, err := json.Marshal(datum.Data)
@@ -128,6 +179,13 @@ func (datum SingleCacheData) ApiMangaStats() (ApiMangaStats, error) {
 	return apiMangaStats, nil
 }
 
+// Write
+//
+//	@Description: writes a SingleCacheData in a specific cache file appending it or not.
+//	@receiver datum
+//	@param filePath
+//	@param Append
+//	@return error
 func (datum SingleCacheData) Write(filePath string, Append bool) error {
 	var cacheData CacheData
 	if Append {

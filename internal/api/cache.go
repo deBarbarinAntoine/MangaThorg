@@ -13,8 +13,14 @@ import (
 	"time"
 )
 
+// dataPath is the absolute path to the cache directory.
 var dataPath string = utils.Path + "cache/"
 
+// retrieveCacheData
+//
+//	@Description: retrieves a specific cache's file content and returns it as a models.CacheData.
+//	@param info: name of the cache file.
+//	@return models.CacheData
 func retrieveCacheData(info string) models.CacheData {
 	data, err := os.ReadFile(dataPath + info + ".json")
 	if err != nil {
@@ -33,6 +39,14 @@ func retrieveCacheData(info string) models.CacheData {
 	return cacheData
 }
 
+// retrieveSingleCacheData
+//
+//	@Description: retrieves a specific entry in a specific cache file and returns it as a models.SingleCacheData.
+//	@param info: name of the cache file.
+//	@param id: id of the item searched.
+//	@param order
+//	@param offset
+//	@return models.SingleCacheData
 func retrieveSingleCacheData(info string, id string, order string, offset int) models.SingleCacheData {
 	cacheData := retrieveCacheData(info)
 
@@ -52,16 +66,12 @@ func retrieveSingleCacheData(info string, id string, order string, offset int) m
 	return models.SingleCacheData{Data: nil}
 }
 
-func checkCache(info string, id string) bool {
-	if !checkStatus(info, id) {
-		return false
-	}
-
-	cacheData := retrieveCacheData(info)
-
-	return cacheData.Exists(id, "", 0)
-}
-
+// checkStatus
+//
+//	@Description: checks if the item's id is present in the `info` category in status.json.
+//	@param info: kind of item.
+//	@param id: the item's id.
+//	@return bool
 func checkStatus(info string, id string) bool {
 	data, err := os.ReadFile(dataPath + "status.json")
 	if err != nil {
@@ -100,6 +110,13 @@ func checkStatus(info string, id string) bool {
 	}
 }
 
+// isCache
+//
+//	@Description: checks if the request has already been cached.
+//	@param r
+//	@return bool
+//	@return string
+//	@return string
 func isCache(r models.MangaRequest) (bool, string, string) {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
@@ -111,6 +128,11 @@ func isCache(r models.MangaRequest) (bool, string, string) {
 	}
 }
 
+// cacheRequest
+//
+//	@Description: retrieves a cached request.
+//	@param r
+//	@return models.SingleCacheData
 func cacheRequest(r models.MangaRequest) models.SingleCacheData {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
@@ -122,6 +144,11 @@ func cacheRequest(r models.MangaRequest) models.SingleCacheData {
 	}
 }
 
+// updateCacheStatus
+//
+//	@Description: updates an item's cache status.
+//	@param info: type of item.
+//	@param id: the item's id.
 func updateCacheStatus(info string, id string) {
 	data, err := os.ReadFile(dataPath + "status.json")
 	if err != nil {
@@ -180,6 +207,11 @@ func updateCacheStatus(info string, id string) {
 	}
 }
 
+// isOldCache
+//
+//	@Description: checks if a cached item is outdated or not.
+//	@param data
+//	@return bool
 func isOldCache(data models.SingleCacheData) bool {
 	// possible evolution: to customize time limit, add a time parameter, or add the info parameter
 	// to set a different time according to the data type (info).
@@ -189,6 +221,11 @@ func isOldCache(data models.SingleCacheData) bool {
 	return false
 }
 
+// deleteCacheStatus
+//
+//	@Description: removes the item's id in status.json.
+//	@param info: item's type.
+//	@param id: item's id.
 func deleteCacheStatus(info string, id string) {
 	data, err := os.ReadFile(dataPath + "status.json")
 	if err != nil {
@@ -247,6 +284,11 @@ func deleteCacheStatus(info string, id string) {
 	}
 }
 
+// deleteCacheData
+//
+//	@Description: removes a single item cached.
+//	@param info: item's type.
+//	@param data: item.
 func deleteCacheData(info string, data models.SingleCacheData) {
 	switch info {
 	case models.Status.LastUploaded, models.Status.Popular, models.Status.Tags:
@@ -265,6 +307,10 @@ func deleteCacheData(info string, data models.SingleCacheData) {
 	deleteCacheStatus(info, data.Id)
 }
 
+// clearCache
+//
+//	@Description: clears all outdated caches of a kind.
+//	@param info: kind of cache.
 func clearCache(info string) {
 	cache := retrieveCacheData(info)
 	for _, data := range cache {
@@ -274,6 +320,10 @@ func clearCache(info string) {
 	}
 }
 
+// CacheMonitor
+//
+//	@Description: checks and clears the cache periodically according to its
+//	validity (meant to be a goroutine).
 func CacheMonitor() {
 	time.Sleep(time.Second * 10)
 	hour := 3
@@ -294,6 +344,10 @@ func CacheMonitor() {
 	}
 }
 
+// emptyFile
+//
+//	@Description: empties a cache file.
+//	@param status: cache type.
 func emptyFile(status string) {
 	err := os.WriteFile(dataPath+status+".json", []byte("[]"), 0666)
 	if err != nil {
@@ -302,6 +356,9 @@ func emptyFile(status string) {
 	}
 }
 
+// emptyCacheStatus
+//
+//	@Description: empties status.json.
 func emptyCacheStatus() {
 	data, err := json.MarshalIndent(models.StatusCache{}, "", "\t")
 	if err != nil {
@@ -314,6 +371,9 @@ func emptyCacheStatus() {
 	}
 }
 
+// EmptyCache
+//
+//	@Description: empties the whole cache (all specific files and status.json).
 func EmptyCache() {
 	log.Println("Emptying cache...")
 	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}

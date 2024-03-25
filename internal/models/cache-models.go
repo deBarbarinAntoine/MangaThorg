@@ -23,6 +23,7 @@ var Status = struct {
 	MangaStats:   "manga_stats",
 }
 
+// StatusCache is the data structure of the status.json cache file.
 type StatusCache struct {
 	LastUploaded bool     `json:"last_uploaded"`
 	Popular      bool     `json:"popular"`
@@ -37,7 +38,8 @@ type StatusCache struct {
 // CacheData is the data structure for all data stored in the cache.
 type CacheData []SingleCacheData
 
-// SingleCacheData is the data structure for every single data record stored in the cache.
+// SingleCacheData is the data structure for every single data record stored in
+// the cache.
 type SingleCacheData struct {
 	Id          string      `json:"id"`
 	UpdatedTime time.Time   `json:"updated_time"`

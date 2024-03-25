@@ -38,7 +38,6 @@ var Guard models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
 		ok := utils.CheckSession(r)
 		if !ok {
 			utils.Logger.Warn("Invalid session", slog.Int("req_id", LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusUnauthorized))
-			// Todo: Handle missing session (e.g., redirect to login)
 			http.Redirect(w, r, "/login?err=restricted", http.StatusSeeOther)
 			return
 		}
@@ -48,7 +47,7 @@ var Guard models.Middleware = func(next http.HandlerFunc) http.HandlerFunc {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err), slog.Int("req_id", LogId))
 		}
 
-		// Use user data (e.g., display username)
+		// Use user data (e.g., display username) // testing
 		//fmt.Fprintf(w, "Welcome, user %s", userData["user_id"])
 		next.ServeHTTP(w, r)
 	}

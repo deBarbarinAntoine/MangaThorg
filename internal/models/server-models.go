@@ -5,8 +5,10 @@ import (
 	"time"
 )
 
-type Middleware func(handler http.HandlerFunc) http.HandlerFunc
+// Middleware is the type used for all middlewares.
+type Middleware func(next http.HandlerFunc) http.HandlerFunc
 
+// Session is the structure used for any user session.
 type Session struct {
 	UserID         int       `json:"user_id"`
 	ConnectionID   int       `json:"connection_id"`
@@ -15,11 +17,13 @@ type Session struct {
 	ExpirationTime time.Time `json:"expiration_time"`
 }
 
+// Credentials is the structure used to authenticate a user at login.
 type Credentials struct {
 	Username string
 	Password string
 }
 
+// User is the structure used to store all user related data.
 type User struct {
 	Id             int         `json:"id"`
 	CreationTime   time.Time   `json:"creation_time"`
@@ -33,17 +37,21 @@ type User struct {
 	Favorites      []MangaUser `json:"favorites"`
 }
 
+// MangaUser is the structure used for all user related mangas.
 type MangaUser struct {
 	Id              string `json:"id,omitempty"`
 	LastChapterRead string `json:"last_chapter_read,omitempty"`
 }
 
+// TempUser is the structure for any temporary user (waiting to be confirmed or
+// which password has been forgotten).
 type TempUser struct {
 	ConfirmID    string
 	CreationTime time.Time
 	User         User
 }
 
+// MailConfig is the structure used to retrieve the sending mail's configuration.
 type MailConfig struct {
 	Email    string `json:"email_addr"`
 	Auth     string `json:"email_auth"`

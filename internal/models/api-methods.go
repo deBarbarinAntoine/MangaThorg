@@ -13,10 +13,16 @@ import (
 	"time"
 )
 
+// Client is the http.Client used for all API requests.
 var Client = http.Client{
 	Timeout: time.Second * 5,
 }
 
+// Params
+//
+//	@Description: generates all parameters names for a specific manga request.
+//	@receiver r
+//	@return MangaRequestParam
 func (r MangaRequest) Params() MangaRequestParam {
 	if r.OrderType == "" {
 		r.OrderType = "rating"
@@ -37,6 +43,11 @@ func (r MangaRequest) Params() MangaRequestParam {
 	}
 }
 
+// ToQuery
+//
+//	@Description: generates a query from a manga request.
+//	@receiver r
+//	@return url.Values
 func (r MangaRequest) ToQuery() url.Values {
 	var q = make(url.Values)
 	params := r.Params()
@@ -73,6 +84,14 @@ func (r MangaRequest) ToQuery() url.Values {
 	return q
 }
 
+// SingleCacheData
+//
+//	@Description: converts an ApiManga to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *ApiManga) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	if len(data.Data) == 1 {
@@ -85,6 +104,14 @@ func (data *ApiManga) SingleCacheData(id string, order string, offset int) Singl
 	return cache
 }
 
+// SingleCacheData
+//
+//	@Description: converts an ApiTags to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *ApiTags) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	if order != "" {
 		log.Println(errors.New("error: ApiTags.SingleCacheData() order not null"))
@@ -97,6 +124,14 @@ func (data *ApiTags) SingleCacheData(id string, order string, offset int) Single
 	return cache
 }
 
+// SingleCacheData
+//
+//	@Description: converts a Manga to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *Manga) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
@@ -105,6 +140,14 @@ func (data *Manga) SingleCacheData(id string, order string, offset int) SingleCa
 	return cache
 }
 
+// SingleCacheData
+//
+//	@Description: converts an ApiMangaFeed to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *ApiMangaFeed) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
@@ -115,6 +158,14 @@ func (data *ApiMangaFeed) SingleCacheData(id string, order string, offset int) S
 	return cache
 }
 
+// SingleCacheData
+//
+//	@Description: converts a ApiChapterScan to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *ApiChapterScan) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
@@ -124,6 +175,14 @@ func (data *ApiChapterScan) SingleCacheData(id string, order string, offset int)
 	return cache
 }
 
+// SingleCacheData
+//
+//	@Description: converts an ApiMangaStats to a SingleCacheData.
+//	@receiver data
+//	@param id
+//	@param order
+//	@param offset
+//	@return SingleCacheData
 func (data *ApiMangaStats) SingleCacheData(id string, order string, offset int) SingleCacheData {
 	var cache SingleCacheData
 	cache.Id = id
@@ -133,6 +192,14 @@ func (data *ApiMangaStats) SingleCacheData(id string, order string, offset int) 
 	return cache
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiManga request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiManga) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -159,6 +226,14 @@ func (data *ApiManga) SendRequest(baseURL string, endpoint string, query url.Val
 	return nil
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiSingleManga request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -185,6 +260,14 @@ func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query u
 	return nil
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiTags request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiTags) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -207,6 +290,14 @@ func (data *ApiTags) SendRequest(baseURL string, endpoint string, query url.Valu
 	return nil
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiMangaFeed request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiMangaFeed) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -231,6 +322,14 @@ func (data *ApiMangaFeed) SendRequest(baseURL string, endpoint string, query url
 	return nil
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiChapterScan request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiChapterScan) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -253,6 +352,14 @@ func (data *ApiChapterScan) SendRequest(baseURL string, endpoint string, query u
 	return nil
 }
 
+// SendRequest
+//
+//	@Description: sends an ApiMangaStats request.
+//	@receiver data
+//	@param baseURL
+//	@param endpoint
+//	@param query
+//	@return error
 func (data *ApiMangaStats) SendRequest(baseURL string, endpoint string, query url.Values) error {
 	if query == nil {
 		query = make(url.Values)
@@ -275,6 +382,13 @@ func (data *ApiMangaStats) SendRequest(baseURL string, endpoint string, query ur
 	return nil
 }
 
+// Request
+//
+//	@Description: sends a request to an `url` with a `query`.
+//	@param url
+//	@param query
+//	@return []byte
+//	@return error
 func Request(url string, query url.Values) ([]byte, error) {
 	req, errReq := http.NewRequest(http.MethodGet, url, nil)
 	if errReq != nil {
@@ -305,6 +419,12 @@ func Request(url string, query url.Values) ([]byte, error) {
 	return body, err
 }
 
+// Stats
+//
+//	@Description: converts an ApiMangaStats to a Statistics structure.
+//	@receiver data
+//	@param id
+//	@return Statistics
 func (data *ApiMangaStats) Stats(id string) Statistics {
 	if data.Statistics == nil {
 		log.Println("ApiMangaStats.Stats(): data.Statistics is null") // testing
@@ -326,6 +446,11 @@ func (data *ApiMangaStats) Stats(id string) Statistics {
 	return Statistics{}
 }
 
+// Format
+//
+//	@Description: converts an ApiManga to a MangasInBulk with all needed data.
+//	@receiver data
+//	@return MangasInBulk
 func (data *ApiManga) Format() MangasInBulk {
 	var formattedMangas MangasInBulk
 	var wg sync.WaitGroup
@@ -341,6 +466,11 @@ func (data *ApiManga) Format() MangasInBulk {
 	return formattedMangas
 }
 
+// Format
+//
+//	@Description: converts a Manga to a MangaUsefullData with all needed data.
+//	@receiver data
+//	@return MangaUsefullData
 func (data *Manga) Format() MangaUsefullData {
 
 	var feed ApiMangaFeed
@@ -393,12 +523,23 @@ func (data *Manga) Format() MangaUsefullData {
 	return manga
 }
 
+// Fill
+//
+//	@Description: adds the statistics and chapter feed to a MangaUsefullData.
+//	@receiver manga
+//	@param stats
+//	@param feed
 func (manga *MangaUsefullData) Fill(stats Statistics, feed ApiMangaFeed) {
 	manga.Rating = math.Round(stats.Rating.Bayesian*10) / 10
 	manga.Chapters = feed.Format()
 	manga.NbChapter = feed.Total
 }
 
+// Format
+//
+//	@Description: converts an ApiMangaFeed to a list of ChapterUsefullData.
+//	@receiver data
+//	@return []ChapterUsefullData
 func (data *ApiMangaFeed) Format() []ChapterUsefullData {
 	var chapters []ChapterUsefullData
 	for _, chapter := range data.Data {
@@ -407,6 +548,11 @@ func (data *ApiMangaFeed) Format() []ChapterUsefullData {
 	return chapters
 }
 
+// Format
+//
+//	@Description: converts a Chapter to a ChapterUsefullData.
+//	@receiver data
+//	@return ChapterUsefullData
 func (data *Chapter) Format() ChapterUsefullData {
 	var chapter = ChapterUsefullData{
 		Id:                 data.Id,
@@ -430,6 +576,11 @@ func (data *Chapter) Format() ChapterUsefullData {
 	return chapter
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiTags) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
@@ -441,6 +592,11 @@ func (data *ApiTags) CheckResponse() error {
 	return nil
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
@@ -452,6 +608,11 @@ func (data *ApiManga) CheckResponse() error {
 	return nil
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiSingleManga) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
@@ -463,6 +624,11 @@ func (data *ApiSingleManga) CheckResponse() error {
 	return nil
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiMangaFeed) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
@@ -474,6 +640,11 @@ func (data *ApiMangaFeed) CheckResponse() error {
 	return nil
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiChapterScan) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
@@ -485,6 +656,11 @@ func (data *ApiChapterScan) CheckResponse() error {
 	return nil
 }
 
+// CheckResponse
+//
+//	@Description: checks the MangaDex API response, looking for any error.
+//	@receiver data
+//	@return error
 func (data *ApiMangaStats) CheckResponse() error {
 	if len(data.Errors) > 0 {
 		var msg string
