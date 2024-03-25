@@ -93,7 +93,17 @@ func FetchMangasById(favorites []models.MangaUser, order string, offset int) []m
 	}
 	wg.Wait()
 
-	return mangas
+	var sortedMangas []models.MangaUsefullData
+
+	for _, favorite := range favorites {
+		for _, manga := range mangas {
+			if favorite.Id == manga.Id {
+				sortedMangas = append(sortedMangas, manga)
+			}
+		}
+	}
+
+	return sortedMangas
 }
 
 // MangaRequestById

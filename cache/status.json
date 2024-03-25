@@ -3,8 +3,8 @@
 	"popular": false,
 	"tags": false,
 	"categories": null,
-	"mangas": [],
-	"manga_feeds": [],
-	"chapters_scan": [],
-	"manga_stats": []
+	"mangas": null,
+	"manga_feeds": null,
+	"chapters_scan": null,
+	"manga_stats": null
 }

@@ -98,14 +98,14 @@
 	{
 		"id": 5,
 		"creation_time": "2024-03-22T00:57:16.285557925+01:00",
-		"last_connection": "2024-03-22T11:38:31.8947835+01:00",
+		"last_connection": "2024-03-25T21:26:34.931091645+01:00",
 		"username": "Thorgan",
 		"avatar": "profile-avatar-044.jpg",
 		"hash": "4388af3c74af934f1368b157a1be6d9144ebef89845483161b97384deb62cbc8d2ffcbd5ab9ef3a1cc915b734e230bdffc373b18c194b84e89941c506bd11ff8",
 		"salt": "CMpFFCcI7Wh2NH3jbge8O22hP134uCC3D4QbuuYZKMPrFm/YuZy6UzRetKFFYMhEw9oy0EVIzL3hPBOi1+i8kA==",
 		"email": "amdebarbarin@gmail.com",
 		"manga_banner": {
-			"id": "32d76d19-8a05-4db0-9fc2-e0b0648fe9d0"
+			"id": "6e4805a6-75ab-462d-883c-4ddedb8e4df6"
 		},
 		"favorites": [
 			{
@@ -194,9 +194,6 @@
 			},
 			{
 				"id": "d41afbd7-3fbf-45b1-813c-b2d8244d69b2"
-			},
-			{
-				"id": "d1a9fdeb-f713-407f-960c-8326b586e6fd"
 			}
 		]
 	}
