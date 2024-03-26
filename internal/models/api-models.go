@@ -99,6 +99,7 @@ type Chapter struct {
 type ChapterUsefullData struct {
 	Id                 string
 	Title              string
+	Offset             int
 	Volume             string
 	Chapter            string
 	Pages              int

@@ -11,6 +11,7 @@ import (
 	"mangathorg/internal/models"
 	"mangathorg/internal/utils"
 	"net/http"
+	"net/url"
 	"reflect"
 	"slices"
 	"strconv"
@@ -634,7 +635,11 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 	}
 
-	//  todo: check if the manga was found, and if not, show the error404 page.
+	//  check if the manga was found, and if not, show the error404 page.
+	if reflect.DeepEqual(manga, models.MangaUsefullData{}) {
+		http.Redirect(w, r, "/error404", http.StatusSeeOther)
+		return
+	}
 
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
@@ -832,41 +837,122 @@ func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 //	@Description: displays the requested chapter's scans to read it, according to
 //	the mangaId, chapterNb and chapterId sent in the URL.
 func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
+
 	log.Println(utils.GetCurrentFuncName())
+
 	mangaId := r.PathValue("mangaId")
-	chapterNb := r.PathValue("chapterNb")
+	offsetString := r.PathValue("offset")
 	chapterId := r.PathValue("chapterId")
-	if chapterId == "" || mangaId == "" || chapterNb == "" {
+
+	if chapterId == "" || mangaId == "" || offsetString == "" {
 		http.Redirect(w, r, "/error404", http.StatusNotFound)
 		return
 	}
+
 	tmpl, err := template.ParseFiles(utils.Path+"templates/chapter.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 	scan := api.ScanRequest(chapterId)
+
+	var apiMangaFeed models.ApiMangaFeed
+	offset, errConv := strconv.Atoi(offsetString)
+	if errConv != nil {
+		offset = 0
+	}
+	limit := 10
+	reqOffset := offset - 5
+	if reqOffset < 0 {
+		limit = 10 + reqOffset
+		reqOffset = 0
+	}
+
+	var query = make(url.Values)
+	query.Add("order[chapter]", "asc")
+	query.Add("translatedLanguage[]", "en")
+	query.Add("contentRating[]", "safe")
+	query.Add("includes[]", "scanlation_group")
+	query.Add("limit", strconv.Itoa(limit))
+	query.Add("offset", strconv.Itoa(reqOffset))
+
+	err = apiMangaFeed.SendRequest(api.BaseApiURL, "manga/"+mangaId+"/feed", query)
+	if err != nil {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
+	}
+
+	currentInd := offset - reqOffset
+	chapters := apiMangaFeed.Format()
+
+	chapterNb := chapters[currentInd].Chapter
+	var previous, next int
+	for i, chapter := range chapters {
+		if chapter.Chapter == chapterNb {
+			previous = i - 1
+			break
+		}
+	}
+	for i := len(chapters) - 1; i >= 0; i-- {
+		if chapters[i].Chapter == chapterNb {
+			next = i + 1
+			break
+		}
+	}
+
+	var isPrevious, isNext bool = true, true
+
+	if previous < 0 {
+		isPrevious = false
+	}
+
+	if (offset + (next - currentInd)) >= apiMangaFeed.Total {
+		isNext = false
+	}
+
+	var previousLink, nextLink string
+
+	if isPrevious {
+		previousLink = "/chapter/" + mangaId + "/" + strconv.Itoa(offset-(currentInd-previous)) + "/" + chapters[previous].Id
+	}
+
+	if isNext {
+		nextLink = "/chapter/" + mangaId + "/" + strconv.Itoa(offset+(next-currentInd)) + "/" + chapters[next].Id
+	}
+
 	var data = struct {
-		IsConnected bool
-		Username    string
-		AvatarImg   string
-		IsOk        bool
-		ToDataSaver bool
-		Manga       string
-		ChapterNb   string
-		Id          string
-		Quality     string
-		Alt         string
-		Scan        struct {
+		IsConnected     bool
+		Username        string
+		AvatarImg       string
+		IsOk            bool
+		ToDataSaver     bool
+		MangaId         string
+		Manga           string
+		ChapterNb       string
+		IsPrevious      bool
+		IsNext          bool
+		Previous        string
+		Next            string
+		ScanlationGroup string
+		Id              string
+		Quality         string
+		Alt             string
+		Scan            struct {
 			Hash      string
 			Data      []string
 			DataSaver []string
 		}
 	}{
-		Manga:     api.FetchMangaById(mangaId, "desc", 1).Title,
-		ChapterNb: chapterNb,
-		Id:        chapterId,
-		Quality:   "data",
-		Alt:       "",
+		MangaId:         mangaId,
+		Manga:           api.FetchMangaById(mangaId, "desc", 0).Title,
+		ChapterNb:       chapterNb,
+		IsPrevious:      isPrevious,
+		IsNext:          isNext,
+		Previous:        previousLink,
+		Next:            nextLink,
+		ScanlationGroup: chapters[currentInd].ScanlationGroup,
+		Id:              chapterId,
+		Quality:         "data",
+		Alt:             "",
 		Scan: struct {
 			Hash      string
 			Data      []string

@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="/chapter/{{.Manga.Id}}/1/{{if .Manga.LastChapterRead}}{{.Manga.LastChapterRead}}{{else}}{{.Manga.FirstChapterId}}{{end}}" class="manga-read-btn">
+                <a href="/chapter/{{.Manga.Id}}/{{if .Manga.LastChapterRead}}0/{{.Manga.LastChapterRead}}{{else}}0/{{.Manga.FirstChapterId}}{{end}}" class="manga-read-btn">
                     <div class="manga-read-btn-text">{{if .Manga.LastChapterRead}}Keep reading{{else}}Begin reading{{end}}</div>
                     <img class="icon-menu-book" src="../static/img/open-book.png"  alt="read-to logo"/>
                 </a>
@@ -85,7 +85,7 @@
                         <img class="icon-group" src="../static/img/scanlation-group.png" />
                         <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
                     </div>
-                    <a href="/chapter/{{$id}}/{{.Chapter}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
+                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
                 </div>
             {{end}}
         </div>

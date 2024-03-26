@@ -462,6 +462,29 @@ h3.chapter-scan-title {
   background-color: #00ADB5;
 }
 
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  height: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: #393E46;
+}
+.pagination .page-link {
+  width: fit-content;
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(14px + 0.5vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+.pagination span.page-link {
+  color: #00ADB5;
+}
+
 .ctn {
   display: flex;
   align-items: center;

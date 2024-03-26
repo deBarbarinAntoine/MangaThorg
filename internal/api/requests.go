@@ -13,8 +13,8 @@ import (
 	"sync"
 )
 
-// baseURL is the common URL used for all MangaDex API requests.
-var baseURL string = "https://api.mangadex.org/"
+// BaseApiURL is the common URL used for all MangaDex API requests.
+var BaseApiURL string = "https://api.mangadex.org/"
 
 // TopPopularRequest is the exact request done to retrieve the six most popular
 // mangas for the principal page.
@@ -54,7 +54,17 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 	apiManga := MangaRequestById(id)
 
 	manga = apiManga.Data.Format()
-	manga.Fill(StatRequest(id), FeedRequest(id, order, offset))
+	feed := FeedRequest(id, order, offset)
+	manga.Fill(StatRequest(id), feed)
+	if order == "asc" {
+		for i := range manga.Chapters {
+			manga.Chapters[i].Offset = offset + i
+		}
+	} else {
+		for i := range manga.Chapters {
+			manga.Chapters[i].Offset = (feed.Total - 1) - (offset + i)
+		}
+	}
 
 	return manga
 }
@@ -129,7 +139,7 @@ func MangaRequestById(id string) models.ApiSingleManga {
 		}
 	}
 	var apiSingleManga models.ApiSingleManga
-	err := apiSingleManga.SendRequest(baseURL, "manga/"+id, nil)
+	err := apiSingleManga.SendRequest(BaseApiURL, "manga/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -175,7 +185,7 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 	}
 
 	var apiManga models.ApiManga
-	err := apiManga.SendRequest(baseURL, "manga", request.ToQuery())
+	err := apiManga.SendRequest(BaseApiURL, "manga", request.ToQuery())
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -206,7 +216,7 @@ func TagsRequest() models.ApiTags {
 	}
 
 	var apiTags models.ApiTags
-	err := apiTags.SendRequest(baseURL, "manga/tag", nil)
+	err := apiTags.SendRequest(BaseApiURL, "manga/tag", nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -287,7 +297,7 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 		query.Add("contentRating[]", "safe")
 		query.Add("includes[]", "scanlation_group")
 
-		err := apiMangaFeed.SendRequest(baseURL, "manga/"+id+"/feed", query)
+		err := apiMangaFeed.SendRequest(BaseApiURL, "manga/"+id+"/feed", query)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
@@ -321,7 +331,7 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 	query.Add("limit", "15")
 	query.Add("offset", strconv.Itoa(offset))
 
-	err := apiMangaFeed.SendRequest(baseURL, "manga/"+id+"/feed", query)
+	err := apiMangaFeed.SendRequest(BaseApiURL, "manga/"+id+"/feed", query)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -351,7 +361,7 @@ func ScanRequest(id string) models.ApiChapterScan {
 		return apiChapterScan
 	}
 	var apiChapterScan models.ApiChapterScan
-	err := apiChapterScan.SendRequest(baseURL, "at-home/server/"+id, nil)
+	err := apiChapterScan.SendRequest(BaseApiURL, "at-home/server/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -386,7 +396,7 @@ func StatRequest(id string) models.Statistics {
 		return mangaStats
 	}
 	var apiMangaStats models.ApiMangaStats
-	err := apiMangaStats.SendRequest(baseURL, "statistics/manga/"+id, nil)
+	err := apiMangaStats.SendRequest(BaseApiURL, "statistics/manga/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}

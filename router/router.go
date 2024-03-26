@@ -30,7 +30,7 @@ func Init() {
 	Mux.HandleFunc("GET /category/{tagId}", controllers.CategoryHandlerGetBundle)
 	Mux.HandleFunc("GET /category/{group}/{name}", controllers.CategoryNameHandlerGetBundle)
 	Mux.HandleFunc("GET /search", controllers.SearchHandlerGetBundle)
-	Mux.HandleFunc("GET /chapter/{mangaId}/{chapterNb}/{chapterId}", controllers.ChapterHandlerGetBundle)
+	Mux.HandleFunc("GET /chapter/{mangaId}/{offset}/{chapterId}", controllers.ChapterHandlerGetBundle)
 	Mux.HandleFunc("GET /covers/{manga}/{img}", controllers.CoversHandlerGetBundle)
 	Mux.HandleFunc("GET /scan/{chapterId}/{quality}/{hash}/{img}", controllers.ScanHandlerGetBundle)
 	Mux.HandleFunc("POST /favorite/{mangaId}", controllers.FavoriteHandlerPostBundle)
