@@ -1,5 +1,29 @@
 @import "base";
 
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  width: 50%;
+  height: fit-content;
+  padding: 10px 20px;
+  border-radius: 8px;
+  background-color: $foreground;
+
+  .page-link {
+    width: fit-content;
+    font-family: "Tilt Neon", sans-serif;
+    font-weight: 400;
+    color: $font-color;
+    font-size: calc(14px + .5vw);
+    text-align: center;
+    letter-spacing: 0;
+    line-height: normal;
+  }
+  span.page-link {
+    color: $blue-elem;
+  }
+}
+
 h2.chapter-scan-manga-title,
 h3.chapter-scan-title {
   width: 100%;
@@ -26,6 +50,9 @@ h3.chapter-scan-title {
   height: fit-content;
   img.chapter-scan {
     object-fit: contain;
+  }
+  .pagination {
+    width: calc(100% - 40px);
   }
 }
 
@@ -87,30 +114,6 @@ h3.chapter-scan-title {
     &:hover {
       background-color: $blue-elem;
     }
-  }
-}
-
-.pagination {
-  display: flex;
-  justify-content: space-between;
-  width: 50%;
-  height: fit-content;
-  padding: 10px 20px;
-  border-radius: 8px;
-  background-color: $foreground;
-
-  .page-link {
-    width: fit-content;
-    font-family: "Tilt Neon", sans-serif;
-    font-weight: 400;
-    color: $font-color;
-    font-size: calc(14px + .5vw);
-    text-align: center;
-    letter-spacing: 0;
-    line-height: normal;
-  }
-  span.page-link {
-    color: $blue-elem;
   }
 }
 
