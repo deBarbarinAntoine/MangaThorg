@@ -705,7 +705,7 @@ body {
 .manga-chapters .chapters-list .chapter:nth-child(even) {
   background-color: rgba(238, 238, 238, 0.2);
 }
-.manga-chapters .chapters-list .chapter p.chapter-title {
+.manga-chapters .chapters-list .chapter a.chapter-title {
   flex: 1 0 auto;
   width: 12vw;
   font-family: "Tilt Neon", sans-serif;
@@ -714,6 +714,11 @@ body {
   font-size: 20px;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 50ms;
+  cursor: pointer;
+}
+.manga-chapters .chapters-list .chapter a.chapter-title:hover {
+  color: #00ADB5;
 }
 .manga-chapters .chapters-list .chapter .source {
   flex: 1 1 auto;
@@ -737,6 +742,7 @@ body {
 .manga-chapters .chapters-list .chapter a.chapter-link {
   padding: 0;
   margin: 0;
+  cursor: pointer;
 }
 .manga-chapters .chapters-list .chapter a.chapter-link img.icon-menu-book {
   width: 44px;
@@ -761,9 +767,14 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 50ms;
+}
+.pagination .page-link:hover {
+  color: #00ADB5;
 }
 .pagination span.page-link {
   color: #00ADB5;
+  transition: none;
 }
 
 /*# sourceMappingURL=manga.css.map */

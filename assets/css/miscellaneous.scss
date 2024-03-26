@@ -18,9 +18,18 @@
     text-align: center;
     letter-spacing: 0;
     line-height: normal;
+    transition: color 100ms ease-in 50ms;
+
+    &:hover {
+      color: $blue-elem;
+    }
   }
   span.page-link {
-    color: $blue-elem;
+    color: $red;
+    transition: none;
+    &:hover {
+      color: $red;
+    }
   }
 }
 

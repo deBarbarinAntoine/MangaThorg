@@ -80,12 +80,12 @@
             {{$id := .Manga.Id}}
             {{range .Manga.Chapters}}
                 <div class="chapter">
-                    <p class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}} </p>
+                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}}</a>
                     <div class="source">
-                        <img class="icon-group" src="../static/img/scanlation-group.png" />
+                        <img class="icon-group" src="../static/img/scanlation-group.png" alt="scanlation-group-icon" />
                         <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
                     </div>
-                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" /></a>
+                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" alt="book-icon" /></a>
                 </div>
             {{end}}
         </div>

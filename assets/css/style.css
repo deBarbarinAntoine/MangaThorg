@@ -910,9 +910,17 @@ a {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 50ms;
+}
+.pagination .page-link:hover {
+  color: #00ADB5;
 }
 .pagination span.page-link {
-  color: #00ADB5;
+  color: #7D0A0A;
+  transition: none;
+}
+.pagination span.page-link:hover {
+  color: #7D0A0A;
 }
 
 .sorting {
