@@ -53,6 +53,10 @@ func LogInit() {
 	var err error
 	var filename string
 	defer closeLog()
+	err = os.MkdirAll("logs", 0750)
+	if err != nil {
+		log.Println("LogInit(): error when creating directory 'logs'", err)
+	}
 	for {
 		filename = "logs/logs_" + time.Now().Format(time.DateOnly) + ".log"
 		closeLog()
