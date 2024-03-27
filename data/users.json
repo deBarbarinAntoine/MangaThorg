@@ -2,41 +2,8 @@
 	{
 		"id": 1,
 		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "0001-01-01T00:00:00Z",
-		"username": "Antoine",
-		"hash": "36a3db4437b94182655f23faa6ff1801e214092b4de8f022c490e79d1e4333f9e4482809ce710aba3bdd11026741257cdca0638cd7f87d379848a838f3797e66",
-		"salt": "elAdroqDRcV4UZUwSeEBJe6rE6wxz9GjVAOW/einxIfpQ41Bnc0B1L0cU9obD1ADbWhXgoVQNrfA3YGJsvXS/g==",
-		"email": "mail@adebarbarin.com",
-		"manga_banner": {},
-		"favorites": []
-	},
-	{
-		"id": 2,
-		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "0001-01-01T00:00:00Z",
-		"username": "henry",
-		"hash": "c1e2c80638ec1657f1a2194419669f15741984c6da0d288d41b6e11460a293e95260cdab5b81cc379f2cb076eecc9bffbacaf31b2f90bfaff4cd20036c67fa5b",
-		"salt": "6V1KitCFiwPmJZXmmyz97ZuczVJqWwbUATTMx6b80wbM+kaqC1KEr3Ow+PeDXB/kIX/syZae0H42vNWo4sjxHQ==",
-		"email": "htitushg@gmail.com",
-		"manga_banner": {},
-		"favorites": []
-	},
-	{
-		"id": 4,
-		"creation_time": "0001-01-01T00:00:00Z",
-		"last_connection": "0001-01-01T00:00:00Z",
-		"username": "Marie",
-		"hash": "c184eda2fc30aa375c5d78efc7f8731aa68b59dd00c2f762d53349ebd8e54bb32823d4610121a3d5acc55802e6093d377794be7f0d08dc01c0efa55119616e83",
-		"salt": "qcEMwPNfZNm+4Jg2PjWlKowCQ1OIrTmIw/szLIvB64AUlJWX5DW71iP1s1XBvANfqgLdSVDVN89ozAJsM1JCxQ==",
-		"email": "nonacidos@gmail.com",
-		"manga_banner": {},
-		"favorites": []
-	},
-	{
-		"id": 3,
-		"creation_time": "0001-01-01T00:00:00Z",
 		"last_connection": "2024-03-22T08:11:55.6292375+01:00",
-		"username": "thorgdar",
+		"username": "Thorgan",
 		"avatar": "profile-avatar-044.jpg",
 		"hash": "91d90921ac94f38d23fdf5394143a76d7f613b714ba8e8220383f4e0fa3c82f80f0b3aee3fcf5f0586e172678ec91843ac8e5c5dc2ea30904782743f96341290",
 		"salt": "qF7W1W5Mc9PQeCyPM57NJGLuvdzpieSluBlBKDEFYLOqPenU41L698RcKMilXZDgifk2wXJYqhp2sv8fZRuQMw==",
@@ -96,10 +63,10 @@
 		]
 	},
 	{
-		"id": 5,
+		"id": 2,
 		"creation_time": "2024-03-22T00:57:16.285557925+01:00",
 		"last_connection": "2024-03-27T10:49:47.5449899+01:00",
-		"username": "Thorgan",
+		"username": "Antoine",
 		"avatar": "profile-avatar-044.jpg",
 		"hash": "4388af3c74af934f1368b157a1be6d9144ebef89845483161b97384deb62cbc8d2ffcbd5ab9ef3a1cc915b734e230bdffc373b18c194b84e89941c506bd11ff8",
 		"salt": "CMpFFCcI7Wh2NH3jbge8O22hP134uCC3D4QbuuYZKMPrFm/YuZy6UzRetKFFYMhEw9oy0EVIzL3hPBOi1+i8kA==",
