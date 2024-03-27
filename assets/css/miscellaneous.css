@@ -378,6 +378,77 @@ body {
   background-position: 50% 50%;
 }
 
+.about {
+  width: 85%;
+}
+.about * {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #EEEEEE;
+  font-size: calc(11px + 0.5vw);
+  letter-spacing: 0;
+  line-height: normal;
+}
+.about h1 {
+  text-align: center;
+  font-size: calc(20px + 1.5vw);
+}
+.about h2 {
+  font-size: calc(16px + 1vw);
+}
+.about h3 {
+  font-size: calc(16px + 0.8vw);
+}
+.about h4 {
+  font-size: calc(16px + 0.6vw);
+}
+.about .api-link {
+  text-align: center;
+}
+.about .api-link a {
+  transition: color 100ms ease-in 50ms;
+  color: #EEEEEE;
+  font-size: calc(12px + 0.6vw);
+}
+.about .api-link a:hover {
+  color: #00ADB5;
+}
+.about img {
+  max-width: 800px;
+}
+.about .line {
+  width: 100%;
+  height: 5px;
+  margin: calc(20px + 1.5vw) auto;
+  background-color: #EEEEEE;
+  border-radius: 3px;
+}
+.about code {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  background-color: rgba(238, 238, 238, 0.2);
+  border-radius: 4px;
+  padding: 0 6px;
+}
+.about .lang-json {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  background-color: rgba(238, 238, 238, 0.2);
+  border-radius: 8px;
+  width: fit-content;
+  padding: 3px 6px;
+}
+.about .lang-json .hljs-attr {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  color: lightgreen;
+}
+.about .lang-json .hljs-string {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  color: lightskyblue;
+}
+.about .lang-json .hljs-number {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+  color: chocolate;
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;

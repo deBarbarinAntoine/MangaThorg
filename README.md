@@ -59,6 +59,9 @@ Fill the mail parameters in ``config.json``, otherwise, the program will bug whe
 - **GET /{$}**: root (redirects to **/principal**).
 
 
+- **GET /about**: displays the about page.
+
+
 - **GET /login**: displays the login form.
 - **POST /login**: login treatment (no display).
 

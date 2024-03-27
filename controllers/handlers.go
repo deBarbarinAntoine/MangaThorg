@@ -67,6 +67,38 @@ func errorHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func aboutHandlerGet(w http.ResponseWriter, r *http.Request) {
+	log.Println(utils.GetCurrentFuncName())
+	var data struct {
+		IsConnected bool
+		Username    string
+		AvatarImg   string
+	}
+
+	session, sessionId := utils.GetSession(r)
+	if sessionId != "" {
+		data.IsConnected = true
+		data.Username = session.Username
+	}
+
+	user, ok := utils.SelectUser(session.Username)
+	if !ok {
+		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
+		data.IsConnected = false
+	}
+
+	data.AvatarImg = user.Avatar
+
+	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/about.gohtml")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	err = tmpl.ExecuteTemplate(w, "base", data)
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
 // loginHandlerGet
 //
 //	@Description: displays the login form and possible messages according to the

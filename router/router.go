@@ -11,6 +11,7 @@ var Mux = http.NewServeMux()
 // Init initializes all routes.
 func Init() {
 	Mux.HandleFunc("GET /{$}", controllers.RootHandlerGetBundle)
+	Mux.HandleFunc("GET /about", controllers.AboutHandlerGetBundle)
 	Mux.HandleFunc("GET /login", controllers.LoginHandlerGetBundle)
 	Mux.HandleFunc("POST /login", controllers.LoginHandlerPostBundle)
 	Mux.HandleFunc("GET /register", controllers.RegisterHandlerGetBundle)

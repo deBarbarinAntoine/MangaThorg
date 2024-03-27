@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="TemplateDataLanguageMappings">
+    <file url="file://$PROJECT_DIR$/templates/about.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/base.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/category.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/chapter.gohtml" dialect="HTML" />
@@ -12,6 +13,7 @@
     <file url="file://$PROJECT_DIR$/templates/home.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/login.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/manga.gohtml" dialect="HTML" />
+    <file url="file://$PROJECT_DIR$/templates/new-password-mail.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/principal.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/profile.gohtml" dialect="HTML" />
     <file url="file://$PROJECT_DIR$/templates/register.gohtml" dialect="HTML" />

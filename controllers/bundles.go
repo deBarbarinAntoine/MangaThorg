@@ -48,6 +48,7 @@ var BannerHandlerPutBundle = middlewares.Join(bannerHandlerPut, middlewares.Simp
 
 // Bundles available for any clients: they all need MangaDex API to work
 
+var AboutHandlerGetBundle = middlewares.Join(aboutHandlerGet, middlewares.Log, middlewares.UserCheck)
 var PrincipalHandlerGetBundle = middlewares.Join(principalHandlerGet, middlewares.Log, middlewares.UserCheck, middlewares.CheckApi)
 var MangaRequestHandlerGet = middlewares.Join(mangaHandlerGet, middlewares.Log, middlewares.UserCheck, middlewares.CheckApi)
 var TagsHandlerGetBundle = middlewares.Join(tagsHandlerGet, middlewares.Log, middlewares.UserCheck, middlewares.CheckApi)

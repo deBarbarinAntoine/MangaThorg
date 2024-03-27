@@ -1,5 +1,85 @@
 @import "base";
 
+.about {
+  width: 85%;
+
+  * {
+    font-family: "Tilt Neon", sans-serif;
+    font-weight: 400;
+    color: $font-color;
+    font-size: calc(11px + .5vw);
+    letter-spacing: 0;
+    line-height: normal;
+  }
+
+  h1{
+    text-align: center;
+    font-size: calc(20px + 1.5vw);
+  }
+  h2 {
+    font-size: calc(16px + 1vw);
+  }
+  h3 {
+    font-size: calc(16px + .8vw);
+  }
+  h4 {
+    font-size: calc(16px + .6vw);
+  }
+  .api-link {
+    text-align: center;
+
+    a {
+      transition: color 100ms ease-in 50ms;
+      color: $font-color;
+      font-size: calc(12px + .6vw);
+
+      &:hover {
+        color: $blue-elem;
+      }
+    }
+  }
+
+  img {
+    max-width: 800px;
+  }
+
+  .line {
+    width: 100%;
+    height: 5px;
+    margin: calc(20px + 1.5vw) auto;
+    background-color: #EEEEEE;
+    border-radius: 3px;
+  }
+
+  code {
+    font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+    background-color: $bright-foreground;
+    border-radius: 4px;
+    padding: 0 6px;
+  }
+  .lang-json{
+    font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+    background-color: $bright-foreground;
+    border-radius: 8px;
+    width: fit-content;
+    padding: 3px 6px;
+
+    .hljs-attr {
+      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+      color: lightgreen;
+    }
+    .hljs-string {
+      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+      color: lightskyblue;
+    }
+    .hljs-number {
+      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
+      color: chocolate;
+    }
+  }
+}
+
+
 .pagination {
   display: flex;
   justify-content: space-between;
