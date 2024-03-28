@@ -7,8 +7,6 @@
 {{define "page"}}
 <div class="about">
     <h1>About</h1>
-    <p class="api-link"><a href="https://api.mangadex.org/docs/">MangaDex API documentation</a>.</p>
-    <div class="line"></div>
 
     <h2 id="introduction">Introduction</h2>
     <p>This project is an assignment done for my studies in my first year of computer science. It is a website based on an API named MangaDex. It permits to search, consult and read mangas.</p>
@@ -16,79 +14,11 @@
     <p>The mangas available in the website are all in english (title, description, scans) and SFW (contentRating[]=safe).</p>
     <div class="line"></div>
 
-    <h2 id="installation">Installation</h2>
-    <p>To set the server up on your own computer, you can use one of those two options:</p>
-    <hr>
-    <h3 id="-from-the-release-version-windows-users-only-">+ From the Release version (Windows users only)</h3>
-    <p>Click on <code>MangaThorg v1.0</code> below the <code>Release</code> option and then on the <code>.exe</code> file to download it.</p>
-    <p>Then you can just execute the downloaded executable.</p>
-    <hr>
-    <h3 id="-from-the-source-code">+ From the source code</h3>
-    <p><strong>REQUIREMENT: you need Golang v1.22 or superior to be able to run this source code.</strong></p>
-    <p>Click on <code>&lt;&gt; Code</code> and then on <code>Download ZIP</code>.</p>
-    <p>Unzip the downloaded file.</p>
-    <h4 id="warning-you-need-a-config-folder-to-run-the-program-properly">WARNING: you need a config folder to run the program properly</h4>
-    <ul>
-        <li>Create a folder named <code>config</code> at the root of the project (at the same level as <code>assets</code>, <code>cache</code> or <code>cmd</code>).</li>
-        <li>Create a JSON file named <code>config.json</code> inside the new <code>config</code> folder.</li>
-        <li>In <code>config.json</code>, you need to put an object of this type:<pre><div class="lang-json">{
-<span class="hljs-attr">"email_addr"</span>: <span class="hljs-string">"&lt;your-email-address&gt;"</span>,
-<span class="hljs-attr">"email_auth"</span>: <span class="hljs-string">"&lt;your-email-password&gt;"</span>,
-<span class="hljs-attr">"host"</span>: <span class="hljs-string">"&lt;your-email-smtp-hostname&gt;"</span>,
-<span class="hljs-attr">"port"</span>: <span class="hljs-number">465</span> // your-email-smtp-port
-}
-</div></pre>
-        </li>
-    </ul>
-    <p>Fill the mail parameters in <code>config.json</code>, otherwise, the program will bug whenever it needs to send a mail (register and forgot password options).</p>
-    <div class="line"></div>
+    <h2>API</h2>
+    <p class="api-link"><a href="https://api.mangadex.org/docs/">MangaDex API documentation</a></p>
 
-    <h2 id="routes">Routes</h2>
-    <ul>
-        <li><strong>GET /{$}</strong>: root (redirects to <strong>/principal</strong>).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /login</strong>: displays the login form.</li>
-        <li><strong>POST /login</strong>: login treatment (no display).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /register</strong>: displays the register form.</li>
-        <li><strong>POST /register</strong>: register treatment (no display).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /forgot-password</strong>: displays the forgot password form.</li>
-        <li><strong>POST /forgot-password</strong>: forgot password treatment (no display).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /update-credentials</strong>: displays the update credentials form (takes the id sent by mail as a GET query: <code>?id={id}</code>.</li>
-        <li><strong>POST /update-credentials/{id}</strong>: update credentials treatment (no display). Takes the id sent by mail as the <code>{id}</code>.</li>
-    </ul>
-    <ul>
-        <li><strong>GET /profile</strong>: displays the profile form (to modify the user&#39;s avatar or/and password).</li>
-        <li><strong>POST /profile</strong>: profile treatment (no display).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /home</strong>: displays the home page (user only) with all his favorites.</li>
-        <li><strong>GET /confirm</strong>: displays the mail confirm page (corresponds to the link sent to confirm the account just created).</li>
-        <li><strong>GET /logout</strong>: log the user out (no display and user only).</li>
-        <li><strong>GET /principal</strong>: displays the principal page.</li>
-        <li><strong>GET /manga/{id}</strong>: displays the manga page according to the id specified in the URL.</li>
-        <li><strong>GET /categories</strong>: displays the categories page.</li>
-        <li><strong>GET /category/{tagId}</strong>: displays the category page according to a specific tag (which id is specified in the URL).</li>
-        <li><strong>GET /category/{group}/{name}</strong>: displays the category page according to a specific name in a specific group (used for public and format tags).</li>
-        <li><strong>GET /search</strong>: displays the search page and the results according to the query params.</li>
-        <li><strong>GET /chapter/{mangaId}/{offset}/{chapterId}</strong>: displays a chapter according to a mangaId, an offset and a chapterId.</li>
-    </ul>
-    <ul>
-        <li><strong>GET /covers/{manga}/{img}</strong>: used to display images in the pages (cover image proxy).</li>
-        <li><strong>GET /scan/{chapterId}/{quality}/{hash}/{img}</strong>: used to display scan images in the pages (scan image proxy).</li>
-        <li><strong>POST /favorite/{mangaId}</strong>: adds a favorite to a user (no display and user only).</li>
-        <li><strong>DELETE /favorite/{mangaId}</strong>: removes a favorite from a user (no display and user only).</li>
-        <li><strong>PUT /favorite/{mangaId}</strong>: modifies the custom user banner (no display and user only).</li>
-    </ul>
-    <ul>
-        <li><strong>GET /logs</strong>: (<em>Testing handler</em>) sends the logs in JSON format. Accepts a filter with <code>?level={info, warn, error}</code> (one of the three, optional).</li>
-    </ul>
+    <p>The API used for this website is MangaDex API. </p>
+
     <div class="line"></div>
 
     <h2 id="endpoints">Endpoints</h2>

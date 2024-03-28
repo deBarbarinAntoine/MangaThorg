@@ -20,11 +20,14 @@ func Run() {
 	fs := http.FileServer(http.Dir(utils.Path + "assets"))
 	router.Mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	// Running the goroutine to automatically remove expired sessions every given time
-	go utils.MonitorSessions()
+	// Clear the cache before running the server
+	api.EmptyCache()
 
 	// Running the goroutine to change log file every given time
 	go utils.LogInit()
+
+	// Running the goroutine to automatically remove expired sessions every given time
+	go utils.MonitorSessions()
 
 	// Running the goroutine to automatically remove old TempUsers and LostUsers
 	go utils.ManageTempUsers()

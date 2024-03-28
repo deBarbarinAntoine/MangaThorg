@@ -64,7 +64,7 @@ func LogInit() {
 			log.Println("LogInit(): error when creating directory 'logs'", err)
 		}
 	}
-	
+
 	for {
 		filename = Path + "logs/logs_" + time.Now().Format(time.DateOnly) + ".log"
 		closeLog()
