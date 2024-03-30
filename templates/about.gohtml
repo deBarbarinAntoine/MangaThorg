@@ -14,14 +14,80 @@
     <p>The mangas available in the website are all in english (title, description, scans) and SFW (contentRating[]=safe).</p>
     <div class="line"></div>
 
-    <h2>API</h2>
-    <p class="api-link"><a href="https://api.mangadex.org/docs/">MangaDex API documentation</a></p>
+    <h2>Presentation</h2>
 
-    <p>The API used for this website is MangaDex API. </p>
+    <p>Since a few years ago, I discovered the world of mangas, manwas and manhuas (japanese, corean and chinese respectively). I always enjoyed, since childhood, reading comics, like Asterix and when I began reading mangas, I was impressed at the quality of some of the drawings and the stories. The difference in culture also interested me quite a bit, because their perspective on a lot of topics was very different from what I was used to in my culture and vision of the world. That point make me reflect in depth about a lot of cultural, psychological and philosophical topics.</p>
+    <p>That's why I chose, for this assignment, to do a website to browse and read mangas. Moreover, there were times when I really disliked the design of the website on which I was reading mangas, so it added an extra motivation to work hard on the frontend development. I am planning to keep working on this project to improve and add features. I will list some features I plan to add in the future, depending on my availability and workload.</p>
+    <p>The website is quite straightforward in its organization. Here is the list of the actual pages available:</p>
+    <ul>
+        <li>The principal page, in which there are some most popular mangas and the latest uploaded on MangaDex displayed</li>
+        <li>The category page, to display all mangas of a specific category</li>
+        <li>The categories page, to display the list of all available categories, sorted by type</li>
+        <li>The search page, to perform advanced researches and see the corresponding results</li>
+        <li>The manga page, to display all information about a single manga, with a list of chapters, with a pagination feature to browse through the chapters</li>
+        <li>The chapter page, to display the scans of a specific chapter</li>
+        <li>The login page</li>
+        <li>The register page, to create an account</li>
+        <li>The mail confirmed page, when your mail is confirmed and your account enabled</li>
+        <li>The forgot password page, when you don't remember your password (it happens to everyone, really)</li>
+        <li>The update credentials page, when you clicked on the link sent by mail to set a new password</li>
+        <li>The home page, to display the user's favorites mangas</li>
+        <li>The profile page, to update the user's information(avatar and password for the moment)</li>
+        <li>The error page (hope you don't need to see it)</li>
+    </ul>
+
+
+    <div class="line"></div>
+
+    <h2>Work in progress</h2>
+
+    <p>As I said before, I plan to keep working on this project to improve and add features. Here is a list of features I want to add in the future:</p>
+    <ul>
+        <li>Add a mail and username field in the profile page</li>
+        <li>Add a 'read last read chapter' in any favorite manga displayed on the home page</li>
+        <li>Add an administration area</li>
+        <li>Improve the search feature (keep the advanced search form with the values set by the user in its research)</li>
+        <li>Link the user's profile to Gravatar API</li>
+        <li>Make the principal page's banner random, and maybe animate it with a carousel</li>
+        <li>Make a carousel for the popular and latest uploaded mangas in the principal page</li>
+        <li>Make the website fully responsive with a phone and tablet version</li>
+        <li>Shift the server from HTTP to HTTPS</li>
+    </ul>
+
+    <div class="line"></div>
+
+    <h2>My thoughts about this projet</h2>
+
+    <p>I really enjoyed developping this website: it made me discover a lot of things, especially the cookies (to handle the user's connection) and the middlewares. I am grateful to benefit from the timely update of Golang to version 1.22 to enhance routing: it made the process much easier than it would be otherwise. I also discovered Figma to make a graphic model before beginning to code the frontend, and I had a definite design before attempting to code (it made me gain time on the trial and error process normally present in frontend development).</p>
+
+    <p>To set this project on its initial stage, I spent my time in the following manner:</p>
+    <ul>
+        <li>A week and a half on Figma to do the frontend model</li>
+        <li>A month learning how to use cookies and middlewares</li>
+        <li>Three weeks coding the website (Backend: API handling, cache handling, routing, etc. / Frontend: HTML, SCSS and Javascript)</li>
+    </ul>
+
+    <div class="line"></div>
+
+    <h2 id="terms-and-conditions">Terms and Conditions</h2>
+    <p class="api-link"><a href="https://api.mangadex.org/">MangaDex API</a></p>
+
+    <p>The API used for this website is MangaDex API. I do not own anything here related to the manga content, and all rights and conditions belong to MangaDex. For the chapter scans, any right belong to the scanlation group mentioned at the beginning of the chapter or in the chapter list present in the manga page.</p>
+    <p>The website development is my own production, be it backend or frontend.</p>
+    <div class="contact" id="contact">
+        <ul>
+            <div class="list-title">Contact</div>
+            <li>Antoine de Barbarin (alias Thorgan)</li>
+            <li><a href="https://github.com/deBarbarinAntoine">GitHub profile</a></li>
+            <li><a href="https://www.linkedin.com/in/antoine-de-barbarin-aa765128b/">See me on LinkedIn</a></li>
+            <li><a href="mailto:mail@adebarbarin.com">Contact me</a></li>
+        </ul>
+    </div>
 
     <div class="line"></div>
 
     <h2 id="endpoints">Endpoints</h2>
+    <p class="api-link"><a href="https://api.mangadex.org/docs/">MangaDex API documentation</a></p>
     <h3 id="search-endpoint-">Search endpoint:</h3>
     <p><a href="https://api.mangadex.org/manga">https://api.mangadex.org/manga</a></p>
     <p><img src="https://github.com/deBarbarinAntoine/Livrables-projet-groupie-tracker/blob/main/img_readme/search-endpoint.png?raw=true" alt="alt text"></p>

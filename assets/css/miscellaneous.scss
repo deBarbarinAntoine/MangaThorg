@@ -10,6 +10,7 @@
     font-size: calc(11px + .5vw);
     letter-spacing: 0;
     line-height: normal;
+    text-align: justify;
   }
 
   h1{
@@ -40,7 +41,9 @@
   }
 
   img {
-    max-width: 1000px;
+    min-width: 60%;
+    width: 1440px;
+    max-width: 100%;
   }
 
   .line {
@@ -51,32 +54,34 @@
     border-radius: 3px;
   }
 
-  code {
-    font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-    background-color: $bright-foreground;
-    border-radius: 4px;
-    padding: 0 6px;
-  }
-  .lang-json{
-    font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-    background-color: $bright-foreground;
-    border-radius: 8px;
-    width: fit-content;
-    padding: 3px 6px;
+  .contact {
+    width: 100%;
+    display: flex;
+    justify-content: center;
 
-    .hljs-attr {
-      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-      color: lightgreen;
-    }
-    .hljs-string {
-      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-      color: lightskyblue;
-    }
-    .hljs-number {
-      font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-      color: chocolate;
+    ul {
+      width: 30%;
+      min-width: max-content;
+      padding: calc(10px + .5vw) calc(18px + .7vw);
+      border: 3px solid $font-color;
+      border-radius: calc(8px + .3vw);
+
+      .list-title {
+        width: 100%;
+        padding: 0 0 15px 0;
+        text-align: center;
+        font-size: calc(14px + .6vw);
+      }
+      li a {
+        transition: color 100ms ease-in 50ms;
+
+        &:hover {
+          color: $blue-elem;
+        }
+      }
     }
   }
+
 }
 
 

@@ -331,7 +331,7 @@ body {
   align-items: center;
   gap: calc(8px + 0.5vw);
 }
-.footer .footer-nav-credits .footer-nav .header-nav-text {
+.footer .footer-nav-credits .footer-nav .footer-nav-text {
   width: fit-content;
   height: calc(15px + 0.4vw);
   font-family: "Tilt Neon", sans-serif;
@@ -341,6 +341,10 @@ body {
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
+  transition: color 100ms ease-in 50ms;
+}
+.footer .footer-nav-credits .footer-nav .footer-nav-text:hover {
+  color: #00ADB5;
 }
 .footer .footer-nav-credits .credits {
   width: 90%;
@@ -370,6 +374,19 @@ body {
   letter-spacing: 0;
   line-height: normal;
 }
+.footer .footer-nav-credits .copyright-link {
+  font-family: "Tilt Neon", sans-serif;
+  font-weight: 400;
+  color: #00ADB5;
+  font-size: calc(11px + 0.4vw);
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+  transition: color 100ms ease-in 100ms;
+}
+.footer .footer-nav-credits .copyright-link:hover {
+  color: #EEEEEE;
+}
 .footer .footer-img-reading {
   height: 100%;
   width: 50%;
@@ -388,6 +405,7 @@ body {
   font-size: calc(11px + 0.5vw);
   letter-spacing: 0;
   line-height: normal;
+  text-align: justify;
 }
 .about h1 {
   text-align: center;
@@ -414,7 +432,9 @@ body {
   color: #00ADB5;
 }
 .about img {
-  max-width: 1000px;
+  min-width: 60%;
+  width: 1440px;
+  max-width: 100%;
 }
 .about .line {
   width: 100%;
@@ -423,30 +443,29 @@ body {
   background-color: #EEEEEE;
   border-radius: 3px;
 }
-.about code {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-  background-color: rgba(238, 238, 238, 0.2);
-  border-radius: 4px;
-  padding: 0 6px;
+.about .contact {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
-.about .lang-json {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-  background-color: rgba(238, 238, 238, 0.2);
-  border-radius: 8px;
-  width: fit-content;
-  padding: 3px 6px;
+.about .contact ul {
+  width: 30%;
+  min-width: max-content;
+  padding: calc(10px + 0.5vw) calc(18px + 0.7vw);
+  border: 3px solid #EEEEEE;
+  border-radius: calc(8px + 0.3vw);
 }
-.about .lang-json .hljs-attr {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-  color: lightgreen;
+.about .contact ul .list-title {
+  width: 100%;
+  padding: 0 0 15px 0;
+  text-align: center;
+  font-size: calc(14px + 0.6vw);
 }
-.about .lang-json .hljs-string {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-  color: lightskyblue;
+.about .contact ul li a {
+  transition: color 100ms ease-in 50ms;
 }
-.about .lang-json .hljs-number {
-  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono", "Droid Sans Mono", monospace, monospace;
-  color: chocolate;
+.about .contact ul li a:hover {
+  color: #00ADB5;
 }
 
 .pagination {

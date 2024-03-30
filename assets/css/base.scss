@@ -380,7 +380,7 @@ body {
       align-items: center;
       gap: calc(8px + .5vw);
 
-      .header-nav-text {
+      .footer-nav-text {
         width: fit-content;
         height: calc(15px + .4vw);
         font-family: "Tilt Neon", sans-serif;
@@ -390,6 +390,11 @@ body {
         text-align: center;
         letter-spacing: 0;
         line-height: normal;
+        transition: color 100ms ease-in 50ms;
+
+        &:hover {
+          color: $blue-elem;
+        }
       }
     }
 
@@ -423,6 +428,20 @@ body {
       text-align: center;
       letter-spacing: 0;
       line-height: normal;
+    }
+    .copyright-link {
+      font-family: "Tilt Neon", sans-serif;
+      font-weight: 400;
+      color: $blue-elem;
+      font-size: calc(11px + .4vw);
+      text-align: center;
+      letter-spacing: 0;
+      line-height: normal;
+      transition: color 100ms ease-in 100ms;
+
+      &:hover {
+        color: $font-color;
+      }
     }
   }
 
