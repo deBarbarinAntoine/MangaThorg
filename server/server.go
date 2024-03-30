@@ -20,9 +20,6 @@ func Run() {
 	fs := http.FileServer(http.Dir(utils.Path + "assets"))
 	router.Mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
-	// Clear the cache before running the server
-	api.EmptyCache()
-
 	// Running the goroutine to change log file every given time
 	go utils.LogInit()
 
