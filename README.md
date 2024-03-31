@@ -3,7 +3,7 @@
 [MangaDex API documentation](https://api.mangadex.org/docs/).
 
 You can see the website self-hosted here:
-[Online version](mangathorg.adebarbarin.com).
+[Online version](http://mangathorg.adebarbarin.com).
 
 <div style="height: 3px; background-color: #EEEEEE; border-radius: 2px"></div>
 
