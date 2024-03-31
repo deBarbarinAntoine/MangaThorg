@@ -23,6 +23,8 @@ function addToFavorites(e) {
         e.currentTarget.classList.add('delete-favorite');
         e.currentTarget.removeEventListener('click', addToFavorites);
         e.currentTarget.addEventListener('click', deleteFromFavorites);
+        let imgFav = e.currentTarget.querySelector('img');
+        imgFav.src = imgFav.src.split('/').slice(0,-1).join('/')+'/darkred-remove-favorite.png';
     } else {
         console.log(`An error occurred!`);
     }
@@ -40,6 +42,8 @@ function deleteFromFavorites(e) {
         e.currentTarget.classList.add('add-favorite');
         e.currentTarget.removeEventListener('click', deleteFromFavorites);
         e.currentTarget.addEventListener('click', addToFavorites);
+        let imgFav = e.currentTarget.querySelector('img');
+        imgFav.src = imgFav.src.split('/').slice(0,-1).join('/')+'/darkred-add-favorite.png';
     } else {
         console.log(`An error occurred!`);
     }
