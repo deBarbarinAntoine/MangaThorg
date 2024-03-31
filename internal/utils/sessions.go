@@ -122,7 +122,7 @@ func CheckSession(r *http.Request) bool {
 	// Retrieve user data from session
 	session, ok := SessionsData[cookie.Value]
 	if !ok {
-		return ok
+		return false
 	}
 	// Verify user IP address
 	if session.IpAddress != GetIP(r) {

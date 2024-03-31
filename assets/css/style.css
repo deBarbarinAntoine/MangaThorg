@@ -762,39 +762,35 @@ a {
   left: 3px;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .set-banner {
-  background-image: url("http://localhost:8080/static/img/set-banner.png");
   width: calc(18px + 0.4vw);
   height: calc(18px + 0.4vw);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
   cursor: pointer;
   z-index: 5;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .set-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .favorite-btn {
   position: absolute;
   top: 0;
   right: 3px;
-}
-.category .category-list .category-card .category-card-cover:hover .hover-description .add-favorite {
-  background-image: url("http://localhost:8080/static/img/darkred-add-favorite.png");
-  width: calc(18px + 0.4vw);
-  height: calc(18px + 0.4vw);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
   z-index: 5;
 }
+.category .category-list .category-card .category-card-cover:hover .hover-description .add-favorite,
 .category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite {
-  background-image: url("http://localhost:8080/static/img/darkred-remove-favorite.png");
   width: calc(18px + 0.4vw);
   height: calc(18px + 0.4vw);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
   cursor: pointer;
-  z-index: 5;
+}
+.category .category-list .category-card .category-card-cover:hover .hover-description .add-favorite img,
+.category .category-list .category-card .category-card-cover:hover .hover-description .delete-favorite img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 .category .category-list .category-card .category-card-cover:hover .hover-description .description-title {
   text-align: center;

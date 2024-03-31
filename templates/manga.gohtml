@@ -39,7 +39,9 @@
                 </a>
             </div>
             {{if .IsConnected}}
-                <div class="favorite-btn{{if .Manga.IsFavorite}} delete-favorite{{else}} add-favorite{{end}}" id="{{.Manga.Id}}"></div>
+                <div class="favorite-btn{{if .Manga.IsFavorite}} delete-favorite{{else}} add-favorite{{end}}" id="{{.Manga.Id}}">
+                    <img src="../static/img/{{if .Manga.IsFavorite}}darkred-remove-favorite.png{{else}}darkred-add-favorite.png{{end}}" alt="favorite-logo" />
+                </div>
             {{end}}
         </div>
         <div class="manga-card-ctn-abs">

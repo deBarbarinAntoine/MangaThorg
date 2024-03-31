@@ -95,6 +95,7 @@
     </form>
 
     {{$isConnected := .IsConnected}}
+    {{$path := .Path}}
     {{if .Req}}
         {{if .IsResponse}}
             {{$current := .CurrentPage}}
@@ -117,7 +118,9 @@
                                 <div class="category-card-hover"></div>
                                 <div class="hover-description">
                                     {{if $isConnected}}
-                                        <div class="favorite-btn {{if .IsFavorite}}delete-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" ></div>
+                                        <div class="favorite-btn {{if .IsFavorite}}delete-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" >
+                                            <img src="{{$path}}/img/{{if .IsFavorite}}darkred-remove-favorite.png{{else}}darkred-add-favorite.png{{end}}" alt="favorite-logo" />
+                                        </div>
                                     {{end}}
                                     <div class="description-title">
                                         Description

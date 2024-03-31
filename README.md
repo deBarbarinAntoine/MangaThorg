@@ -2,6 +2,9 @@
 
 [MangaDex API documentation](https://api.mangadex.org/docs/).
 
+You can see the website self-hosted here:
+[Online version](mangathorg.adebarbarin.com).
+
 <div style="height: 3px; background-color: #EEEEEE; border-radius: 2px"></div>
 
 ## Introduction
@@ -15,20 +18,6 @@ The mangas available in the website are all in english (title, description, scan
 <div style="height: 3px; background-color: #EEEEEE; border-radius: 2px"></div>
 
 ## Installation
-
-To set the server up on your own computer, you can use one of those two options:
-
----
-
-### + From the Release version (Windows users only)
-
-Click on ``MangaThorg v1.0`` below the `Release` option and then on the `.exe` file to download it.
-
-Then you can just execute the downloaded executable.
-
----
-
-### + From the source code
 
 **REQUIREMENT: you need Golang v1.22 or superior to be able to run this source code.**
 

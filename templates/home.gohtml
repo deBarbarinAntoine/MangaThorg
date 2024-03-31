@@ -36,6 +36,7 @@
             </div>
 
             {{$bannerId := .Banner.Id}}
+            {{$path := .Path}}
 
             <div class="category-list list-wrap">
                 {{range .Favorites}}
@@ -45,9 +46,13 @@
                             <div class="category-card-hover"></div>
                             <div class="hover-description">
                                 {{if ne $bannerId .Id}}
-                                    <div class="set-banner-btn set-banner" id="{{.Id}}"></div>
+                                    <div class="set-banner-btn set-banner" id="{{.Id}}">
+                                        <img src="{{$path}}/img/set-banner.png" alt="set-banner-logo" />
+                                    </div>
                                 {{end}}
-                                <div class="favorite-btn delete-favorite" id="{{.Id}}"></div>
+                                <div class="favorite-btn delete-favorite" id="{{.Id}}">
+                                    <img src="{{$path}}/img/darkred-remove-favorite.png" alt="favorite-logo" />
+                                </div>
                                 <div class="description-title">
                                     Description
                                 </div>

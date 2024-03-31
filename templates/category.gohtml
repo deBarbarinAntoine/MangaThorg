@@ -8,6 +8,7 @@
 
     {{$current := .CurrentPage}}
     {{$isConnected := .IsConnected}}
+    {{$path := .Path}}
 
     <div class="category">
         <div class="category-title"><div class="category-title-text">{{.Name}}</div></div>
@@ -29,7 +30,9 @@
                         <div class="category-card-hover"></div>
                         <div class="hover-description">
                             {{if $isConnected}}
-                                <div class="favorite-btn {{if .IsFavorite}}delete-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" ></div>
+                                <div class="favorite-btn {{if .IsFavorite}}delete-favorite{{else}}add-favorite{{end}}" id="{{.Id}}" >
+                                    <img src="{{$path}}/img/{{if .IsFavorite}}darkred-remove-favorite.png{{else}}darkred-add-favorite.png{{end}}" alt="favorite-logo" />
+                                </div>
                             {{end}}
                             <div class="description-title">
                                 Description
