@@ -4,13 +4,14 @@ import (
 	"crypto/rand"
 	"encoding/base64"
 	"log/slog"
-	"mangathorg/internal/models"
 	"net/http"
 	"time"
+	
+	"mangathorg/internal/models/server"
 )
 
 // SessionsData is an in-memory models.Session data storage.
-var SessionsData = make(map[string]models.Session)
+var SessionsData = make(map[string]server.Session)
 
 // sessionTime is the constant handling the session's maximum opened time without interaction.
 const sessionTime time.Duration = time.Hour * 2
@@ -19,8 +20,8 @@ const sessionTime time.Duration = time.Hour * 2
 //
 //	@Description: fetches all sessions present in SessionsData.
 //	@return []models.Session
-func retrieveSessions() []models.Session {
-	var sessions []models.Session
+func retrieveSessions() []server.Session {
+	var sessions []server.Session
 	for _, session := range SessionsData {
 		sessions = append(sessions, session)
 	}
@@ -34,11 +35,11 @@ func retrieveSessions() []models.Session {
 //	@param r
 //	@return models.Session
 //	@return string
-func GetSession(r *http.Request) (models.Session, string) {
+func GetSession(r *http.Request) (server.Session, string) {
 	sessionID, err := r.Cookie("updatedCookie")
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
-		return models.Session{}, ""
+		return server.Session{}, ""
 	}
 	return SessionsData[sessionID.Value], sessionID.Value
 }
@@ -73,12 +74,12 @@ func newConnectionID() int {
 //	@param username
 //	@param r
 func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
-
+	
 	// Generate and set Session ID cookie
 	sessionID := generateSessionID()
 	// Generate expiration time for the cookie
 	expirationTime := time.Now().Add(time.Hour * 2)
-
+	
 	newCookie := &http.Cookie{
 		Name:     "session_id",
 		Value:    sessionID,
@@ -88,25 +89,25 @@ func OpenSession(w *http.ResponseWriter, username string, r *http.Request) {
 		HttpOnly: true,
 		SameSite: http.SameSiteStrictMode,
 	}
-
+	
 	http.SetCookie(*w, newCookie)
 	r.AddCookie(newCookie)
-
+	
 	user, _ := SelectUser(username)
-
+	
 	// Update the last connection time in `users.json`.
 	user.LastConnection = time.Now()
 	UpdateUser(user)
-
+	
 	// Create Session data in memory
-	SessionsData[sessionID] = models.Session{
+	SessionsData[sessionID] = server.Session{
 		UserID:         user.Id,
 		ConnectionID:   newConnectionID(),
 		Username:       username,
 		IpAddress:      GetIP(r),
 		ExpirationTime: expirationTime,
 	}
-
+	
 	Logger.Info("Login", slog.Any("user", SessionsData[sessionID]))
 }
 
@@ -150,7 +151,7 @@ func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 	// generating new sessionID and new expiration time
 	newSessionID := generateSessionID()
 	newExpirationTime := time.Now().Add(sessionTime)
-
+	
 	var newCookie = &http.Cookie{
 		Name:     "session_id",
 		Value:    newSessionID,
@@ -160,27 +161,27 @@ func RefreshSession(w *http.ResponseWriter, r *http.Request) error {
 		Expires:  newExpirationTime,
 		SameSite: http.SameSiteStrictMode,
 	}
-
+	
 	// setting the new cookie
 	http.SetCookie(*w, newCookie)
-
+	
 	// retrieving the in-memory current session data
 	cookie, err := r.Cookie("session_id")
 	currentSessionData := SessionsData[cookie.Value]
-
+	
 	// updating the sessionID and expirationTime
 	currentSessionData.ExpirationTime = newExpirationTime
-
+	
 	// deleting previous entry in the SessionsData map
 	delete(SessionsData, cookie.Value)
-
+	
 	// setting the new entry in the SessionsData map
 	SessionsData[newSessionID] = currentSessionData
-
+	
 	// adding the new cookie to the request to access it from the targeted handler with the Name "updatedCookie"
 	newCookie.Name = "updatedCookie"
 	r.AddCookie(newCookie)
-
+	
 	if err != nil {
 		return err
 	}
@@ -202,15 +203,15 @@ func Logout(w *http.ResponseWriter, r *http.Request) {
 		MaxAge:   -1,
 		SameSite: http.SameSiteStrictMode,
 	}
-
+	
 	// setting the new cookie
 	http.SetCookie(*w, newCookie)
-
+	
 	// retrieving the in-memory current session data
 	cookie, _ := r.Cookie("updatedCookie")
-
+	
 	Logger.Info("Logout", slog.Any("user", SessionsData[cookie.Value]))
-
+	
 	// deleting previous entry in the SessionsData map
 	delete(SessionsData, cookie.Value)
 }
@@ -243,7 +244,7 @@ func validateSessionID(sessionID string) bool {
 //	@Description: checks if the models.Session is expired.
 //	@param session
 //	@return bool
-func isExpired(session models.Session) bool {
+func isExpired(session server.Session) bool {
 	return session.ExpirationTime.Before(time.Now())
 }
 

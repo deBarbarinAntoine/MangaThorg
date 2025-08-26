@@ -1,8 +1,9 @@
 package router
 
 import (
-	"mangathorg/controllers"
 	"net/http"
+	
+	"mangathorg/controllers"
 )
 
 // Mux is the server's ServeMux.
@@ -37,10 +38,10 @@ func Init() {
 	Mux.HandleFunc("POST /favorite/{mangaId}", controllers.FavoriteHandlerPostBundle)
 	Mux.HandleFunc("DELETE /favorite/{mangaId}", controllers.FavoriteHandlerDeleteBundle)
 	Mux.HandleFunc("PUT /favorite/{mangaId}", controllers.BannerHandlerPutBundle)
-
+	
 	// !! TESTING: this route is only for testing purposes for now. You need to disable it if you want to deploy the server.
-	Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
-
+	// Mux.HandleFunc("GET /logs", controllers.LogHandlerGetBundle)
+	
 	// Handling StatusNotFound error everywhere else
 	Mux.HandleFunc("/", controllers.ErrorHandlerBundle)
 }

@@ -1,37 +1,36 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"net/http"
-	"path/filepath"
+	"os"
 	"runtime"
-	"strconv"
 	"strings"
 	"time"
 )
 
-var (
-	_, b, _, _ = runtime.Caller(0)
-
-	// Path is the absolute path to the project's root directory.
-	Path = filepath.Dir(filepath.Dir(filepath.Dir(b))) + "/"
+const (
+	// Path is the path to the project's root directory.
+	Path = "./"
+	
+	// DataPath is the path to the cache directory.
+	DataPath string = Path + "cache/"
 )
 
-// durationToString -> just for fun ;)
-func durationToString(d time.Duration) string {
-	var hours, minutes string
-	h := int(d.Hours())
-	m := int(d.Minutes()) % 60
-	if h < 10 {
-		hours += "0"
+var BaseURL = os.Getenv("BASE_URL")
+
+// DurationToString -> just for fun ;)
+func DurationToString(d time.Duration) string {
+	hours := int(d.Hours())
+	minutes := int(d.Minutes()) % 60
+	seconds := int(d.Seconds()) % 60
+	
+	if hours > 0 {
+		return fmt.Sprintf("%dh%0dm%0ds", hours, minutes, seconds)
 	}
-	if m < 10 {
-		minutes += "0"
-	}
-	hours += strconv.Itoa(h)
-	minutes += strconv.Itoa(m)
-	return hours + "H" + minutes
+	return fmt.Sprintf("%dm%0ds", minutes, seconds)
 }
 
 // SetDailyTimer sets a waiting time to match a certain `hour`.
@@ -44,7 +43,7 @@ func SetDailyTimer(hour int) time.Duration {
 		n = n.Add(24 * time.Hour)
 		d = n.Sub(t)
 	}
-	log.Println("SetDailyTimer() value: ", durationToString(d), "until", n.Format("02 Jan 15H04")) // verbose
+	log.Println("SetDailyTimer() value: ", DurationToString(d), "until", n.Format("02 Jan 15H04")) // verbose
 	return d
 }
 
@@ -56,7 +55,7 @@ func SetDailyTimer(hour int) time.Duration {
 func GetIP(r *http.Request) string {
 	ips := r.Header.Get("X-Forwarded-For")
 	splitIps := strings.Split(ips, ",")
-
+	
 	if len(splitIps) > 0 {
 		// get last IP in list since ELB prepends other user defined IPs, meaning the last one is the actual client IP.
 		netIP := net.ParseIP(splitIps[len(splitIps)-1])
@@ -64,12 +63,12 @@ func GetIP(r *http.Request) string {
 			return netIP.String()
 		}
 	}
-
+	
 	ip, _, err := net.SplitHostPort(r.RemoteAddr)
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	
 	netIP := net.ParseIP(ip)
 	if netIP != nil {
 		ip := netIP.String()
@@ -78,7 +77,7 @@ func GetIP(r *http.Request) string {
 		}
 		return ip
 	}
-
+	
 	log.Fatalln(err)
 	return ""
 }

@@ -1,0 +1,35 @@
+services:
+  mangathorg-dev:
+    profiles:
+      - dev
+    build:
+      context: .
+    container_name: mangathorg-dev
+    ports:
+      - "8081:8080"
+    environment:
+      ENV: production
+      PORT: 8080
+      BASE_URL: 'http://localhost:8081'
+    restart: no
+    volumes:
+      - mangathorg_users:/app/data
+
+
+  mangathorg:
+    image: docker.adebarbarin.com/mangathorg:latest
+    container_name: mangathorg-deploy
+    restart: unless-stopped
+    profiles:
+      - deploy
+    ports:
+      - "8080:8080"
+    environment:
+      ENV: production
+      PORT: 8080
+      BASE_URL: 'http://localhost:8080'
+    volumes:
+      - mangathorg_users:/app/data
+
+volumes:
+  mangathorg_users:

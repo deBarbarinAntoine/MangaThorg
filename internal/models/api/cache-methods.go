@@ -1,10 +1,75 @@
-package models
+package api
 
 import (
 	"encoding/json"
 	"errors"
 	"os"
+	"path/filepath"
+	"sync"
+	
+	"mangathorg/internal/utils"
 )
+
+// cacheMutexes encapsulates the map to control access.
+type cacheMutexes struct {
+	mu sync.RWMutex
+	m  map[string]*sync.RWMutex
+}
+
+// newCacheMutexes initializes the map and wraps it in the struct.
+func newCacheMutexes() *cacheMutexes {
+	return &cacheMutexes{
+		m: map[string]*sync.RWMutex{
+			filepath.Join(utils.DataPath, "status.json"):               new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.LastUploaded+".json"): new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.Popular+".json"):      new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.Tags+".json"):         new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.Categories+".json"):   new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.Mangas+".json"):       new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.MangaFeeds+".json"):   new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.ChaptersScan+".json"): new(sync.RWMutex),
+			filepath.Join(utils.DataPath, Status.MangaStats+".json"):   new(sync.RWMutex),
+		},
+	}
+}
+
+// Get safely retrieves a mutex from the map.
+func (c *cacheMutexes) Get(filename string) *sync.RWMutex {
+	c.mu.RLock()
+	defer c.mu.RUnlock()
+	return c.m[filename]
+}
+
+// CacheMutexes is the exported instance.
+var CacheMutexes = newCacheMutexes()
+
+// RLock locks a mutex with read access for a given filename.
+func RLock(filename string) {
+	if mutex := CacheMutexes.Get(filename); mutex != nil {
+		mutex.RLock()
+	}
+}
+
+// RUnlock unlocks a mutex with read access for a given filename.
+func RUnlock(filename string) {
+	if mutex := CacheMutexes.Get(filename); mutex != nil {
+		mutex.RUnlock()
+	}
+}
+
+// RWLock locks a mutex with read and write access for a given filename.
+func RWLock(filename string) {
+	if mutex := CacheMutexes.Get(filename); mutex != nil {
+		mutex.Lock()
+	}
+}
+
+// RWUnlock unlocks a mutex with read and write access for a given filename.
+func RWUnlock(filename string) {
+	if mutex := CacheMutexes.Get(filename); mutex != nil {
+		mutex.Unlock()
+	}
+}
 
 // Exists
 //
@@ -187,6 +252,10 @@ func (datum SingleCacheData) ApiMangaStats() (ApiMangaStats, error) {
 //	@param Append
 //	@return error
 func (datum SingleCacheData) Write(filePath string, Append bool) error {
+	
+	RWLock(filePath)
+	defer RWUnlock(filePath)
+	
 	var cacheData CacheData
 	if Append {
 		data, err := os.ReadFile(filePath)

@@ -1,5 +1,3 @@
-{{define "staticPath"}}{{.Path}}{{end}}
-
 {{define "title"}}MangaThorg - Search{{end}}
 
 {{define "cssFile"}}style{{end}}
@@ -162,6 +160,8 @@
     {{end}}
 
     <script src="{{.Path}}/js/search.js"></script>
-    <script src="{{.Path}}/js/favorites.js"></script>
+    <script>
+        {{ template "favorites.js" . }}
+    </script>
 
 {{end}}

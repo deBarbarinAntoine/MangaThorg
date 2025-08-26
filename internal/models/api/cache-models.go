@@ -1,6 +1,8 @@
-package models
+package api
 
-import "time"
+import (
+	"time"
+)
 
 // Status is an enum-like variable for status keys.
 var Status = struct {

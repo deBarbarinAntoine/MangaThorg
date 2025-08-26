@@ -1,3 +1,4 @@
+{{ define "favorites.js" }}
 "use strict"
 
 let addFavoriteBtns = document.querySelectorAll('.add-favorite');
@@ -5,12 +6,12 @@ let deleteFavoriteBtns = document.querySelectorAll('.delete-favorite');
 let setBannerBtns = document.querySelectorAll('.set-banner');
 
 async function sendRequest(method, manga) {
-    const response = await fetch(`http://localhost:8080/favorite/${manga}`, {
-        method: method, // *GET, POST, PUT, DELETE, etc.
+    const response = await fetch(`{{ .BaseURL }}/favorite/${manga}`, {
+        method: method,    // *GET, POST, PUT, DELETE, etc.
         cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
         credentials: "same-origin", // include, *same-origin, omit
-        redirect: "follow", // manual, *follow, error
-        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        redirect: "follow",         // manual, *follow, error
+        referrerPolicy: "no-referrer" // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
     });
     return response.ok;
 }
@@ -24,7 +25,7 @@ function addToFavorites(e) {
         e.currentTarget.removeEventListener('click', addToFavorites);
         e.currentTarget.addEventListener('click', deleteFromFavorites);
         let imgFav = e.currentTarget.querySelector('img');
-        imgFav.src = imgFav.src.split('/').slice(0,-1).join('/')+'/darkred-remove-favorite.png';
+        imgFav.src = imgFav.src.split('/').slice(0, -1).join('/') + '/darkred-remove-favorite.png';
     } else {
         console.log(`An error occurred!`);
     }
@@ -43,7 +44,7 @@ function deleteFromFavorites(e) {
         e.currentTarget.removeEventListener('click', deleteFromFavorites);
         e.currentTarget.addEventListener('click', addToFavorites);
         let imgFav = e.currentTarget.querySelector('img');
-        imgFav.src = imgFav.src.split('/').slice(0,-1).join('/')+'/darkred-add-favorite.png';
+        imgFav.src = imgFav.src.split('/').slice(0, -1).join('/') + '/darkred-add-favorite.png';
     } else {
         console.log(`An error occurred!`);
     }
@@ -68,3 +69,4 @@ function setBanner(e) {
 for (let bannerBtn of setBannerBtns) {
     bannerBtn.addEventListener('click', setBanner);
 }
+{{ end }}

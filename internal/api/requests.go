@@ -4,13 +4,15 @@ import (
 	"errors"
 	"log"
 	"log/slog"
-	"mangathorg/internal/models"
-	"mangathorg/internal/utils"
 	"net/http"
 	"net/url"
 	"reflect"
 	"strconv"
 	"sync"
+	
+	"mangathorg/internal/models/api"
+	"mangathorg/internal/models/server"
+	"mangathorg/internal/utils"
 )
 
 // BaseApiURL is the common URL used for all MangaDex API requests.
@@ -18,7 +20,7 @@ var BaseApiURL string = "https://api.mangadex.org/"
 
 // TopPopularRequest is the exact request done to retrieve the six most popular
 // mangas for the principal page.
-var TopPopularRequest = models.MangaRequest{
+var TopPopularRequest = api.MangaRequest{
 	OrderType:    "rating",
 	OrderValue:   "desc",
 	IncludedTags: nil,
@@ -29,7 +31,7 @@ var TopPopularRequest = models.MangaRequest{
 
 // TopLatestUploadedRequest is the exact request done to retrieve the six latest
 // uploaded mangas for the principal page.
-var TopLatestUploadedRequest = models.MangaRequest{
+var TopLatestUploadedRequest = api.MangaRequest{
 	OrderType:    "latestUploadedChapter",
 	OrderValue:   "desc",
 	IncludedTags: nil,
@@ -46,13 +48,13 @@ var TopLatestUploadedRequest = models.MangaRequest{
 //	@param order
 //	@param offset
 //	@return models.MangaUsefullData
-func FetchMangaById(id string, order string, offset int) models.MangaUsefullData {
+func FetchMangaById(id string, order string, offset int) api.MangaUsefullData {
 	if id == "" {
-		return models.MangaUsefullData{}
+		return api.MangaUsefullData{}
 	}
-	var manga models.MangaUsefullData
+	var manga api.MangaUsefullData
 	apiManga := MangaRequestById(id)
-
+	
 	manga = apiManga.Data.Format()
 	feed := FeedRequest(id, order, offset)
 	manga.Fill(StatRequest(id), feed)
@@ -65,7 +67,7 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 			manga.Chapters[i].Offset = (feed.Total - 1) - (offset + i)
 		}
 	}
-
+	
 	return manga
 }
 
@@ -78,7 +80,7 @@ func FetchMangaById(id string, order string, offset int) models.MangaUsefullData
 //	@param offset
 //	@param mangaList
 //	@param wg
-func fillMangaListById(id, order string, offset int, mangaList *[]models.MangaUsefullData, wg *sync.WaitGroup) {
+func fillMangaListById(id, order string, offset int, mangaList *[]api.MangaUsefullData, wg *sync.WaitGroup) {
 	defer wg.Done()
 	*mangaList = append(*mangaList, FetchMangaById(id, order, offset))
 }
@@ -90,21 +92,21 @@ func fillMangaListById(id, order string, offset int, mangaList *[]models.MangaUs
 //	@param order
 //	@param offset
 //	@return []models.MangaUsefullData
-func FetchMangasById(favorites []models.MangaUser, order string, offset int) []models.MangaUsefullData {
+func FetchMangasById(favorites []server.MangaUser, order string, offset int) []api.MangaUsefullData {
 	if favorites == nil {
 		return nil
 	}
-	var mangas []models.MangaUsefullData
+	var mangas []api.MangaUsefullData
 	var wg sync.WaitGroup
-
+	
 	for _, favorite := range favorites {
 		wg.Add(1)
 		go fillMangaListById(favorite.Id, order, offset, &mangas, &wg)
 	}
 	wg.Wait()
-
-	var sortedMangas []models.MangaUsefullData
-
+	
+	var sortedMangas []api.MangaUsefullData
+	
 	for _, favorite := range favorites {
 		for _, manga := range mangas {
 			if favorite.Id == manga.Id {
@@ -112,7 +114,7 @@ func FetchMangasById(favorites []models.MangaUser, order string, offset int) []m
 			}
 		}
 	}
-
+	
 	return sortedMangas
 }
 
@@ -121,39 +123,39 @@ func FetchMangasById(favorites []models.MangaUser, order string, offset int) []m
 //	@Description: requests a single manga according to its id.
 //	@param id
 //	@return models.ApiSingleManga
-func MangaRequestById(id string) models.ApiSingleManga {
-	if checkStatus(models.Status.Mangas, id) {
-		mangaCache := retrieveSingleCacheData(models.Status.Mangas, id, "", 0)
+func MangaRequestById(id string) api.ApiSingleManga {
+	if checkStatus(api.Status.Mangas, id) {
+		mangaCache := retrieveSingleCacheData(api.Status.Mangas, id, "", 0)
 		manga, err := mangaCache.Manga()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		log.Println("retrieving manga from cache") // testing
-
+		
 		// handling missing id in the manga cache data
 		if manga.Id == "" {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("manga retrieved from cache has no Id")))
-			deleteCacheData(models.Status.Mangas, mangaCache)
+			deleteCacheData(api.Status.Mangas, mangaCache)
 		} else {
-			return models.ApiSingleManga{Data: manga}
+			return api.ApiSingleManga{Data: manga}
 		}
 	}
-	var apiSingleManga models.ApiSingleManga
+	var apiSingleManga api.ApiSingleManga
 	err := apiSingleManga.SendRequest(BaseApiURL, "manga/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	err = apiSingleManga.Data.SingleCacheData(id, "desc", 0).Write(dataPath+models.Status.Mangas+".json", true)
+	
+	err = apiSingleManga.Data.SingleCacheData(id, "desc", 0).Write(utils.DataPath+api.Status.Mangas+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.Mangas, id)
-
-	if reflect.DeepEqual(apiSingleManga, models.ApiSingleManga{}) {
+	updateCacheStatus(api.Status.Mangas, id)
+	
+	if reflect.DeepEqual(apiSingleManga, api.ApiSingleManga{}) {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("empty apiSingleManga")))
 	}
-
+	
 	return apiSingleManga
 }
 
@@ -162,9 +164,9 @@ func MangaRequestById(id string) models.ApiSingleManga {
 //	@Description: fetches mangas according to a request.
 //	@param request
 //	@return models.MangasInBulk
-func FetchManga(request models.MangaRequest) models.MangasInBulk {
+func FetchManga(request api.MangaRequest) api.MangasInBulk {
 	apiManga := MangaRequest(request)
-
+	
 	return apiManga.Format()
 }
 
@@ -173,7 +175,7 @@ func FetchManga(request models.MangaRequest) models.MangasInBulk {
 //	@Description: requests a list of mangas.
 //	@param request
 //	@return models.ApiManga
-func MangaRequest(request models.MangaRequest) models.ApiManga {
+func MangaRequest(request api.MangaRequest) api.ApiManga {
 	var exists bool
 	var info, id string
 	if exists, info, id = isCache(request); exists {
@@ -183,15 +185,15 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 		}
 		return apiManga
 	}
-
-	var apiManga models.ApiManga
+	
+	var apiManga api.ApiManga
 	err := apiManga.SendRequest(BaseApiURL, "manga", request.ToQuery())
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	if info != "" {
-		err = apiManga.SingleCacheData("", request.OrderValue, request.Offset).Write(dataPath+info+".json", id != "")
+		err = apiManga.SingleCacheData("", request.OrderValue, request.Offset).Write(utils.DataPath+info+".json", id != "")
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
@@ -204,9 +206,9 @@ func MangaRequest(request models.MangaRequest) models.ApiManga {
 //
 //	@Description: requests all tags from MangaDex API.
 //	@return models.ApiTags
-func TagsRequest() models.ApiTags {
-	if checkStatus(models.Status.Tags, "") {
-		tagCache := retrieveSingleCacheData(models.Status.Tags, "", "", 0)
+func TagsRequest() api.ApiTags {
+	if checkStatus(api.Status.Tags, "") {
+		tagCache := retrieveSingleCacheData(api.Status.Tags, "", "", 0)
 		apiTags, err := tagCache.ApiTags()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -214,19 +216,19 @@ func TagsRequest() models.ApiTags {
 		log.Println("retrieving tags from cache") // testing
 		return apiTags
 	}
-
-	var apiTags models.ApiTags
+	
+	var apiTags api.ApiTags
 	err := apiTags.SendRequest(BaseApiURL, "manga/tag", nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	err = apiTags.SingleCacheData("", "", 0).Write(dataPath+models.Status.Tags+".json", false)
+	
+	err = apiTags.SingleCacheData("", "", 0).Write(utils.DataPath+api.Status.Tags+".json", false)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.Tags, "")
-
+	updateCacheStatus(api.Status.Tags, "")
+	
 	return apiTags
 }
 
@@ -235,7 +237,7 @@ func TagsRequest() models.ApiTags {
 //	@Description: selects a tag according to its id.
 //	@param id
 //	@return models.ApiTag
-func TagSelect(id string) models.ApiTag {
+func TagSelect(id string) api.ApiTag {
 	tags := TagsRequest()
 	for _, tag := range tags.Data {
 		if tag.Id == id {
@@ -243,7 +245,7 @@ func TagSelect(id string) models.ApiTag {
 		}
 	}
 	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("tag [id:"+id+"] not found")))
-	return models.ApiTag{}
+	return api.ApiTag{}
 }
 
 // FetchSortedTags
@@ -251,9 +253,9 @@ func TagSelect(id string) models.ApiTag {
 //	@Description: fetches all tags (public and status included) and sort them by
 //	type.
 //	@return models.OrderedTags
-func FetchSortedTags() models.OrderedTags {
+func FetchSortedTags() api.OrderedTags {
 	allTags := TagsRequest().Data
-	var orderedTags models.OrderedTags
+	var orderedTags api.OrderedTags
 	for _, tag := range allTags {
 		switch tag.Attributes.Group {
 		case "format":
@@ -264,8 +266,8 @@ func FetchSortedTags() models.OrderedTags {
 			orderedTags.ThemeTags = append(orderedTags.ThemeTags, tag)
 		}
 	}
-	orderedTags.PublicTags = models.MangaPublic
-	orderedTags.StatusTags = models.MangaStatus
+	orderedTags.PublicTags = api.MangaPublic
+	orderedTags.StatusTags = api.MangaStatus
 	return orderedTags
 }
 
@@ -277,40 +279,40 @@ func FetchSortedTags() models.OrderedTags {
 //	@param order
 //	@param offset
 //	@return models.ApiMangaFeed
-func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
-
+func FeedRequest(id, order string, offset int) api.ApiMangaFeed {
+	
 	// retrieving the total number of chapters
 	var total int
-	if checkStatus(models.Status.MangaFeeds, id) {
-		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, "desc", 0)
+	if checkStatus(api.Status.MangaFeeds, id) {
+		feedCache := retrieveSingleCacheData(api.Status.MangaFeeds, id, "desc", 0)
 		apiMangaFeed, err := feedCache.ApiMangaFeed()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
 	} else {
-		var apiMangaFeed models.ApiMangaFeed
-
+		var apiMangaFeed api.ApiMangaFeed
+		
 		var query = make(url.Values)
 		query.Add("order[chapter]", order)
 		query.Add("translatedLanguage[]", "en")
 		query.Add("contentRating[]", "safe")
 		query.Add("includes[]", "scanlation_group")
-
+		
 		err := apiMangaFeed.SendRequest(BaseApiURL, "manga/"+id+"/feed", query)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		total = apiMangaFeed.Total
 	}
-
+	
 	// checking the offset value
 	if total != 0 && total <= offset {
 		offset = (total / 15) - 1
 	}
-
-	if checkStatus(models.Status.MangaFeeds, id) {
-		feedCache := retrieveSingleCacheData(models.Status.MangaFeeds, id, order, offset)
+	
+	if checkStatus(api.Status.MangaFeeds, id) {
+		feedCache := retrieveSingleCacheData(api.Status.MangaFeeds, id, order, offset)
 		if feedCache.Data != nil {
 			apiMangaFeed, err := feedCache.ApiMangaFeed()
 			if err != nil {
@@ -320,9 +322,9 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 			return apiMangaFeed
 		}
 	}
-
-	var apiMangaFeed models.ApiMangaFeed
-
+	
+	var apiMangaFeed api.ApiMangaFeed
+	
 	var query = make(url.Values)
 	query.Add("order[chapter]", order)
 	query.Add("translatedLanguage[]", "en")
@@ -330,18 +332,18 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 	query.Add("includes[]", "scanlation_group")
 	query.Add("limit", "15")
 	query.Add("offset", strconv.Itoa(offset))
-
+	
 	err := apiMangaFeed.SendRequest(BaseApiURL, "manga/"+id+"/feed", query)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	err = apiMangaFeed.SingleCacheData(id, order, offset).Write(dataPath+models.Status.MangaFeeds+".json", true)
+	
+	err = apiMangaFeed.SingleCacheData(id, order, offset).Write(utils.DataPath+api.Status.MangaFeeds+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.MangaFeeds, id)
-
+	updateCacheStatus(api.Status.MangaFeeds, id)
+	
 	return apiMangaFeed
 }
 
@@ -350,9 +352,9 @@ func FeedRequest(id, order string, offset int) models.ApiMangaFeed {
 //	@Description: requests a chapter's scans according to its `id`.
 //	@param id
 //	@return models.ApiChapterScan
-func ScanRequest(id string) models.ApiChapterScan {
-	if checkStatus(models.Status.ChaptersScan, id) {
-		scanCache := retrieveSingleCacheData(models.Status.ChaptersScan, id, "", 0)
+func ScanRequest(id string) api.ApiChapterScan {
+	if checkStatus(api.Status.ChaptersScan, id) {
+		scanCache := retrieveSingleCacheData(api.Status.ChaptersScan, id, "", 0)
 		apiChapterScan, err := scanCache.ApiChapterScan()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -360,18 +362,18 @@ func ScanRequest(id string) models.ApiChapterScan {
 		log.Println("retrieving chapterScan from cache") // testing
 		return apiChapterScan
 	}
-	var apiChapterScan models.ApiChapterScan
+	var apiChapterScan api.ApiChapterScan
 	err := apiChapterScan.SendRequest(BaseApiURL, "at-home/server/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	err = apiChapterScan.SingleCacheData(id, "", 0).Write(dataPath+models.Status.ChaptersScan+".json", true)
+	
+	err = apiChapterScan.SingleCacheData(id, "", 0).Write(utils.DataPath+api.Status.ChaptersScan+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.ChaptersScan, id)
-
+	updateCacheStatus(api.Status.ChaptersScan, id)
+	
 	return apiChapterScan
 }
 
@@ -380,34 +382,34 @@ func ScanRequest(id string) models.ApiChapterScan {
 //	@Description: requests a manga's statistics according to its `id`.
 //	@param id
 //	@return models.Statistics
-func StatRequest(id string) models.Statistics {
-	if checkStatus(models.Status.MangaStats, id) {
-		statCache := retrieveSingleCacheData(models.Status.MangaStats, id, "", 0)
+func StatRequest(id string) api.Statistics {
+	if checkStatus(api.Status.MangaStats, id) {
+		statCache := retrieveSingleCacheData(api.Status.MangaStats, id, "", 0)
 		apiMangaStats, err := statCache.ApiMangaStats()
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 		log.Println("retrieving chapterStats from cache") // testing
-
+		
 		mangaStats := apiMangaStats.Stats(id)
-		if reflect.DeepEqual(mangaStats, models.Statistics{}) {
+		if reflect.DeepEqual(mangaStats, api.Statistics{}) {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("unable to extract statistics from interface")))
 		}
 		return mangaStats
 	}
-	var apiMangaStats models.ApiMangaStats
+	var apiMangaStats api.ApiMangaStats
 	err := apiMangaStats.SendRequest(BaseApiURL, "statistics/manga/"+id, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	err = apiMangaStats.SingleCacheData(id, "", 0).Write(dataPath+models.Status.MangaStats+".json", true)
+	err = apiMangaStats.SingleCacheData(id, "", 0).Write(utils.DataPath+api.Status.MangaStats+".json", true)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-	updateCacheStatus(models.Status.MangaStats, id)
-
+	updateCacheStatus(api.Status.MangaStats, id)
+	
 	mangaStats := apiMangaStats.Stats(id)
-	if reflect.DeepEqual(mangaStats, models.Statistics{}) {
+	if reflect.DeepEqual(mangaStats, api.Statistics{}) {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("unable to extract statistics from interface")))
 	}
 	return mangaStats
@@ -421,11 +423,11 @@ func StatRequest(id string) models.Statistics {
 //	@return []byte
 func ImageProxy(mangaId, pictureName string) []byte {
 	reqUrl := "https://uploads.mangadex.org/covers/" + mangaId + "/" + pictureName
-	data, err := models.Request(reqUrl, nil)
+	data, err := api.Request(reqUrl, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	return data
 }
 
@@ -443,7 +445,7 @@ func ScanProxy(chapterId, quality, hash, img string) []byte {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("invalid hash (chapterScan)")))
 	}
 	reqUrl := chapter.BaseUrl + "/" + quality + "/" + hash + "/" + img
-	data, err := models.Request(reqUrl, nil)
+	data, err := api.Request(reqUrl, nil)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		for i, datum := range chapter.Chapter.Data {
@@ -452,12 +454,12 @@ func ScanProxy(chapterId, quality, hash, img string) []byte {
 			}
 		}
 		reqUrl = chapter.BaseUrl + "/dataSaver/" + hash + "/" + img
-		data, err = models.Request(reqUrl, nil)
+		data, err = api.Request(reqUrl, nil)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 	}
-
+	
 	return data
 }
 
@@ -467,7 +469,7 @@ func ScanProxy(chapterId, quality, hash, img string) []byte {
 //	@param r
 //	@param mangas
 //	@return bool
-func AddFavoriteInfo(r *http.Request, mangas *[]models.MangaUsefullData) bool {
+func AddFavoriteInfo(r *http.Request, mangas *[]api.MangaUsefullData) bool {
 	session, sessionId := utils.GetSession(r)
 	if sessionId == "" {
 		return false
@@ -493,7 +495,7 @@ func AddFavoriteInfo(r *http.Request, mangas *[]models.MangaUsefullData) bool {
 //	@param r
 //	@param manga
 //	@return bool
-func AddSingleFavoriteInfo(r *http.Request, manga *models.MangaUsefullData) bool {
+func AddSingleFavoriteInfo(r *http.Request, manga *api.MangaUsefullData) bool {
 	session, sessionId := utils.GetSession(r)
 	if sessionId == "" {
 		return false

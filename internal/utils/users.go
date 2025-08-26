@@ -3,49 +3,82 @@ package utils
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"log/slog"
-	"mangathorg/internal/models"
 	"os"
 	"reflect"
 	"regexp"
+	"sync"
 	"time"
+	
+	"mangathorg/internal/models/server"
 )
 
+// directory is the directory where the json file is stored.
+var directory = Path + "data"
+
 // jsonFile is the models.User's JSON file full path.
-var jsonFile = Path + "data/users.json"
+var jsonFile = directory + "/users.json"
+
+// mutex is the mutex for jsonFile.
+var mutex = new(sync.RWMutex)
 
 // TempUsers is the models.TempUser's array for newly registered models.User
 // before they confirm their email address.
-var TempUsers []models.TempUser
+var TempUsers []server.TempUser
 
 // LostUsers is the models.TempUser's array for models.User
 // that forgot their password, until they access the link sent to their
 // email address to change their password.
-var LostUsers []models.TempUser
+var LostUsers []server.TempUser
+
+func InitUsers() {
+	mutex.Lock()
+	defer mutex.Unlock()
+	
+	if _, err := os.Stat(directory); errors.Is(err, os.ErrNotExist) {
+		err = os.Mkdir(directory, 0755)
+		if err != nil {
+			log.Printf("An error occurred: %s", err.Error())
+			log.Fatalln("Error while creating data directory!")
+		}
+	}
+	
+	if _, err := os.Stat(jsonFile); errors.Is(err, os.ErrNotExist) {
+		err = os.WriteFile(jsonFile, []byte("[]"), 0644)
+		if err != nil {
+			log.Printf("An error occurred: %s", err.Error())
+			log.Fatalln("Error while creating users.json file!")
+		}
+	}
+}
 
 // retrieveUsers
 // retrieves all models.User present in jsonFile and stores them in a slice of models.User.
 // It returns the slice of models.User and an error.
-func retrieveUsers() ([]models.User, error) {
-	var users []models.User
-
+func retrieveUsers() ([]server.User, error) {
+	mutex.RLock()
+	defer mutex.RUnlock()
+	
+	var users []server.User
+	
 	data, err := os.ReadFile(jsonFile)
-
+	
 	if len(data) == 0 {
 		return nil, nil
 	}
-
+	
 	err = json.Unmarshal(data, &users)
 	if err != nil {
 		return nil, err
 	}
-
+	
 	return users, nil
 }
 
 // CheckUser
 // checks if the models.User 's username and email are still available in jsonFile and TempUsers.
-func CheckUser(user models.User) bool {
+func CheckUser(user server.User) bool {
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -70,7 +103,7 @@ func CheckEmail(email string) bool {
 }
 
 // EmailExists return whether the mail address exists in the user's list.
-func EmailExists(email string) (bool, models.User) {
+func EmailExists(email string) (bool, server.User) {
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -80,16 +113,16 @@ func EmailExists(email string) (bool, models.User) {
 			return true, singleUser
 		}
 	}
-	return false, models.User{}
+	return false, server.User{}
 }
 
 // CheckPasswd
 // checks if the password's format is according to the rules.
 func CheckPasswd(passwd string) bool {
-
+	
 	// Matches any password containing at least one digit, one lowercase,
 	// one uppercase, one symbol and 8 characters in total.
-	//regex := regexp.MustCompile(`^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*([^\w\s]|_)).{8,}$`) // Alas not supported by the regexp library
+	// regex := regexp.MustCompile(`^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*([^\w\s]|_)).{8,}$`) // Alas not supported by the regexp library
 	digit := regexp.MustCompile(`\d+`)
 	lower := regexp.MustCompile(`[a-z]+`)
 	upper := regexp.MustCompile(`[A-Z]+`)
@@ -100,7 +133,10 @@ func CheckPasswd(passwd string) bool {
 
 // changeUsers
 // overwrites jsonFile with `users` in json format.
-func changeUsers(users []models.User) {
+func changeUsers(users []server.User) {
+	mutex.Lock()
+	defer mutex.Unlock()
+	
 	data, errJSON := json.MarshalIndent(users, "", "\t")
 	if errJSON != nil {
 		Logger.Error(GetCurrentFuncName()+" JSON MarshalIndent error!", slog.Any("output", errJSON))
@@ -135,7 +171,7 @@ func GetIdNewUser() int {
 
 // CreateUser
 // adds the models.User `newUser` to jsonFile.
-func CreateUser(newUser models.User) {
+func CreateUser(newUser server.User) {
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -161,8 +197,8 @@ func removeUser(id int) {
 
 // SelectUser
 // returns the models.User which models.User.Username matches the `username` argument.
-func SelectUser(username string) (models.User, bool) {
-	var user models.User
+func SelectUser(username string) (server.User, bool) {
+	var user server.User
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -180,7 +216,7 @@ func SelectUser(username string) (models.User, bool) {
 // UpdateUser
 // modifies the models.User in jsonFile that matches
 // `updatedUser`'s Id with `updatedUser`'s content.
-func UpdateUser(updatedUser models.User) {
+func UpdateUser(updatedUser server.User) {
 	users, err := retrieveUsers()
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
@@ -195,7 +231,7 @@ func UpdateUser(updatedUser models.User) {
 
 // deleteTempUser
 // removes a specific models.TempUser from TempUsers.
-func deleteTempUser(temp models.TempUser) {
+func deleteTempUser(temp server.TempUser) {
 	for i, user := range TempUsers {
 		if reflect.DeepEqual(user, temp) {
 			TempUsers = append(TempUsers[:i], TempUsers[i+1:]...)
@@ -205,7 +241,7 @@ func deleteTempUser(temp models.TempUser) {
 
 // deleteLostUser
 // removes a specific models.TempUser from LostUsers.
-func deleteLostUser(temp models.TempUser) {
+func deleteLostUser(temp server.TempUser) {
 	for i, user := range LostUsers {
 		if reflect.DeepEqual(user, temp) {
 			LostUsers = append(LostUsers[:i], LostUsers[i+1:]...)
@@ -231,7 +267,7 @@ func PushTempUser(id string) {
 // UpdateLostUser
 // updates the models.User's Hash and Salt with the `lost`
 // models.TempUser's Hash and Salt sent in the param.
-func UpdateLostUser(lost models.TempUser) {
+func UpdateLostUser(lost server.TempUser) {
 	user, ok := SelectUser(lost.User.Username)
 	if !ok {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
@@ -246,7 +282,7 @@ func UpdateLostUser(lost models.TempUser) {
 // is a goroutine that periodically removes old models.TempUser from TempUsers and LostUsers.
 func ManageTempUsers() {
 	time.Sleep(time.Second * 10)
-	duration := SetDailyTimer(2)
+	duration := SetDailyTimer(0)
 	for {
 		Logger.Info(GetCurrentFuncName(), slog.String("goroutine", "ManageTempUsers"))
 		for _, user := range TempUsers {

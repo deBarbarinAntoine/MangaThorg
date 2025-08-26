@@ -5,33 +5,36 @@ import (
 	"errors"
 	"log"
 	"log/slog"
-	"mangathorg/internal/models"
-	"mangathorg/internal/utils"
 	"os"
 	"reflect"
 	"slices"
 	"time"
+	
+	"mangathorg/internal/models/api"
+	"mangathorg/internal/utils"
 )
-
-// dataPath is the absolute path to the cache directory.
-var dataPath string = utils.Path + "cache/"
 
 // retrieveCacheData
 //
 //	@Description: retrieves a specific cache's file content and returns it as a models.CacheData.
 //	@param info: name of the cache file.
 //	@return models.CacheData
-func retrieveCacheData(info string) models.CacheData {
-	data, err := os.ReadFile(dataPath + info + ".json")
+func retrieveCacheData(info string) api.CacheData {
+	filename := utils.DataPath + info + ".json"
+	
+	api.RLock(filename)
+	defer api.RUnlock(filename)
+	
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	if len(data) == 0 {
 		return nil
 	}
-
-	var cacheData models.CacheData
+	
+	var cacheData api.CacheData
 	err = json.Unmarshal(data, &cacheData)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -47,23 +50,23 @@ func retrieveCacheData(info string) models.CacheData {
 //	@param order
 //	@param offset
 //	@return models.SingleCacheData
-func retrieveSingleCacheData(info string, id string, order string, offset int) models.SingleCacheData {
+func retrieveSingleCacheData(info string, id string, order string, offset int) api.SingleCacheData {
 	cacheData := retrieveCacheData(info)
-
+	
 	if id == "" && cacheData != nil {
 		return cacheData[0]
 	} else if cacheData == nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: CacheData not found")))
-		return models.SingleCacheData{Data: nil}
+		return api.SingleCacheData{Data: nil}
 	}
-
+	
 	for _, datum := range cacheData {
 		if datum.Id == id && datum.Order == order && datum.Offset == offset {
 			return datum
 		}
 	}
 	utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("cache fetching error: SingleCacheData not found")))
-	return models.SingleCacheData{Data: nil}
+	return api.SingleCacheData{Data: nil}
 }
 
 // checkStatus
@@ -73,37 +76,42 @@ func retrieveSingleCacheData(info string, id string, order string, offset int) m
 //	@param id: the item's id.
 //	@return bool
 func checkStatus(info string, id string) bool {
-	data, err := os.ReadFile(dataPath + "status.json")
+	filename := utils.DataPath + "status.json"
+	
+	api.RLock(filename)
+	defer api.RUnlock(filename)
+	
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	if len(data) == 0 {
 		return false
 	}
-
-	var status models.StatusCache
+	
+	var status api.StatusCache
 	err = json.Unmarshal(data, &status)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	switch info {
-	case models.Status.LastUploaded:
+	case api.Status.LastUploaded:
 		return status.LastUploaded
-	case models.Status.Popular:
+	case api.Status.Popular:
 		return status.Popular
-	case models.Status.Categories:
+	case api.Status.Categories:
 		return status.Categories != nil && slices.Contains(status.Categories, id)
-	case models.Status.ChaptersScan:
+	case api.Status.ChaptersScan:
 		return status.ChaptersScan != nil && slices.Contains(status.ChaptersScan, id)
-	case models.Status.MangaFeeds:
+	case api.Status.MangaFeeds:
 		return status.MangaFeeds != nil && slices.Contains(status.MangaFeeds, id)
-	case models.Status.MangaStats:
+	case api.Status.MangaStats:
 		return status.MangaStats != nil && slices.Contains(status.MangaStats, id)
-	case models.Status.Mangas:
+	case api.Status.Mangas:
 		return status.Mangas != nil && slices.Contains(status.Mangas, id)
-	case models.Status.Tags:
+	case api.Status.Tags:
 		return status.Tags
 	default:
 		return false
@@ -117,12 +125,12 @@ func checkStatus(info string, id string) bool {
 //	@return bool
 //	@return string
 //	@return string
-func isCache(r models.MangaRequest) (bool, string, string) {
+func isCache(r api.MangaRequest) (bool, string, string) {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
-		return checkStatus(models.Status.Popular, ""), models.Status.Popular, ""
+		return checkStatus(api.Status.Popular, ""), api.Status.Popular, ""
 	case reflect.DeepEqual(r, TopLatestUploadedRequest):
-		return checkStatus(models.Status.LastUploaded, ""), models.Status.LastUploaded, ""
+		return checkStatus(api.Status.LastUploaded, ""), api.Status.LastUploaded, ""
 	default:
 		return false, "", ""
 	}
@@ -133,14 +141,14 @@ func isCache(r models.MangaRequest) (bool, string, string) {
 //	@Description: retrieves a cached request.
 //	@param r
 //	@return models.SingleCacheData
-func cacheRequest(r models.MangaRequest) models.SingleCacheData {
+func cacheRequest(r api.MangaRequest) api.SingleCacheData {
 	switch {
 	case reflect.DeepEqual(r, TopPopularRequest):
-		return retrieveSingleCacheData(models.Status.Popular, "", "", 0)
+		return retrieveSingleCacheData(api.Status.Popular, "", "", 0)
 	case reflect.DeepEqual(r, TopLatestUploadedRequest):
-		return retrieveSingleCacheData(models.Status.LastUploaded, "", "", 0)
+		return retrieveSingleCacheData(api.Status.LastUploaded, "", "", 0)
 	default:
-		return models.SingleCacheData{}
+		return api.SingleCacheData{}
 	}
 }
 
@@ -150,58 +158,63 @@ func cacheRequest(r models.MangaRequest) models.SingleCacheData {
 //	@param info: type of item.
 //	@param id: the item's id.
 func updateCacheStatus(info string, id string) {
-	data, err := os.ReadFile(dataPath + "status.json")
+	filename := utils.DataPath + "status.json"
+	
+	api.RWLock(filename)
+	defer api.RWUnlock(filename)
+	
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	var status models.StatusCache
+	
+	var status api.StatusCache
 	if len(data) != 0 {
 		err = json.Unmarshal(data, &status)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 	}
-
+	
 	switch info {
-	case models.Status.LastUploaded:
+	case api.Status.LastUploaded:
 		status.LastUploaded = true
-	case models.Status.Popular:
+	case api.Status.Popular:
 		status.Popular = true
-	case models.Status.Categories:
+	case api.Status.Categories:
 		if slices.Contains(status.Categories, id) {
 			return
 		}
 		status.Categories = append(status.Categories, id)
-	case models.Status.ChaptersScan:
+	case api.Status.ChaptersScan:
 		if slices.Contains(status.ChaptersScan, id) {
 			return
 		}
 		status.ChaptersScan = append(status.ChaptersScan, id)
-	case models.Status.MangaFeeds:
+	case api.Status.MangaFeeds:
 		if slices.Contains(status.MangaFeeds, id) {
 			return
 		}
 		status.MangaFeeds = append(status.MangaFeeds, id)
-	case models.Status.MangaStats:
+	case api.Status.MangaStats:
 		if slices.Contains(status.MangaStats, id) {
 			return
 		}
 		status.MangaStats = append(status.MangaStats, id)
-	case models.Status.Mangas:
+	case api.Status.Mangas:
 		if slices.Contains(status.Mangas, id) {
 			return
 		}
 		status.Mangas = append(status.Mangas, id)
-	case models.Status.Tags:
+	case api.Status.Tags:
 		status.Tags = true
 	}
-
+	
 	data, errJSON := json.MarshalIndent(status, "", "\t")
 	if errJSON != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errJSON))
 	}
-	errWrite := os.WriteFile(dataPath+"status.json", data, 0666)
+	errWrite := os.WriteFile(filename, data, 0666)
 	if errWrite != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errWrite))
 	}
@@ -212,7 +225,7 @@ func updateCacheStatus(info string, id string) {
 //	@Description: checks if a cached item is outdated or not.
 //	@param data
 //	@return bool
-func isOldCache(data models.SingleCacheData) bool {
+func isOldCache(data api.SingleCacheData) bool {
 	// possible evolution: to customize time limit, add a time parameter, or add the info parameter
 	// to set a different time according to the data type (info).
 	if time.Since(data.UpdatedTime) > time.Hour*24 {
@@ -227,58 +240,63 @@ func isOldCache(data models.SingleCacheData) bool {
 //	@param info: item's type.
 //	@param id: item's id.
 func deleteCacheStatus(info string, id string) {
-	data, err := os.ReadFile(dataPath + "status.json")
+	filename := utils.DataPath + "status.json"
+	
+	api.RWLock(filename)
+	defer api.RWUnlock(filename)
+	
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
-	var status models.StatusCache
+	
+	var status api.StatusCache
 	if len(data) != 0 {
 		err = json.Unmarshal(data, &status)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
 	}
-
+	
 	switch info {
-	case models.Status.LastUploaded:
+	case api.Status.LastUploaded:
 		status.LastUploaded = false
-	case models.Status.Popular:
+	case api.Status.Popular:
 		status.Popular = false
-	case models.Status.Categories:
+	case api.Status.Categories:
 		index := slices.Index(status.Categories, id)
 		if index != -1 {
 			status.Categories = append(status.Categories[:index], status.Categories[index+1:]...)
 		}
-	case models.Status.ChaptersScan:
+	case api.Status.ChaptersScan:
 		index := slices.Index(status.ChaptersScan, id)
 		if index != -1 {
 			status.ChaptersScan = append(status.ChaptersScan[:index], status.ChaptersScan[index+1:]...)
 		}
-	case models.Status.MangaFeeds:
+	case api.Status.MangaFeeds:
 		index := slices.Index(status.MangaFeeds, id)
 		if index != -1 {
 			status.MangaFeeds = append(status.MangaFeeds[:index], status.MangaFeeds[index+1:]...)
 		}
-	case models.Status.MangaStats:
+	case api.Status.MangaStats:
 		index := slices.Index(status.MangaStats, id)
 		if index != -1 {
 			status.MangaStats = append(status.MangaStats[:index], status.MangaStats[index+1:]...)
 		}
-	case models.Status.Mangas:
+	case api.Status.Mangas:
 		index := slices.Index(status.Mangas, id)
 		if index != -1 {
 			status.Mangas = append(status.Mangas[:index], status.Mangas[index+1:]...)
 		}
-	case models.Status.Tags:
+	case api.Status.Tags:
 		status.Tags = false
 	}
-
+	
 	data, errJSON := json.MarshalIndent(status, "", "\t")
 	if errJSON != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errJSON))
 	}
-	errWrite := os.WriteFile(dataPath+"status.json", data, 0666)
+	errWrite := os.WriteFile(filename, data, 0666)
 	if errWrite != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errWrite))
 	}
@@ -289,10 +307,15 @@ func deleteCacheStatus(info string, id string) {
 //	@Description: removes a single item cached.
 //	@param info: item's type.
 //	@param data: item.
-func deleteCacheData(info string, data models.SingleCacheData) {
+func deleteCacheData(info string, data api.SingleCacheData) {
+	filename := utils.DataPath + info + ".json"
+	
+	api.RWLock(filename)
+	defer api.RWUnlock(filename)
+	
 	switch info {
-	case models.Status.LastUploaded, models.Status.Popular, models.Status.Tags:
-		err := os.WriteFile(dataPath+info+".json", []byte("[]"), 0666)
+	case api.Status.LastUploaded, api.Status.Popular, api.Status.Tags:
+		err := os.WriteFile(filename, []byte("[]"), 0666)
 		if err != nil {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		}
@@ -326,9 +349,9 @@ func clearCache(info string) {
 //	validity (meant to be a goroutine).
 func CacheMonitor() {
 	time.Sleep(time.Second * 10)
-	hour := 3
+	hour := 1
 	var duration time.Duration
-	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}
+	var infos = []string{api.Status.Popular, api.Status.LastUploaded, api.Status.Tags, api.Status.Mangas, api.Status.MangaFeeds, api.Status.MangaStats, api.Status.ChaptersScan, api.Status.Categories}
 	for {
 		utils.Logger.Info(utils.GetCurrentFuncName(), slog.String("goroutine", "CacheMonitor"))
 		for _, status := range infos {
@@ -349,7 +372,12 @@ func CacheMonitor() {
 //	@Description: empties a cache file.
 //	@param status: cache type.
 func emptyFile(status string) {
-	err := os.WriteFile(dataPath+status+".json", []byte("[]"), 0666)
+	filename := utils.DataPath + status + ".json"
+	
+	api.RWLock(filename)
+	defer api.RWUnlock(filename)
+	
+	err := os.WriteFile(filename, []byte("[]"), 0666)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		return
@@ -360,12 +388,17 @@ func emptyFile(status string) {
 //
 //	@Description: empties status.json.
 func emptyCacheStatus() {
-	data, err := json.MarshalIndent(models.StatusCache{}, "", "\t")
+	filename := utils.DataPath + "status.json"
+	
+	api.RWLock(filename)
+	defer api.RWUnlock(filename)
+	
+	data, err := json.MarshalIndent(api.StatusCache{}, "", "\t")
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 		return
 	}
-	err = os.WriteFile(dataPath+"status.json", data, 0666)
+	err = os.WriteFile(filename, data, 0666)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
@@ -376,7 +409,7 @@ func emptyCacheStatus() {
 //	@Description: empties the whole cache (all specific files and status.json).
 func EmptyCache() {
 	log.Println("Emptying cache...")
-	var infos = []string{models.Status.Popular, models.Status.LastUploaded, models.Status.Tags, models.Status.Mangas, models.Status.MangaFeeds, models.Status.MangaStats, models.Status.ChaptersScan, models.Status.Categories}
+	var infos = []string{api.Status.Popular, api.Status.LastUploaded, api.Status.Tags, api.Status.Mangas, api.Status.MangaFeeds, api.Status.MangaStats, api.Status.ChaptersScan, api.Status.Categories}
 	for _, status := range infos {
 		emptyFile(status)
 	}

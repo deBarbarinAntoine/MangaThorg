@@ -1,0 +1,22 @@
+[build]
+# Builds the app
+@echo ":: Beginning to build the app..."
+@go build -o mangathorg -ldflags="-w -s" -trimpath ./cmd/
+
+[dev]
+# Runs the app in the development environment
+@echo ":: Running the app in dev environment..."
+@go run ./cmd/
+
+[docker/build]
+# Builds and runs the app with docker in interactive mode
+@echo ":: Beginning to build the docker image..."
+@docker compose --profile dev up --build
+
+[docker/deploy] confirm
+# Deploys the last version of the docker container to the self-hosted docker repository
+@echo ":: Building and pushing the docker image..."
+@docker compose build mangathorg-dev && \
+docker tag mangathorg-mangathorg-dev docker.adebarbarin.com/mangathorg && \
+docker push docker.adebarbarin.com/mangathorg && \
+echo ":: Job finished successfully!" || (echo ":: Job failed." && exit 1)

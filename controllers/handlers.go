@@ -6,10 +6,6 @@ import (
 	"html/template"
 	"log"
 	"log/slog"
-	"mangathorg/internal/api"
-	"mangathorg/internal/middlewares"
-	"mangathorg/internal/models"
-	"mangathorg/internal/utils"
 	"net/http"
 	"net/url"
 	"reflect"
@@ -17,6 +13,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	
+	"mangathorg/internal/api"
+	"mangathorg/internal/middlewares"
+	api2 "mangathorg/internal/models/api"
+	"mangathorg/internal/models/server"
+	"mangathorg/internal/utils"
 )
 
 // rootHandlerGet
@@ -24,7 +26,7 @@ import (
 //	@Description: manages the / route and redirects to the principal page.
 func rootHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	http.Redirect(w, r, "/principal", http.StatusSeeOther)
 }
 
@@ -36,27 +38,27 @@ func errorHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println("HTTP ApiErr", http.StatusNotFound)
 	w.WriteHeader(http.StatusNotFound)
 	utils.Logger.Warn("errorHandler", slog.Int("req_id", middlewares.LogId), slog.String("req_url", r.URL.String()), slog.Int("http_status", http.StatusNotFound))
-
+	
 	var data struct {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
 	}
-
+	
 	session, sessionId := utils.GetSession(r)
 	if sessionId != "" {
 		data.IsConnected = true
 		data.Username = session.Username
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		data.IsConnected = false
 	}
-
+	
 	data.AvatarImg = user.Avatar
-
+	
 	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/error404.gohtml")
 	if err != nil {
 		log.Fatalln(err)
@@ -74,21 +76,21 @@ func aboutHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Username    string
 		AvatarImg   string
 	}
-
+	
 	session, sessionId := utils.GetSession(r)
 	if sessionId != "" {
 		data.IsConnected = true
 		data.Username = session.Username
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		data.IsConnected = false
 	}
-
+	
 	data.AvatarImg = user.Avatar
-
+	
 	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/about.gohtml")
 	if err != nil {
 		log.Fatalln(err)
@@ -141,7 +143,7 @@ func loginHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	@Description: login treatment handler
 func loginHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	credentials := models.Credentials{
+	credentials := server.Credentials{
 		Username: r.FormValue("username"),
 		Password: r.FormValue("password"),
 	}
@@ -209,7 +211,7 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 	case len(formValues.username) < 3:
 		http.Redirect(w, r, "register?err=username", http.StatusSeeOther)
 		return
-	case !utils.CheckUser(models.User{
+	case !utils.CheckUser(server.User{
 		Username: formValues.username,
 		Email:    formValues.email,
 	}):
@@ -226,10 +228,10 @@ func registerHandlerPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	hash, salt := utils.NewPwd(formValues.password1)
-	newTempUser := models.TempUser{
+	newTempUser := server.TempUser{
 		ConfirmID:    "",
 		CreationTime: time.Now(),
-		User: models.User{
+		User: server.User{
 			Id:        0,
 			Username:  formValues.username,
 			HashedPwd: hash,
@@ -272,17 +274,17 @@ func forgotPasswordHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	@Description: forgot password's form treatment handler.
 func forgotPasswordHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	email := r.FormValue("email")
 	if exists, user := utils.EmailExists(email); exists {
-		var temp = models.TempUser{
+		var temp = server.TempUser{
 			CreationTime: time.Now(),
 			User:         user,
 		}
 		utils.SendMail(&temp, "lost")
 		utils.LostUsers = append(utils.LostUsers, temp)
 	}
-
+	
 	http.Redirect(w, r, "/forgot-password?confirm=true", http.StatusSeeOther)
 }
 
@@ -332,7 +334,7 @@ func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
 	password := r.FormValue("password")
 	confirmPassword := r.FormValue("confirm-password")
-	var lostUser models.TempUser
+	var lostUser server.TempUser
 	for _, user := range utils.LostUsers {
 		if user.ConfirmID == id {
 			lostUser = user
@@ -354,7 +356,7 @@ func updateCredentialsHandlerPost(w http.ResponseWriter, r *http.Request) {
 //	messages according to the `err` and `status` query keys.
 func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	var message template.HTML
 	if r.URL.Query().Has("err") {
 		switch r.URL.Query().Get("err") {
@@ -374,13 +376,13 @@ func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 			message = "<div class=\"message\">Nothing has been changed!</div>"
 		}
 	}
-
+	
 	session, _ := utils.GetSession(r)
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
-
+	
 	var data = struct {
 		IsConnected bool
 		Username    string
@@ -393,7 +395,7 @@ func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Message:     message,
 		AvatarImg:   user.Avatar,
 	}
-
+	
 	for i := range 86 {
 		var nb string
 		if i+1 < 10 {
@@ -403,7 +405,7 @@ func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 		}
 		data.Avatars = append(data.Avatars, "profile-avatar-"+nb+".jpg")
 	}
-
+	
 	tmpl, err := template.ParseFiles(utils.Path+"templates/base.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/profile.gohtml")
 	if err != nil {
 		log.Fatalln(err)
@@ -419,23 +421,23 @@ func profileHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	@Description: profile form's treatment handler.
 func profileHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	avatar := r.FormValue("avatar")
 	password := r.FormValue("password")
 	newPassword := r.FormValue("new-password")
 	confirmPassword := r.FormValue("confirm-password")
-
+	
 	session, _ := utils.GetSession(r)
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		http.Redirect(w, r, "/profile?err=internal-error", http.StatusSeeOther)
 		return
 	}
-
+	
 	if password != "" && newPassword != "" && confirmPassword != "" {
-		if !utils.CheckPwd(models.Credentials{Username: session.Username, Password: password}) {
+		if !utils.CheckPwd(server.Credentials{Username: session.Username, Password: password}) {
 			http.Redirect(w, r, "/profile?err=current-pwd", http.StatusSeeOther)
 			return
 		}
@@ -451,10 +453,10 @@ func profileHandlerPost(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/profile?status=nothing", http.StatusSeeOther)
 		return
 	}
-
+	
 	user.Avatar = avatar
 	utils.UpdateUser(user)
-
+	
 	http.Redirect(w, r, "/profile?status=updated", http.StatusSeeOther)
 }
 
@@ -463,16 +465,16 @@ func profileHandlerPost(w http.ResponseWriter, r *http.Request) {
 //	@Description: display the user's home page.
 func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	session, _ := utils.GetSession(r)
 	user, ok := utils.SelectUser(session.Username)
-
+	
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		http.Redirect(w, r, "/login?err=restricted", http.StatusSeeOther)
 		return
 	}
-
+	
 	var data = struct {
 		Order        string
 		Path         string
@@ -481,9 +483,10 @@ func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Email        string
 		AvatarImg    string
 		HasBanner    bool
-		Banner       models.MangaUsefullData
+		Banner       api2.MangaUsefullData
 		HasFavorites bool
-		Favorites    []models.MangaUsefullData
+		Favorites    []api2.MangaUsefullData
+		BaseURL      string
 	}{
 		Order:        "desc",
 		Path:         "static",
@@ -493,12 +496,13 @@ func homeHandlerGet(w http.ResponseWriter, r *http.Request) {
 		AvatarImg:    user.Avatar,
 		Banner:       api.FetchMangaById(user.MangaBanner.Id, "desc", 0),
 		Favorites:    api.FetchMangasById(user.Favorites, "desc", 0),
+		BaseURL:      utils.BaseURL,
 	}
-
+	
 	data.HasFavorites = data.Favorites != nil && len(data.Favorites) > 0
-	data.HasBanner = !reflect.DeepEqual(data.Banner, models.MangaUsefullData{})
-
-	tmpl, err := template.ParseFiles(utils.Path+"templates/home.gohtml", utils.Path+"templates/base.gohtml")
+	data.HasBanner = !reflect.DeepEqual(data.Banner, api2.MangaUsefullData{})
+	
+	tmpl, err := template.ParseFiles(utils.Path+"templates/home.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -546,7 +550,7 @@ func confirmHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Query().Has("id") {
 		id := r.URL.Query().Get("id")
 		utils.PushTempUser(id)
-
+		
 		tmpl, err := template.ParseFiles(utils.Path+"templates/confirm.gohtml", utils.Path+"templates/base.gohtml")
 		if err != nil {
 			log.Fatalln(err)
@@ -572,7 +576,7 @@ func logoutHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	@Description: displays the principal page.
 func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/principal.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -580,27 +584,29 @@ func principalHandlerGet(w http.ResponseWriter, r *http.Request) {
 		IsConnected    bool
 		Username       string
 		AvatarImg      string
-		Banner         models.MangaUsefullData
-		LatestUploaded []models.MangaUsefullData
-		Popular        []models.MangaUsefullData
+		Banner         api2.MangaUsefullData
+		LatestUploaded []api2.MangaUsefullData
+		Popular        []api2.MangaUsefullData
+		BaseURL        string
 	}{
 		Banner:         api.FetchMangaById("cb676e05-8e6e-4ec4-8ba0-d3cb4f033cfa", "asc", 1),
 		LatestUploaded: api.FetchManga(api.TopLatestUploadedRequest).Mangas,
 		Popular:        api.FetchManga(api.TopPopularRequest).Mangas,
+		BaseURL:        utils.BaseURL,
 	}
-
+	
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
 	data.IsConnected = api.AddSingleFavoriteInfo(r, &data.Banner)
 	_ = api.AddFavoriteInfo(r, &data.LatestUploaded)
 	_ = api.AddFavoriteInfo(r, &data.Popular)
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
@@ -638,7 +644,7 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 	if pag < 1 {
 		pag = 1
 	}
-	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
+	tmpl, err := template.ParseFiles(utils.Path+"templates/manga.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -656,33 +662,35 @@ func mangaHandlerGet(w http.ResponseWriter, r *http.Request) {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
-		Manga       models.MangaUsefullData
+		Manga       api2.MangaUsefullData
 		CurrentPage int
 		Pages       []int
 		Order       string
+		BaseURL     string
 	}{
 		Manga:       manga,
 		CurrentPage: pag,
 		Pages:       pages,
 		Order:       order,
+		BaseURL:     utils.BaseURL,
 	}
-
+	
 	//  check if the manga was found, and if not, show the error404 page.
-	if reflect.DeepEqual(manga, models.MangaUsefullData{}) {
+	if reflect.DeepEqual(manga, api2.MangaUsefullData{}) {
 		http.Redirect(w, r, "/error404", http.StatusSeeOther)
 		return
 	}
-
+	
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
 	data.IsConnected = api.AddSingleFavoriteInfo(r, &data.Manga)
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
@@ -739,38 +747,38 @@ func scanHandlerGet(w http.ResponseWriter, r *http.Request) {
 func favoriteHandlerPost(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
-
+	
 	session, sessionId := utils.GetSession(r)
-
+	
 	if sessionId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("sessionId not found")))
 		http.Error(w, "restricted access: you need a valid session to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	if mangaId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("mangaId is null")))
 		http.Error(w, "you need to provide a mangaId", http.StatusNotFound)
 		return
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		http.Error(w, "restricted access: you need a valid user to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	for _, favorite := range user.Favorites {
 		if mangaId == favorite.Id {
 			http.Error(w, "the manga is already present in the favorites", http.StatusConflict)
 			return
 		}
 	}
-
-	user.Favorites = append(user.Favorites, models.MangaUser{Id: mangaId})
+	
+	user.Favorites = append(user.Favorites, server.MangaUser{Id: mangaId})
 	utils.UpdateUser(user)
-
+	
 	w.Header().Set("result", "Manga added successfully")
 	w.WriteHeader(http.StatusOK)
 }
@@ -782,28 +790,28 @@ func favoriteHandlerPost(w http.ResponseWriter, r *http.Request) {
 func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
-
+	
 	session, sessionId := utils.GetSession(r)
-
+	
 	if sessionId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("sessionId not found")))
 		http.Error(w, "restricted access: you need a valid session to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	if mangaId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("mangaId is null")))
 		http.Error(w, "you need to provide a mangaId", http.StatusNotFound)
 		return
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		http.Error(w, "restricted access: you need a valid user to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	for i, favorite := range user.Favorites {
 		if mangaId == favorite.Id {
 			user.Favorites = append(user.Favorites[:i], user.Favorites[i+1:]...)
@@ -813,7 +821,7 @@ func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
+	
 	w.WriteHeader(http.StatusNotFound)
 	w.Header().Set("error", "The manga was not found in the favorites")
 }
@@ -825,31 +833,31 @@ func favoriteHandlerDelete(w http.ResponseWriter, r *http.Request) {
 func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
 	mangaId := r.PathValue("mangaId")
-
+	
 	session, sessionId := utils.GetSession(r)
-
+	
 	if sessionId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("sessionId not found")))
 		http.Error(w, "restricted access: you need a valid session to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	if mangaId == "" {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("mangaId is null")))
 		http.Error(w, "you need to provide a mangaId", http.StatusNotFound)
 		return
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		http.Error(w, "restricted access: you need a valid user to proceed", http.StatusUnauthorized)
 		return
 	}
-
+	
 	for _, favorite := range user.Favorites {
 		if mangaId == favorite.Id {
-			user.MangaBanner = models.MangaUser{
+			user.MangaBanner = server.MangaUser{
 				Id:              mangaId,
 				LastChapterRead: favorite.LastChapterRead,
 			}
@@ -859,7 +867,7 @@ func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-
+	
 	w.WriteHeader(http.StatusNotFound)
 	w.Header().Set("error", "The manga was not found in the favorites")
 }
@@ -869,26 +877,26 @@ func bannerHandlerPut(w http.ResponseWriter, r *http.Request) {
 //	@Description: displays the requested chapter's scans to read it, according to
 //	the mangaId, chapterNb and chapterId sent in the URL.
 func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
-
+	
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	mangaId := r.PathValue("mangaId")
 	offsetString := r.PathValue("offset")
 	chapterId := r.PathValue("chapterId")
-
+	
 	if chapterId == "" || mangaId == "" || offsetString == "" {
 		http.Redirect(w, r, "/error404", http.StatusNotFound)
 		return
 	}
-
+	
 	tmpl, err := template.ParseFiles(utils.Path+"templates/chapter.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	
 	scan := api.ScanRequest(chapterId)
-
-	var apiMangaFeed models.ApiMangaFeed
+	
+	var apiMangaFeed api2.ApiMangaFeed
 	offset, errConv := strconv.Atoi(offsetString)
 	if errConv != nil {
 		offset = 0
@@ -899,7 +907,7 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 		limit = 10 + reqOffset
 		reqOffset = 0
 	}
-
+	
 	var query = make(url.Values)
 	query.Add("order[chapter]", "asc")
 	query.Add("translatedLanguage[]", "en")
@@ -907,15 +915,15 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 	query.Add("includes[]", "scanlation_group")
 	query.Add("limit", strconv.Itoa(limit))
 	query.Add("offset", strconv.Itoa(reqOffset))
-
+	
 	err = apiMangaFeed.SendRequest(api.BaseApiURL, "manga/"+mangaId+"/feed", query)
 	if err != nil {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", err))
 	}
-
+	
 	currentInd := offset - reqOffset
 	chapters := apiMangaFeed.Format()
-
+	
 	chapterNb := chapters[currentInd].Chapter
 	var previous, next int
 	for i, chapter := range chapters {
@@ -930,27 +938,27 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-
+	
 	var isPrevious, isNext bool = true, true
-
+	
 	if previous < 0 {
 		isPrevious = false
 	}
-
+	
 	if (offset + (next - currentInd)) >= apiMangaFeed.Total {
 		isNext = false
 	}
-
+	
 	var previousLink, nextLink string
-
+	
 	if isPrevious {
 		previousLink = "/chapter/" + mangaId + "/" + strconv.Itoa(offset-(currentInd-previous)) + "/" + chapters[previous].Id
 	}
-
+	
 	if isNext {
 		nextLink = "/chapter/" + mangaId + "/" + strconv.Itoa(offset+(next-currentInd)) + "/" + chapters[next].Id
 	}
-
+	
 	var data = struct {
 		IsConnected     bool
 		Username        string
@@ -995,19 +1003,19 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 			DataSaver: scan.Chapter.DataSaver,
 		},
 	}
-
+	
 	session, sessionId := utils.GetSession(r)
 	if sessionId != "" {
 		data.IsConnected = true
 		data.Username = session.Username
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	if len(data.Scan.Data) == 0 {
 		if len(data.Scan.DataSaver) == 0 {
 			data.IsOk = false
@@ -1030,16 +1038,16 @@ func chapterHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	@Description: displays all the available Tag sorted by type.
 func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	sortedTags := api.FetchSortedTags()
-
+	
 	var data = struct {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
-		FormatTags  []models.ApiTag
-		GenreTags   []models.ApiTag
-		ThemeTags   []models.ApiTag
+		FormatTags  []api2.ApiTag
+		GenreTags   []api2.ApiTag
+		ThemeTags   []api2.ApiTag
 		PublicTags  []string
 		StatusTags  []string
 	}{
@@ -1049,24 +1057,24 @@ func tagsHandlerGet(w http.ResponseWriter, r *http.Request) {
 		PublicTags: sortedTags.PublicTags,
 		StatusTags: sortedTags.StatusTags,
 	}
-
+	
 	session, sessionId := utils.GetSession(r)
 	if sessionId != "" {
 		data.IsConnected = true
 		data.Username = session.Username
 	}
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	tmpl, err := template.ParseFiles(utils.Path+"templates/tags.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	
 	err = tmpl.ExecuteTemplate(w, "base", data)
 	if err != nil {
 		log.Fatalln(err)
@@ -1106,8 +1114,8 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		pag = 1
 	}
 	offset := (pag - 1) * 18
-
-	var request = models.MangaRequest{
+	
+	var request = api2.MangaRequest{
 		OrderType:    "rating",
 		OrderValue:   order,
 		IncludedTags: []string{tagId},
@@ -1115,19 +1123,20 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Limit:        18,
 		Offset:       offset,
 	}
-
+	
 	var data = struct {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
 		Path        string
 		Name        string
-		Response    models.MangasInBulk
+		Response    api2.MangasInBulk
 		CurrentPage int
 		TotalPages  int
 		Order       string
 		Previous    int
 		Next        int
+		BaseURL     string
 	}{
 		AvatarImg:   "avatar.jpg",
 		Path:        "../static",
@@ -1137,24 +1146,25 @@ func categoryHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 		Previous:    pag - 1,
 		Next:        pag + 1,
+		BaseURL:     utils.BaseURL,
 	}
-
+	
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
 	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
 		data.TotalPages++
 	}
-
-	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
+	
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -1198,19 +1208,19 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		pag = 1
 	}
 	offset := (pag - 1) * 18
-
-	var request models.MangaRequest
-
-	if group == "public" && slices.Contains(models.MangaPublic, name) {
-		request = models.MangaRequest{
+	
+	var request api2.MangaRequest
+	
+	if group == "public" && slices.Contains(api2.MangaPublic, name) {
+		request = api2.MangaRequest{
 			OrderType:  "rating",
 			OrderValue: order,
 			Public:     []string{name},
 			Limit:      18,
 			Offset:     offset,
 		}
-	} else if group == "status" && slices.Contains(models.MangaStatus, name) {
-		request = models.MangaRequest{
+	} else if group == "status" && slices.Contains(api2.MangaStatus, name) {
+		request = api2.MangaRequest{
 			OrderType:  "rating",
 			OrderValue: order,
 			Status:     []string{name},
@@ -1219,7 +1229,7 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		}
 	} else if group == "special" {
 		if name == "latest-updates" {
-			request = models.MangaRequest{
+			request = api2.MangaRequest{
 				OrderType:  "latestUploadedChapter",
 				OrderValue: order,
 				Limit:      18,
@@ -1227,7 +1237,7 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 			}
 			name = "latest uploaded"
 		} else if name == "popular" {
-			request = models.MangaRequest{
+			request = api2.MangaRequest{
 				OrderType:  "rating",
 				OrderValue: order,
 				Limit:      18,
@@ -1238,19 +1248,20 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/error404", http.StatusNotFound)
 		return
 	}
-
+	
 	var data = struct {
 		IsConnected bool
 		Username    string
 		AvatarImg   string
 		Path        string
 		Name        string
-		Response    models.MangasInBulk
+		Response    api2.MangasInBulk
 		CurrentPage int
 		TotalPages  int
 		Order       string
 		Previous    int
 		Next        int
+		BaseURL     string
 	}{
 		AvatarImg:   "avatar.jpg",
 		Path:        "../../static",
@@ -1260,24 +1271,25 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 		Order:       order,
 		Previous:    pag - 1,
 		Next:        pag + 1,
+		BaseURL:     utils.BaseURL,
 	}
-
+	
 	session, _ := utils.GetSession(r)
 	data.Username = session.Username
 	data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
-
+	
 	user, ok := utils.SelectUser(session.Username)
 	if !ok {
 		utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 	}
 	data.AvatarImg = user.Avatar
-
+	
 	data.TotalPages = data.Response.NbMangas / 18
 	if data.Response.NbMangas%18 > 0 {
 		data.TotalPages++
 	}
-
-	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
+	
+	tmpl, err := template.ParseFiles(utils.Path+"templates/category.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -1293,26 +1305,27 @@ func categoryNameHandlerGet(w http.ResponseWriter, r *http.Request) {
 //	and the search and advanced search form.
 func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 	log.Println(utils.GetCurrentFuncName())
-
+	
 	var data struct {
 		ExpandedFilters bool
 		IsConnected     bool
 		Username        string
 		AvatarImg       string
-		Tags            models.OrderedTags
+		Tags            api2.OrderedTags
 		Path            string
 		IsResponse      bool
-		Response        models.MangasInBulk
+		Response        api2.MangasInBulk
 		CurrentPage     int
 		TotalPages      int
 		Order           string
 		Previous        int
 		Next            int
 		Req             string
+		BaseURL         string
 	}
-
+	
 	if r.URL.Query().Has("q") {
-
+		
 		var pagination string
 		if r.URL.Query().Has("pag") {
 			pagination = r.URL.Query().Get("pag")
@@ -1327,10 +1340,10 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			pag = 1
 		}
 		offset := (pag - 1) * 18
-
-		var request models.MangaRequest
-
-		request = models.MangaRequest{
+		
+		var request api2.MangaRequest
+		
+		request = api2.MangaRequest{
 			OrderType:      "rating",
 			OrderValue:     r.URL.Query().Get("order"),
 			IncludedTags:   r.URL.Query()["includedTags[]"],
@@ -1344,11 +1357,11 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Offset:         offset,
 		}
 		log.Printf("request: %#v\n", request)
-
+		
 		if request.OrderValue != "asc" && request.OrderValue != "desc" {
 			request.OrderValue = "desc"
 		}
-
+		
 		var query string
 		query += "?q=Search"
 		query += "&title=" + request.Title
@@ -1367,22 +1380,23 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			query += "&public[]=" + public
 		}
 		query += "&order[" + request.OrderType + "]=" + request.OrderValue
-
+		
 		data = struct {
 			ExpandedFilters bool
 			IsConnected     bool
 			Username        string
 			AvatarImg       string
-			Tags            models.OrderedTags
+			Tags            api2.OrderedTags
 			Path            string
 			IsResponse      bool
-			Response        models.MangasInBulk
+			Response        api2.MangasInBulk
 			CurrentPage     int
 			TotalPages      int
 			Order           string
 			Previous        int
 			Next            int
 			Req             string
+			BaseURL         string
 		}{
 			ExpandedFilters: r.URL.Query().Has("option"),
 			IsConnected:     data.IsConnected,
@@ -1396,18 +1410,19 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Previous:        pag - 1,
 			Next:            pag + 1,
 			Req:             query,
+			BaseURL:         utils.BaseURL,
 		}
-
+		
 		session, _ := utils.GetSession(r)
 		data.Username = session.Username
 		data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
-
+		
 		user, ok := utils.SelectUser(session.Username)
 		if !ok {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		}
 		data.AvatarImg = user.Avatar
-
+		
 		data.IsResponse = data.Response.Mangas != nil
 		data.TotalPages = data.Response.NbMangas / 18
 		if data.Response.NbMangas%18 > 0 {
@@ -1419,16 +1434,17 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			IsConnected     bool
 			Username        string
 			AvatarImg       string
-			Tags            models.OrderedTags
+			Tags            api2.OrderedTags
 			Path            string
 			IsResponse      bool
-			Response        models.MangasInBulk
+			Response        api2.MangasInBulk
 			CurrentPage     int
 			TotalPages      int
 			Order           string
 			Previous        int
 			Next            int
 			Req             string
+			BaseURL         string
 		}{
 			ExpandedFilters: r.URL.Query().Has("option"),
 			IsConnected:     data.IsConnected,
@@ -1437,28 +1453,29 @@ func searchHandlerGet(w http.ResponseWriter, r *http.Request) {
 			Tags:            api.FetchSortedTags(),
 			Path:            "../static",
 			IsResponse:      false,
-			Response:        models.MangasInBulk{},
+			Response:        api2.MangasInBulk{},
 			CurrentPage:     1,
 			TotalPages:      1,
 			Order:           "desc",
 			Previous:        1,
 			Next:            1,
 			Req:             "",
+			BaseURL:         utils.BaseURL,
 		}
-
+		
 		session, _ := utils.GetSession(r)
 		data.Username = session.Username
 		data.IsConnected = api.AddFavoriteInfo(r, &data.Response.Mangas)
-
+		
 		user, ok := utils.SelectUser(session.Username)
 		if !ok {
 			utils.Logger.Error(utils.GetCurrentFuncName(), slog.Any("output", errors.New("user not found")))
 		}
 		data.AvatarImg = user.Avatar
-
+		
 	}
-
-	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml")
+	
+	tmpl, err := template.ParseFiles(utils.Path+"templates/search.gohtml", utils.Path+"templates/header-line2.gohtml", utils.Path+"templates/base.gohtml", utils.Path+"templates/favorites.js.gohtml")
 	if err != nil {
 		log.Fatalln(err)
 	}

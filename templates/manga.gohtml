@@ -1,5 +1,3 @@
-{{define "staticPath"}}../static{{end}}
-
 {{define "title"}}MangaThorg - {{.Manga.Title}}{{end}}
 
 {{define "cssFile"}}manga{{end}}
@@ -15,15 +13,21 @@
                 <div class="manga-attributes">
                     <div class="attribute">
                         <div class="attribute-label">Author</div>
-                        <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Author}}</div></div>
+                        <div class="div-attr-ctn">
+                            <div class="attr-text">{{.Manga.Author}}</div>
+                        </div>
                     </div>
                     <div class="attribute">
                         <div class="attribute-label">Status</div>
-                        <div class="div-attr-ctn"><div class="attr-text">{{.Manga.Status}}</div></div>
+                        <div class="div-attr-ctn">
+                            <div class="attr-text">{{.Manga.Status}}</div>
+                        </div>
                     </div>
                     <div class="attribute">
                         <div class="attribute-label">Public</div>
-                        <div class="div-attr-ctn"><div class="attr-text">{{if .Manga.PublicationDemographic}}{{.Manga.PublicationDemographic}}{{else}}N/A{{end}}</div></div>
+                        <div class="div-attr-ctn">
+                            <div class="attr-text">{{if .Manga.PublicationDemographic}}{{.Manga.PublicationDemographic}}{{else}}N/A{{end}}</div>
+                        </div>
                     </div>
                     <div class="attribute">
                         <div class="attribute-label">Rating</div>
@@ -33,19 +37,25 @@
                         </div>
                     </div>
                 </div>
-                <a href="/chapter/{{.Manga.Id}}/{{if .Manga.LastChapterRead}}0/{{.Manga.LastChapterRead}}{{else}}0/{{.Manga.FirstChapterId}}{{end}}" class="manga-read-btn">
+                <a href="/chapter/{{.Manga.Id}}/{{if .Manga.LastChapterRead}}0/{{.Manga.LastChapterRead}}{{else}}0/{{.Manga.FirstChapterId}}{{end}}"
+                   class="manga-read-btn">
                     <div class="manga-read-btn-text">{{if .Manga.LastChapterRead}}Keep reading{{else}}Begin reading{{end}}</div>
-                    <img class="icon-menu-book" src="../static/img/open-book.png"  alt="read-to logo"/>
+                    <img class="icon-menu-book" src="../static/img/open-book.png" alt="read-to logo" />
                 </a>
             </div>
             {{if .IsConnected}}
-                <div class="favorite-btn{{if .Manga.IsFavorite}} delete-favorite{{else}} add-favorite{{end}}" id="{{.Manga.Id}}">
-                    <img src="../static/img/{{if .Manga.IsFavorite}}darkred-remove-favorite.png{{else}}darkred-add-favorite.png{{end}}" alt="favorite-logo" />
+                <div class="favorite-btn{{if .Manga.IsFavorite}} delete-favorite{{else}} add-favorite{{end}}"
+                     id="{{.Manga.Id}}">
+                    <img src="../static/img/{{if .Manga.IsFavorite}}darkred-remove-favorite.png{{else}}darkred-add-favorite.png{{end}}"
+                         alt="favorite-logo" />
                 </div>
             {{end}}
         </div>
         <div class="manga-card-ctn-abs">
-            <div class="manga-card"><div class="manga-card-img" style="background-image: url('/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}')"></div></div>
+            <div class="manga-card">
+                <div class="manga-card-img"
+                     style="background-image: url('/covers/{{.Manga.Id}}/{{.Manga.CoverImg}}')"></div>
+            </div>
         </div>
         <div class="manga-info">
             <div class="manga-description">
@@ -54,7 +64,9 @@
                 </p>
                 <div class="manga-tag-list">
                     {{range .Manga.Tags}}
-                        <a href="/category/{{.Id}}" class="manga-tag"><div class="manga-tag-text">{{.Attributes.Name.En}}</div></a>
+                        <a href="/category/{{.Id}}" class="manga-tag">
+                            <div class="manga-tag-text">{{.Attributes.Name.En}}</div>
+                        </a>
                     {{end}}
                 </div>
             </div>
@@ -66,45 +78,67 @@
     <!-- Manga Chapter-list -->
     <div class="manga-chapters">
         <div class="chapters-header">
-            <div class="title-ctn"><div class="title">Chapters</div></div>
+            <div class="title-ctn">
+                <div class="title">Chapters</div>
+            </div>
             <div class="sorting">
                 <div class="sort-title">Sort:</div>
                 {{if eq .Order "desc"}}
-                    <div class="sort-tag selected"><div class="sort-tag-text">Descending</div></div>
-                    <a href="?order=asc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Ascending</div></a>
+                    <div class="sort-tag selected">
+                        <div class="sort-tag-text">Descending</div>
+                    </div>
+                    <a href="?order=asc&pag={{$current}}" class="sort-tag">
+                        <div class="sort-tag-text">Ascending</div>
+                    </a>
                 {{else if eq .Order "asc"}}
-                    <a href="?order=desc&pag={{$current}}" class="sort-tag"><div class="sort-tag-text">Descending</div></a>
-                    <div class="sort-tag selected"><div class="sort-tag-text">Ascending</div></div>
+                    <a href="?order=desc&pag={{$current}}" class="sort-tag">
+                        <div class="sort-tag-text">Descending</div>
+                    </a>
+                    <div class="sort-tag selected">
+                        <div class="sort-tag-text">Ascending</div>
+                    </div>
                 {{end}}
             </div>
         </div>
         <div class="chapters-list">
-            {{$id := .Manga.Id}}
-            {{range .Manga.Chapters}}
-                <div class="chapter">
-                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}}</a>
-                    <div class="source">
-                        <img class="icon-group" src="../static/img/scanlation-group.png" alt="scanlation-group-icon" />
-                        <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
+            {{ if ne 0 (len .Manga.Chapters) }}
+                {{$id := .Manga.Id}}
+                {{range .Manga.Chapters}}
+                    <div class="chapter">
+                        <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}"
+                           class="chapter-title">Ch. {{.Chapter}}{{if .Title}}: {{.Title}}{{end}}</a>
+                        <div class="source">
+                            <img class="icon-group" src="../static/img/scanlation-group.png"
+                                 alt="scanlation-group-icon" />
+                            <div class="source-name">{{if .ScanlationGroup}}{{.ScanlationGroup}}{{else}}N/A{{end}}</div>
+                        </div>
+                        <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book"
+                                                                                                 src="../static/img/open-book.png"
+                                                                                                 alt="book-icon" /></a>
                     </div>
-                    <a href="/chapter/{{$id}}/{{.Offset}}/{{.Id}}" class="chapter-link"><img class="icon-menu-book" src="../static/img/open-book.png" alt="book-icon" /></a>
-                </div>
-            {{end}}
+                {{end}}
+            {{ else }}
+                <div class="chapters-empty">No chapters available</div>
+            {{ end }}
         </div>
     </div>
 
-    <div class="pagination">
-        {{$order := .Order}}
+    {{ if ne 0 (len .Pages) }}
+        <div class="pagination">
+            {{$order := .Order}}
 
-        {{range .Pages}}
-            {{if eq . $current}}
-                <span class="page-link">{{.}}</span>
-            {{else}}
-                <a href="?order={{$order}}&pag={{.}}" class="page-link">{{.}}</a>
+            {{range .Pages}}
+                {{if eq . $current}}
+                    <span class="page-link">{{.}}</span>
+                {{else}}
+                    <a href="?order={{$order}}&pag={{.}}" class="page-link">{{.}}</a>
+                {{end}}
             {{end}}
-        {{end}}
-    </div>
+        </div>
+    {{ end }}
 
-    <script src="../static/js/favorites.js"></script>
+    <script>
+        {{ template "favorites.js" . }}
+    </script>
 
 {{end}}

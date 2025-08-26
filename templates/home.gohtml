@@ -1,5 +1,3 @@
-{{define "staticPath"}}{{.Path}}{{end}}
-
 {{define "title"}}MangaThorg - Home{{end}}
 
 {{define "cssFile"}}style{{end}}
@@ -17,7 +15,7 @@
             <div class="filler"></div>
             <div class="username-ctn"><div class="username-txt">{{.Username}}</div></div>
             <div class="filler"></div>
-            <div class="profile-avatar"><img src="{{template "staticPath" .}}/img/profile-avatars/{{.AvatarImg}}" alt="avatar-img" class="avatar-img"></div>
+            <div class="profile-avatar"><img src="/static/img/profile-avatars/{{.AvatarImg}}" alt="avatar-img" class="avatar-img"></div>
         </div>
         {{if .HasBanner}}
             <div class="banner-card"><img class="banner-cover" src="/covers/{{.Banner.Id}}/{{.Banner.CoverImg}}" alt="{{.Banner.Title}}" /></div>
@@ -79,6 +77,8 @@
         {{end}}
     </div>
 
-    <script src="{{.Path}}/js/favorites.js"></script>
+    <script>
+        {{ template "favorites.js" . }}
+    </script>
 
 {{end}}

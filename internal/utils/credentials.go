@@ -5,7 +5,8 @@ import (
 	"crypto/sha512"
 	"encoding/base64"
 	"encoding/hex"
-	"mangathorg/internal/models"
+	
+	"mangathorg/internal/models/server"
 )
 
 // pepper is a constant value used to hash passwords.
@@ -57,7 +58,7 @@ func NewPwd(pwd string) (string, string) {
 //	@Description: checks whether the models.Credentials are correct or not.
 //	@param cred
 //	@return bool
-func CheckPwd(cred models.Credentials) bool {
+func CheckPwd(cred server.Credentials) bool {
 	user, ok := SelectUser(cred.Username)
 	if !ok {
 		return false

@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"log"
 	"log/slog"
-	"mangathorg/internal/models"
 	"os"
 	"regexp"
 	"sort"
 	"strings"
 	"sync"
 	"time"
+	
+	"mangathorg/internal/models/server"
 )
 
 type Logs []Log
@@ -21,7 +22,7 @@ type Log struct {
 	Level      string         `json:"level"`
 	Message    string         `json:"message"`
 	ReqId      int            `json:"req_id,omitempty"`
-	User       models.Session `json:"user,omitempty"`
+	User       server.Session `json:"user,omitempty"`
 	ClientIP   string         `json:"client_ip,omitempty"`
 	ReqMethod  string         `json:"req_method,omitempty"`
 	ReqURL     string         `json:"req_url,omitempty"`
@@ -48,23 +49,29 @@ func closeLog() {
 // LogInit is meant to be run as a goroutine to create a new log file every day
 // appending the file's creation timestamp in its name.
 func LogInit() {
+	env := os.Getenv("ENV")
+	if env == "production" {
+		Logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
+		Logger.Info(GetCurrentFuncName(), slog.String("goroutine", "LogInit"))
+		return
+	}
 	duration := SetDailyTimer(0)
 	var jsonHandler *slog.JSONHandler
 	var err error
 	var filename string
 	defer closeLog()
-
+	
 	// checking if logs directory exists
 	_, err = os.Stat(Path + "logs")
 	if os.IsNotExist(err) {
-
+		
 		// create it if it doesn't exist
 		err = os.Mkdir(Path+"logs", 0750)
 		if err != nil {
 			log.Println("LogInit(): error when creating directory 'logs'", err)
 		}
 	}
-
+	
 	for {
 		filename = Path + "logs/logs_" + time.Now().Format(time.DateOnly) + ".log"
 		closeLog()
@@ -117,7 +124,7 @@ func printFileNames(files []os.DirEntry) []string {
 // and returns a Logs array.
 func RetrieveLogs() (logArray Logs) {
 	logFiles, err := os.ReadDir(Path + "logs/.")
-	//fmt.Printf("logFiles: %#v\n", printFileNames(logFiles)) // verbose
+	// fmt.Printf("logFiles: %#v\n", printFileNames(logFiles)) // verbose
 	if err != nil {
 		Logger.Error(GetCurrentFuncName(), slog.Any("output", err))
 	} else {

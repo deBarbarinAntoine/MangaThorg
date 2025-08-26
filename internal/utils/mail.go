@@ -10,10 +10,11 @@ import (
 	"html/template"
 	"log"
 	"log/slog"
-	"mangathorg/internal/models"
 	"net"
 	"net/smtp"
 	"os"
+	
+	"mangathorg/internal/models/server"
 )
 
 // configFile is the config's file absolute path.
@@ -43,31 +44,31 @@ func generateMessageID(domain string) string {
 	if err != nil {
 		return ""
 	}
-
+	
 	return fmt.Sprintf("<%s@%s>", base64.StdEncoding.EncodeToString(b), domain)
-
+	
 }
 
 // fetchConfig
 //
 //	@Description: retrieves the models.MailConfig from config/config.json.
 //	@return models.MailConfig
-func fetchConfig() models.MailConfig {
-	var config models.MailConfig
-
+func fetchConfig() server.MailConfig {
+	var config server.MailConfig
+	
 	data, err := os.ReadFile(configFile)
-
+	
 	if len(data) == 0 {
 		Logger.Error(GetCurrentFuncName() + " No JSON config data found!")
 		return config
 	}
-
+	
 	err = json.Unmarshal(data, &config)
 	if err != nil {
 		Logger.Error(GetCurrentFuncName()+" JSON MarshalIndent error!", slog.Any("output", err))
 		return config
 	}
-
+	
 	return config
 }
 
@@ -76,18 +77,18 @@ func fetchConfig() models.MailConfig {
 //	@Description: sends a mail to models.TempUser to create his account.
 //	@param temp
 //	@param status
-func SendMail(temp *models.TempUser, status string) {
+func SendMail(temp *server.TempUser, status string) {
 	// Fetching mail configuration
 	config := fetchConfig()
-
+	
 	// Recipient information
 	recipientMail := []string{temp.User.Email}
-
+	
 	// Generating confirmation Id
 	temp.ConfirmID = generateConfirmationID()
-
+	
 	var subject, templateName string
-
+	
 	switch status {
 	case "creation":
 		subject = "Email verification"
@@ -96,7 +97,7 @@ func SendMail(temp *models.TempUser, status string) {
 		subject = "Set a new password"
 		templateName = "new-password-mail"
 	}
-
+	
 	// Setting the headers
 	header := make(map[string]string)
 	header["From"] = "MangaThorg" + "<" + config.Email + ">"
@@ -104,33 +105,35 @@ func SendMail(temp *models.TempUser, status string) {
 	header["Subject"] = subject
 	header["Message-ID"] = generateMessageID(config.Hostname)
 	header["Content-Type"] = "text/html; charset=UTF-8"
-
+	
 	t, err := template.ParseFiles(Path + "templates/" + templateName + ".gohtml")
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	
 	// Create a buffer to hold the formatted message
 	var body bytes.Buffer
-
+	
 	// Execute the mail's template with data
 	err = t.Execute(&body, struct {
 		Username  string
 		ConfirmID string
+		BaseURL   string
 	}{
 		Username:  temp.User.Username,
 		ConfirmID: temp.ConfirmID,
+		BaseURL:   BaseURL,
 	})
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	
 	message := ""
 	for k, v := range header {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
 	message += "\r\n" + body.String()
-
+	
 	// Setting the authentication
 	auth := smtp.PlainAuth(
 		"",
@@ -138,7 +141,7 @@ func SendMail(temp *models.TempUser, status string) {
 		config.Auth,
 		config.Hostname,
 	)
-
+	
 	// Sending the mail using TLS
 	err = sendMailTLS(
 		fmt.Sprintf("%s:%d", config.Hostname, config.Port),
@@ -147,7 +150,7 @@ func SendMail(temp *models.TempUser, status string) {
 		recipientMail,
 		[]byte(message),
 	)
-
+	
 	if err != nil {
 		panic(err)
 	} else {
@@ -178,7 +181,7 @@ func dial(addr string) (*smtp.Client, error) {
 // When len (to)>1, to [1] starts to prompt that it is secret delivery.
 func sendMailTLS(addr string, auth smtp.Auth, from string,
 	to []string, msg []byte) (err error) {
-
+	
 	// Create smtp client
 	c, err := dial(addr)
 	if err != nil {
@@ -186,7 +189,7 @@ func sendMailTLS(addr string, auth smtp.Auth, from string,
 		return err
 	}
 	defer c.Close()
-
+	
 	// Checking authentication
 	if auth != nil {
 		if ok, _ := c.Extension("AUTH"); ok {
@@ -196,35 +199,35 @@ func sendMailTLS(addr string, auth smtp.Auth, from string,
 			}
 		}
 	}
-
+	
 	// Setting recipient
 	if err = c.Mail(from); err != nil {
 		return err
 	}
-
+	
 	for _, addr := range to {
 		if err = c.Rcpt(addr); err != nil {
 			return err
 		}
 	}
-
+	
 	// Retrieving the Writer to set the message headers and body
 	w, err := c.Data()
 	if err != nil {
 		return err
 	}
-
+	
 	// Writing `msg` in the Writer
 	_, err = w.Write(msg)
 	if err != nil {
 		return err
 	}
-
+	
 	// Closing the Writer
 	err = w.Close()
 	if err != nil {
 		return err
 	}
-
+	
 	return c.Quit()
 }

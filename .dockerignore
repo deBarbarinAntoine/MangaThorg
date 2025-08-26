@@ -1,0 +1,10 @@
+.idea/
+logs/
+img_readme/
+.git/
+
+.gitignore
+README.md
+Dofile
+Makefile
+compose.yml

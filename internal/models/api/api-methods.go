@@ -1,4 +1,4 @@
-package models
+package api
 
 import (
 	"encoding/json"
@@ -80,7 +80,7 @@ func (r MangaRequest) ToQuery() url.Values {
 	q[params.ContentRating] = []string{"safe"}
 	q[params.Limit] = []string{strconv.Itoa(r.Limit)}
 	q[params.Offset] = []string{strconv.Itoa(r.Offset)}
-
+	
 	return q
 }
 
@@ -204,25 +204,25 @@ func (data *ApiManga) SendRequest(baseURL string, endpoint string, query url.Val
 	if query == nil {
 		query = make(url.Values)
 	}
-
+	
 	query.Add("includes[]", "cover_art")
 	query.Add("includes[]", "author")
-
+	
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -238,25 +238,25 @@ func (data *ApiSingleManga) SendRequest(baseURL string, endpoint string, query u
 	if query == nil {
 		query = make(url.Values)
 	}
-
+	
 	query.Add("includes[]", "cover_art")
 	query.Add("includes[]", "author")
-
+	
 	body, err := Request(baseURL+endpoint, query)
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -276,17 +276,17 @@ func (data *ApiTags) SendRequest(baseURL string, endpoint string, query url.Valu
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -307,18 +307,18 @@ func (data *ApiMangaFeed) SendRequest(baseURL string, endpoint string, query url
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		log.Println("ApiMangaFeed.SendRequest: unmarshal error!")
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -338,17 +338,17 @@ func (data *ApiChapterScan) SendRequest(baseURL string, endpoint string, query u
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -368,17 +368,17 @@ func (data *ApiMangaStats) SendRequest(baseURL string, endpoint string, query ur
 	if err != nil {
 		return err
 	}
-
+	
 	err = json.Unmarshal(body, data)
 	if err != nil {
 		return err
 	}
-
+	
 	err = data.CheckResponse()
 	if err != nil {
 		return err
 	}
-
+	
 	return nil
 }
 
@@ -394,28 +394,28 @@ func Request(url string, query url.Values) ([]byte, error) {
 	if errReq != nil {
 		return nil, errReq
 	}
-
+	
 	if query != nil {
 		req.URL.RawQuery = query.Encode()
 	}
-
+	
 	res, errRes := Client.Do(req)
 	if res.Body != nil {
 		defer res.Body.Close()
 	} else {
 		return nil, errRes
 	}
-
+	
 	body, errBody := io.ReadAll(res.Body)
 	if errBody != nil {
 		return nil, errBody
 	}
-
+	
 	var err error
 	if res.StatusCode != 200 {
 		err = errors.New("error " + res.Status)
 	}
-
+	
 	return body, err
 }
 
@@ -472,23 +472,23 @@ func (data *ApiManga) Format() MangasInBulk {
 //	@receiver data
 //	@return MangaUsefullData
 func (data *Manga) Format() MangaUsefullData {
-
+	
 	var feed ApiMangaFeed
 	var query = make(url.Values)
 	query.Add("order[chapter]", "asc")
 	query.Add("contentRating[]", "safe")
 	query.Add("includes[]", "scanlation_group")
 	query.Add("limit", "1")
-
+	
 	err := feed.SendRequest("https://api.mangadex.org/", "manga/"+data.Id+"/feed", query)
 	if err != nil {
 		log.Println("request error:", err)
 	}
 	var firstChapterId string
-	if feed.Data != nil {
+	if feed.Data != nil && len(feed.Data) > 0 {
 		firstChapterId = feed.Data[0].Id
 	}
-
+	
 	var manga = MangaUsefullData{
 		Id:                     data.Id,
 		Title:                  data.Attributes.Title.En,

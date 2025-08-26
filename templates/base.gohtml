@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{template "staticPath" .}}/css/base.css" />
-    <link rel="stylesheet" href="{{template "staticPath" .}}/css/{{template "cssFile" .}}.css" />
-    <link rel="icon" type="image/png" href="{{template "staticPath" .}}/img/logo-solo-transparent.png">
+    <link rel="stylesheet" href="/static/css/base.css" />
+    <link rel="stylesheet" href="/static/css/{{template "cssFile" .}}.css" />
+    <link rel="icon" type="image/png" href="/static/img/logo-solo-transparent.png">
     <title>{{template "title" .}}</title>
 </head>
 <body>
 <header class="header">
     <div class="main">
-        <a href="/principal" class="logo-link"><img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" /></a>
+        <a href="/principal" class="logo-link"><img class="logo" src="/static/img/header-logo-1.png" alt="logo" /></a>
         <div class="header-nav">
             <a href="/category/special/latest-updates" class="category-link">LATEST UPDATES</a>
             <a href="/category/special/popular" class="category-link">POPULAR</a>
@@ -23,7 +23,7 @@
                 <a href="/search?option=filters" class="filter-search-bar"><div class="filter-search-text">Filter</div></a>
                 <input name="title" placeholder="Search..." type="text" class="search-bar-input" required />
                 <button class="search-bar-btn" type="submit" name="q" value="Search">
-                    <img class="icon-search" src="{{template "staticPath" .}}/img/icon-search-1.png" alt="search" />
+                    <img class="icon-search" src="/static/img/icon-search-1.png" alt="search" />
                 </button>
             </form>
         </div>
@@ -38,7 +38,7 @@
 <footer class="footer">
     <div class="footer-nav-credits">
         <a href="/" class="logo-ctn">
-            <img class="logo" src="{{template "staticPath" .}}/img/header-logo-1.png" alt="logo" />
+            <img class="logo" src="/static/img/header-logo-1.png" alt="logo" />
         </a>
         <div class="footer-nav">
             <a href="/about" class="footer-nav-text">ABOUT</a>
@@ -51,7 +51,7 @@
         <a href="/about#contact" class="copyright-link">Contact</a>
         <div class="copyright">© MangaThorg.adebarbarin.com</div>
     </div>
-    <div class="footer-img-reading" style="background-image: url('{{template "staticPath" .}}/img/footer-img-reading-girl-1.png')"></div>
+    <div class="footer-img-reading" style="background-image: url('/static/img/footer-img-reading-girl-1.png')"></div>
 </footer>
 
 </body>
